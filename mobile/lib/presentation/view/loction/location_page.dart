@@ -1,13 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:mobile/config/assets/app_icon.dart';
-import 'package:mobile/config/assets/app_image.dart';
-import 'package:mobile/config/themes/app_color.dart';
-import 'package:mobile/presentation/controller/user_controller.dart';
-import 'package:mobile/presentation/view/loction/map_screen.dart';
-import 'package:mobile/presentation/widgets/appbars/main_app_bar.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:latlong2/latlong.dart';
+
+import 'package:mobile/config/assets/app_icon.dart';
+import 'package:mobile/config/assets/app_image.dart';
+import 'package:mobile/config/themes/app_color.dart';
+import 'package:mobile/config/api_config.dart';
+
+import 'package:mobile/presentation/controller/user_controller.dart';
+import 'package:mobile/presentation/widgets/appbars/main_app_bar.dart';
+import 'package:mobile/presentation/widgets/address_search_field.dart';
+
+import 'package:mobile/data/model/vietnam_address.dart';
+import 'package:mobile/data/remote/geocoding_api.dart';
+
+// Google Maps widget bạn đã chuyển sang (MapRouteBox dùng Google Maps)
+import 'package:mobile/presentation/view/loction/map_screen.dart';
 
 class LocationPage extends StatefulWidget {
   const LocationPage({super.key});
@@ -20,9 +29,17 @@ class _LocationPageState extends State<LocationPage> {
   UserController? _userCtrl;
   String _name = '...';
   bool _loadingName = true;
-  final String _location = 'Q12, TP.HCM';
-  final bool _loadingLoc = false;
+
+  String _location = 'Q12, TP.HCM';
+
   final _searchCtl = TextEditingController();
+
+  // Địa chỉ hiển thị dưới ô tìm kiếm
+  String _selectedAddress = '';
+
+  // Điểm đến cho bản đồ
+  LatLng _destination = const LatLng(10.8232704, 106.6631168);
+
   @override
   void initState() {
     super.initState();
@@ -30,9 +47,9 @@ class _LocationPageState extends State<LocationPage> {
   }
 
   Future<void> _initControllers() async {
-    // User
     _userCtrl = await UserController.create();
     if (!mounted) return;
+
     try {
       final n = await _userCtrl!.fetchDisplayName();
       if (!mounted) return;
@@ -52,8 +69,55 @@ class _LocationPageState extends State<LocationPage> {
   @override
   void dispose() {
     _searchCtl.dispose();
-    // TODO: implement dispose
     super.dispose();
+  }
+
+  /// Khi chọn một địa chỉ trong popup gợi ý:
+  Future<void> _onAddressSelected(VietnamAddress? address) async {
+    if (address == null) return;
+
+    setState(() {
+      _selectedAddress = address.name; // hiển thị dưới ô tìm kiếm
+    });
+
+    // Loading nho nhỏ khi geocode
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => const Center(child: CircularProgressIndicator()),
+    );
+
+    try {
+      // Geocode ra tọa độ
+      final coordinates = await GeocodingApi.geocodeAddress(address.name);
+
+      if (coordinates != null) {
+        setState(() {
+          _destination = coordinates; // cập nhật điểm đến
+          _location = address.name;   // cập nhật label trên AppBar (tuỳ ý)
+        });
+      } else {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Không tìm thấy tọa độ cho "${address.name}"'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Lỗi khi tìm kiếm địa chỉ: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) Navigator.of(context).pop(); // tắt loading
+    }
   }
 
   @override
@@ -63,7 +127,7 @@ class _LocationPageState extends State<LocationPage> {
         logo: Image.asset(AppImages.mainLogo, height: 100.h, width: 40.w),
         name: _name,
         loadingName: _loadingName,
-        location: _location, // hoặc null nếu không cần
+        location: _location,
         onAvatarTap: () {
           // mở trang profile / settings
         },
@@ -75,50 +139,13 @@ class _LocationPageState extends State<LocationPage> {
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
           child: Column(
             children: [
+              // Ô tìm kiếm + nút bên phải
               Row(
                 children: [
                   Expanded(
-                    child: TextField(
-                      controller: _searchCtl,
-                      style: const TextStyle(color: Colors.black),
-                      cursorColor: AppColor.primaryColor,
-                      onChanged: (q) {
-                        // TODO: lọc dữ liệu nếu cần
-                      },
-                      textInputAction: TextInputAction.search,
-                      decoration: InputDecoration(
-                        hintText: 'Tìm kiếm...',
-                        hintStyle: const TextStyle(color: Colors.black38),
-                        prefixIcon: const Icon(
-                          Icons.search,
-                          color: Colors.black,
-                        ),
-                        suffixIcon: _searchCtl.text.isEmpty
-                            ? null
-                            : IconButton(
-                                icon: const Icon(
-                                  Icons.clear,
-                                  color: Colors.black,
-                                ),
-                                onPressed: () {
-                                  _searchCtl.clear();
-                                  setState(() {});
-                                },
-                              ),
-                        isDense: true,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(color: AppColor.primaryColor),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                          borderSide: const BorderSide(color: Colors.black26),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                          borderSide: BorderSide(color: AppColor.primaryColor),
-                        ),
-                      ),
+                    child: AddressSearchField(
+                      hintText: 'Nhập tỉnh/quận/phường...',
+                      onAddressSelected: _onAddressSelected, // <-- GẮN HÀM Ở ĐÂY
                     ),
                   ),
                   const SizedBox(width: 12),
@@ -146,11 +173,41 @@ class _LocationPageState extends State<LocationPage> {
                   ),
                 ],
               ),
-              SizedBox(height: 20),
+
+              if (_selectedAddress.isNotEmpty) ...[
+                const SizedBox(height: 12),
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.blue.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: Colors.blue.withOpacity(0.3)),
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.location_on, color: Colors.blue, size: 20),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          'Địa chỉ đã chọn: $_selectedAddress',
+                          style: const TextStyle(
+                            color: Colors.blue,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+
+              const SizedBox(height: 20),
+
+              // BOX bản đồ dùng Google Maps (MapRouteBox bạn đã chuyển)
               MapRouteBox(
-                dest: const LatLng(10.776, 106.700), // điểm đến
-                apiKey:
-                    "https://api.openrouteservice.org/v2/directions/driving-car?api_key=eyJvcmciOiI1YjNjZTM1OTc4NTExMTAwMDFjZjYyNDgiLCJpZCI6IjZlNzBmN2ZhNGJjMTQ2NTJhZjM4N2I1MWI2ZDVhNDM4IiwiaCI6Im11cm11cjY0In0=&start=8.681495,49.41461&end=8.687872,49.420318", // đừng hardcode—đọc từ secrets/.env
+                key: ValueKey(_destination.toString()), // force rebuild khi đổi dest
+                dest: _destination,
+                apiKey: ApiConfig.googleMapsApiKey,
                 height: 260,
                 onError: (err) => debugPrint('Map error: $err'),
               ),
