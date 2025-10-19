@@ -1,4 +1,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+
+<!-- (tuỳ chọn nếu bạn chạy foreground service để lấy GPS liên tục) -->
+<uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+
     <application
         android:label="mobile"
         android:name="${applicationName}"

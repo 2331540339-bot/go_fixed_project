@@ -2,8 +2,11 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:mobile/config/themes/app_color.dart';
-import 'package:mobile/view/home/home_page.dart';
+import 'package:mobile/presentation/view/home/home_page.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:mobile/presentation/view/loction/location_page.dart';
+import 'package:mobile/presentation/view/messenger/inbox_page.dart';
+import 'package:mobile/presentation/view/setting/settings_page.dart';
 
 class Mainscreen extends StatefulWidget {
   const Mainscreen({super.key});
@@ -16,8 +19,9 @@ class _MainscreenState extends State<Mainscreen> {
   int _index = 0;
   final _pages = const [
     HomePage(), // Fragment 1
-    // SearchPage(),    // Fragment 2
-    // SettingsPage(),  // Fragment 3
+    InboxPage(),   
+    LocationPage(), 
+    SettingsPage(), 
   ];
   @override
   Widget build(BuildContext context) {
@@ -82,9 +86,14 @@ class _MainscreenState extends State<Mainscreen> {
                       label: 'Home',
                     ),
                     NavigationDestination(
-                      icon: Icon(Icons.search_outlined, color: Color(0xff000000)),
-                      selectedIcon: Icon(Icons.search),
-                      label: 'Search',
+                      icon: Icon(Icons.message_outlined, color: Color(0xff000000)),
+                      selectedIcon: Icon(Icons.message),
+                      label: 'message',
+                    ),
+                     NavigationDestination(
+                      icon: Icon(Icons.location_on_outlined, color: Color(0xff000000)),
+                      selectedIcon: Icon(Icons.location_on),
+                      label: 'location',
                     ),
                     NavigationDestination(
                       icon: Icon(Icons.person_outline, color: Color(0xff000000)),

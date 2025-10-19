@@ -1,80 +1,32 @@
-// lib/data/remote/user_api.dart
 import 'dart:convert';
-import 'package:http/http.dart' as http;
+import '../../core/network/endpoints.dart';
+import '../../core/network/api_client.dart';
+import '../model/user.dart';
 
 class UserApi {
-  UserApi(this._client, this.baseUrl);
+  UserApi(this._api);
+  final ApiClient _api;
 
-  final http.Client _client;
-  final String baseUrl;
-
-  /// Login: trả về (token, userJson). Đổi [useHashKey] tuỳ server (password vs password_hash)
-  Future<(String? token, Map<String, dynamic> user)> login({
-    required String email,
-    required String password,
-    bool useHashKey = true,
-  }) async {
-    final payload = <String, dynamic>{'email': email};
-    payload[useHashKey ? 'password_hash' : 'password'] = password;
-
-    final res = await _client
-        .post(
-          Uri.parse('$baseUrl/account/login'),
-          headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-          },
-          body: jsonEncode(payload),
-        )
-        .timeout(const Duration(seconds: 15));
-
+  Future<String?> login({required String email, required String password}) async {
+    final res = await _api.post(
+      Endpoints.login,
+      body: jsonEncode({'email': email, 'password_hash': password}),
+    );
     if (res.statusCode != 200) {
-      throw Exception(_pickMsg(res.body, fallback: 'Login failed (${res.statusCode})'));
+      throw Exception('Login failed: ${res.body}');
     }
-
-    final data = _asMap(res.body);
-    final token = (data['token'] as String?)?.trim();
-    final user  = (data['user'] ?? data) as Map<String, dynamic>;
-    return (token, user);
+    final map = jsonDecode(res.body) as Map<String, dynamic>;
+    return map['token'] as String?;
   }
 
-  /// /account/me: trả về userJson
-  Future<Map<String, dynamic>> me({required String token}) async {
-    final res = await _client
-        .get(
-          Uri.parse('$baseUrl/account/me'),
-          headers: {
-            'Accept': 'application/json',
-            'Authorization': 'Bearer $token',
-          },
-        )
-        .timeout(const Duration(seconds: 15));
-
+  Future<User> me() async {
+    final res = await _api.get(Endpoints.me);
     if (res.statusCode != 200) {
-      throw Exception('Fetch profile failed (${res.statusCode})');
+      throw Exception('Fetch /me failed: ${res.body}');
     }
-    final data = _asMap(res.body);
-    final user = (data['user'] ?? data) as Map<String, dynamic>;
-    return user;
-  }
-
-  void dispose() {
-    _client.close();
-  }
-
-  // ===== helpers =====
-  Map<String, dynamic> _asMap(String body) {
-    final d = jsonDecode(body);
-    if (d is Map<String, dynamic>) return d;
-    throw Exception('Invalid JSON response');
-  }
-
-  String _pickMsg(String body, {required String fallback}) {
-    try {
-      final m = _asMap(body);
-      return (m['error'] ?? m['message'] ?? fallback).toString();
-    } catch (_) {
-      return fallback;
-    }
+    final map = jsonDecode(res.body) as Map<String, dynamic>;
+    // server có thể trả { user: {...} } hoặc trả thẳng {...}
+    final obj = (map['user'] ?? map) as Map<String, dynamic>;
+    return User.fromJson(obj);
   }
 }

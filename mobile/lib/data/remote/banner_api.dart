@@ -1,7 +1,7 @@
 // lib/data/remote/banner_api.dart
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:mobile/model/banner.dart';
+import 'package:mobile/data/model/banner.dart';
 
 class BannerApi {
   BannerApi(this._client, this.baseUrl);

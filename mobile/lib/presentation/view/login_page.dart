@@ -3,9 +3,9 @@ import 'package:mobile/common/app_button.dart';
 import 'package:mobile/config/assets/app_image.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:mobile/config/themes/app_color.dart';
-import 'package:mobile/controller/user_controller.dart';
-import 'package:mobile/router/app_router.dart';
-import 'package:mobile/view/main_screen.dart';
+import 'package:mobile/presentation/controller/user_controller.dart';
+import 'package:mobile/config/router/app_router.dart';
+import 'package:mobile/presentation/view/main_screen.dart';
 
 const String kBaseUrl = AppRouter.main_domain;
 
