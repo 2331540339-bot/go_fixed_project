@@ -4,7 +4,7 @@ function Header(){
     return(
 
         <>
-            <nav className='h-30 w-full flex justify-between px-10 py-3 '>
+            <nav className='  h-30 w-full flex justify-between px-10 py-3 '>
                 <a href='#'>
                     <img src={logo} alt= "Logo" className='h-full w-auto object-contain' /> 
                 </a>

@@ -5,7 +5,7 @@
 /** Theme **/
 @theme {
   /* Screens */
-  --breakpoint-sm: 30rem; /*480px*/
+  --breakpoint-sm: 20rem; /*480px*/
   --breakpoint-md: 48rem; /*768px*/
   --breakpoint-lg: 80rem; /*1280px*/
   --breakpoint-xl: 87.5rem; /*1400px*/
