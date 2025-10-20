@@ -1,23 +1,24 @@
+import { Link } from 'react-router-dom'
 import logo from '../assets/logo.png'
 
 function Header(){
     return(
 
         <>
-            <nav className='  h-30 w-full flex justify-between px-10 py-3 '>
-                <a href='#'>
-                    <img src={logo} alt= "Logo" className='h-full w-auto object-contain' /> 
-                </a>
+            <nav className='flex justify-between w-full px-10 py-3 h-30'>
+                <Link to='/'>
+                    <img src={logo} alt= "Logo" className='object-contain w-auto h-full' /> 
+                </Link>
 
-                <div className='hidden md:flex items-center md:gap-x-12'>
-                        <a href='#' className='text-md font-grostek text-n-800 font-semibold'>About us</a>
-                        <a href='#' className='text-md font-grostek text-n-800 font-semibold'>Services</a>
-                        <a href='#' className='text-md font-grostek text-n-800 font-semibold'>Use Cases</a>
-                        <a href='#' className='text-md font-grostek text-n-800 font-semibold'>Genuine Parts </a>
+                <div className='items-center hidden md:flex md:gap-x-12'>
+                        <Link to='#' className='font-semibold text-md font-grostek text-n-800'>About us</Link>
+                        <Link to="/services" className='font-semibold text-md font-grostek text-n-800'>Services</Link>
+                        <Link to='#' className='font-semibold text-md font-grostek text-n-800'>Use Cases</Link>
+                        <Link to='#' className='font-semibold text-md font-grostek text-n-800'>Genuine Parts </Link>
                 </div>
 
                 <div class="hidden md:flex items-center md:gap-x-12 md:mr-5" >
-                    <a href='#' className='font-grostek font-bold text-n-800 border border-p-500 rounded-xl px-4 py-2 inline-block hover:bg-p-500 hover:text-n-50 '>Login here <span>&rarr;</span></a>
+                    <a href='#' className='inline-block px-4 py-2 font-bold border font-grostek text-n-800 border-p-500 rounded-xl hover:bg-p-500 hover:text-n-50 '>Login here <span>&rarr;</span></a>
                 </div>
                 
 

@@ -1,5 +1,6 @@
 import Header from "./components/Header"
-import Home from "./pages/Home"
+import { Outlet } from "react-router-dom"
+import Footer from "./components/Footer"
 function App() {
   return (
     <>
@@ -7,7 +8,8 @@ function App() {
         @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&display=swap');
       </style>
       <Header/>
-      <Home/>
+      <Outlet/>
+      <Footer/>
     </>
   )
 }
