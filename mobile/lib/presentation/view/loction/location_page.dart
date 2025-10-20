@@ -9,9 +9,9 @@ import 'package:mobile/config/themes/app_color.dart';
 import 'package:mobile/config/api_config.dart';
 
 import 'package:mobile/presentation/controller/user_controller.dart';
-import 'package:mobile/presentation/widgets/CityDropdownField.dart';
+import 'package:mobile/presentation/widgets/dropdown/CityDropdownField.dart';
 import 'package:mobile/presentation/widgets/appbars/main_app_bar.dart';
-import 'package:mobile/presentation/widgets/address_search_field.dart';
+import 'package:mobile/presentation/widgets/dropdown/address_search_field.dart';
 
 import 'package:mobile/data/model/vietnam_address.dart';
 import 'package:mobile/data/remote/geocoding_api.dart';
@@ -144,13 +144,17 @@ class _LocationPageState extends State<LocationPage> {
               Row(
                 children: [
                   Expanded(
-                    child: CityDropdownField(
-                      // Nếu cần set sẵn theo code
-                      // initialProvinceCode: '01', // ví dụ: Hà Nội
-                      onSelected: (province) {
-                        // province.code, province.name, province.fullLabel (với province thì = name)
+                    child: ProvinceDistrictPicker(
+                      initialProvince:
+                          null, // nếu có, truyền VietnamAddress của tỉnh ban đầu
+                      initialDistrict:
+                          null, // nếu có, truyền VietnamAddress của quận ban đầu
+                      onProvinceSelected: (p) {
+                        debugPrint('Province: ${p?.name} (${p?.code})');
                       },
-                      // validator: (v) => v == null ? 'Vui lòng chọn Tỉnh/Thành phố' : null,
+                      onDistrictSelected: (d) {
+                        debugPrint('District: ${d?.name} (${d?.code})');
+                      },
                     ),
 
                     // AddressSearchField(

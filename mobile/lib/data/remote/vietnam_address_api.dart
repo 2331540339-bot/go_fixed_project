@@ -5,7 +5,10 @@ import 'package:mobile/data/model/vietnam_address.dart';
 class VietnamAddressApi {
   static const _base = 'https://provinces.open-api.vn/api/v1';
 
-  static Future<List<VietnamAddress>> searchProvinces(String q, {int limit = 6}) async {
+  static Future<List<VietnamAddress>> searchProvinces(
+    String q, {
+    int limit = 6,
+  }) async {
     final uri = Uri.parse('$_base/p?search=$q');
     final res = await http.get(uri);
     if (res.statusCode != 200) return [];
@@ -21,7 +24,10 @@ class VietnamAddressApi {
     }).toList();
   }
 
-  static Future<List<VietnamAddress>> searchDistricts(String q, {int limit = 6}) async {
+  static Future<List<VietnamAddress>> searchDistricts(
+    String q, {
+    int limit = 6,
+  }) async {
     final uri = Uri.parse('$_base/d?search=$q');
     final res = await http.get(uri);
     if (res.statusCode != 200) return [];
@@ -37,7 +43,10 @@ class VietnamAddressApi {
     }).toList();
   }
 
-  static Future<List<VietnamAddress>> searchWards(String q, {int limit = 6}) async {
+  static Future<List<VietnamAddress>> searchWards(
+    String q, {
+    int limit = 6,
+  }) async {
     final uri = Uri.parse('$_base/w?search=$q');
     final res = await http.get(uri);
     if (res.statusCode != 200) return [];
@@ -70,11 +79,7 @@ class VietnamAddressApi {
     final districts = rs[1];
     final provinces = rs[0];
 
-    final combined = <VietnamAddress>[
-      ...wards,
-      ...districts,
-      ...provinces,
-    ];
+    final combined = <VietnamAddress>[...wards, ...districts, ...provinces];
 
     // Loại trùng theo (name + parentName + topName)
     final seen = <String>{};
@@ -85,5 +90,29 @@ class VietnamAddressApi {
       if (dedup.length >= totalLimit) break;
     }
     return dedup;
+  }
+
+  // Trong VietnamAddressApi
+  static Future<List<VietnamAddress>> getDistrictsByProvinceCode(
+    String provinceCode,
+  ) async {
+    if (provinceCode.isEmpty) return [];
+    final uri = Uri.parse('$_base/p/$provinceCode?depth=2');
+    final res = await http.get(uri);
+    if (res.statusCode != 200) return [];
+
+    final data = jsonDecode(res.body);
+    final provinceName = (data['name'] ?? '').toString();
+    final List districts = (data['districts'] as List?) ?? [];
+
+    return districts.map((e) {
+      return VietnamAddress(
+        code: (e['code'] ?? '').toString(),
+        name: e['name'] ?? '',
+        divisionType: e['division_type'] ?? 'district',
+        parentName: provinceName, // cha là Tỉnh/Thành
+        topName: provinceName,
+      );
+    }).toList()..sort((a, b) => a.name.compareTo(b.name));
   }
 }
