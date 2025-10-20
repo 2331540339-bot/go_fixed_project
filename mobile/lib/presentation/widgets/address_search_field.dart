@@ -23,6 +23,7 @@ class AddressSearchField extends StatefulWidget {
 class _AddressSearchFieldState extends State<AddressSearchField> {
   late final TextEditingController _ctl;
   final _focusNode = FocusNode();
+  final _fieldKey = GlobalKey(); // NEW: đo size TextField
 
   // overlay
   final _link = LayerLink();
@@ -63,7 +64,10 @@ class _AddressSearchFieldState extends State<AddressSearchField> {
     _debounce?.cancel();
     _debounce = Timer(const Duration(milliseconds: 300), () async {
       if (!mounted) return;
-      if (q.trim().isEmpty) {
+      final query = q.trim().toLowerCase();
+
+      if (query.length < 2) {
+        // NEW: ngưỡng 2 ký tự
         setState(() => _results = []);
         _removeOverlay();
         return;
@@ -71,8 +75,7 @@ class _AddressSearchFieldState extends State<AddressSearchField> {
 
       setState(() => _loading = true);
       try {
-        // bạn có thể đổi chiến lược: search province + district + ward
-        final rs = await VietnamAddressApi.searchAllAdministrativeLevels(q);
+        final rs = await VietnamAddressApi.searchAllAdministrativeLevels(query);
         if (!mounted) return;
         setState(() {
           _results = rs;
@@ -83,7 +86,7 @@ class _AddressSearchFieldState extends State<AddressSearchField> {
         } else {
           _removeOverlay();
         }
-      } catch (e) {
+      } catch (_) {
         if (!mounted) return;
         setState(() {
           _results = [];
@@ -116,46 +119,59 @@ class _AddressSearchFieldState extends State<AddressSearchField> {
     );
 
     // danh sách gợi ý
-    _listEntry = OverlayEntry(builder: (context) {
-      // đo kích thước TextField bằng CompositedTransformTarget/Follower
-      return CompositedTransformFollower(
-        link: _link,
-        showWhenUnlinked: false,
-        offset: const Offset(0, 52), // cách dưới TextField
-        child: Material(
-          elevation: 6,
-          borderRadius: BorderRadius.circular(8),
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxHeight: 280, minWidth: 280),
-            child: _loading
-                ? const Padding(
-                    padding: EdgeInsets.all(12),
-                    child: Center(child: CircularProgressIndicator()),
-                  )
-                : ListView.separated(
-                    padding: EdgeInsets.zero,
-                    itemCount: _results.length,
-                    separatorBuilder: (_, __) => const Divider(height: 1),
-                    itemBuilder: (_, i) {
-                      final a = _results[i];
-                      return ListTile(
-                        dense: true,
-                        leading: const Icon(Icons.location_on, size: 20, color: Colors.blue),
-                        title: Text(a.name, maxLines: 1, overflow: TextOverflow.ellipsis),
-                        subtitle: Text(
-                          a.subLabel, // ví dụ “Quận/Huyện • Tỉnh/Thành”
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(fontSize: 12, color: Colors.grey),
-                        ),
-                        onTap: () => _select(a),
-                      );
-                    },
-                  ),
+    _listEntry = OverlayEntry(
+      builder: (context) {
+        // đo kích thước TextField bằng CompositedTransformTarget/Follower
+        return CompositedTransformFollower(
+          link: _link,
+          showWhenUnlinked: false,
+          offset: const Offset(0, 52), // cách dưới TextField
+          child: Material(
+            elevation: 6,
+            borderRadius: BorderRadius.circular(8),
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxHeight: 280, minWidth: 280),
+              child: _loading
+                  ? const Padding(
+                      padding: EdgeInsets.all(12),
+                      child: Center(child: CircularProgressIndicator()),
+                    )
+                  : ListView.separated(
+                      padding: EdgeInsets.zero,
+                      itemCount: _results.length,
+                      separatorBuilder: (_, __) => const Divider(height: 1),
+                      itemBuilder: (_, i) {
+                        final a = _results[i];
+                        return ListTile(
+                          dense: true,
+                          leading: const Icon(
+                            Icons.location_on,
+                            size: 20,
+                            color: Colors.blue,
+                          ),
+                          title: Text(
+                            a.name,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          subtitle: Text(
+                            a.subLabel, // ví dụ “Quận/Huyện • Tỉnh/Thành”
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              fontSize: 12,
+                              color: Colors.grey,
+                            ),
+                          ),
+                          onTap: () => {_select(a)},
+                        );
+                      },
+                    ),
+            ),
           ),
-        ),
-      );
-    });
+        );
+      },
+    );
 
     final overlay = Overlay.of(context, rootOverlay: true);
     overlay.insertAll([_barrierEntry!, _listEntry!]);
@@ -173,11 +189,17 @@ class _AddressSearchFieldState extends State<AddressSearchField> {
     return CompositedTransformTarget(
       link: _link,
       child: TextField(
+        key: _fieldKey, // NEW
         controller: _ctl,
         focusNode: _focusNode,
         onChanged: _onChanged,
         onTap: () {
           if (_results.isNotEmpty) _showOverlay();
+        },
+        textInputAction: TextInputAction.search, // optional
+        onSubmitted: (_) {
+          if (_results.isNotEmpty)
+            _select(_results.first); // Enter để chọn gợi ý đầu tiên
         },
         style: const TextStyle(color: Colors.black),
         decoration: InputDecoration(

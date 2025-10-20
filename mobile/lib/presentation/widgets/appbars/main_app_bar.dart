@@ -115,7 +115,7 @@ class _UserHead extends StatelessWidget {
               style: theme.bodyMedium?.copyWith(
                 color: AppColor.primaryColor,
                 fontWeight: FontWeight.bold,
-                fontSize: 14.sp,
+                fontSize: 14.h,
               ),
             ),
             if (loading)
@@ -131,7 +131,7 @@ class _UserHead extends StatelessWidget {
                 style: theme.bodyMedium?.copyWith(
                   fontWeight: FontWeight.bold,
                   color: AppColor.textColor,
-                  fontSize: 14.sp,
+                  fontSize: 14.h,
                 ),
               ),
           ],
@@ -141,14 +141,14 @@ class _UserHead extends StatelessWidget {
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(Icons.location_on, size: 16.h, color: AppColor.primaryColor,),
+              Icon(Icons.location_on, size: 14.h, color: AppColor.primaryColor,),
               SizedBox(width: 4.w),
               ConstrainedBox(
                 constraints: BoxConstraints(maxWidth: 160.w),
                 child: Text(
                   location!,
                   overflow: TextOverflow.ellipsis,
-                  style: theme.bodySmall?.copyWith(fontSize: 12.sp, color: AppColor.textColor),
+                  style: theme.bodySmall?.copyWith(fontSize: 14.h, color: AppColor.textColor),
                 ),
               ),
             ],

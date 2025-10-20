@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:mobile/data/model/vietnam_address.dart';
 
 class VietnamAddressApi {
-  static const _base = 'https://provinces.open-api.vn/api';
+  static const _base = 'https://provinces.open-api.vn/api/v1';
 
   static Future<List<VietnamAddress>> searchProvinces(String q, {int limit = 6}) async {
     final uri = Uri.parse('$_base/p?search=$q');

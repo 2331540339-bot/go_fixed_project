@@ -9,6 +9,7 @@ import 'package:mobile/config/themes/app_color.dart';
 import 'package:mobile/config/api_config.dart';
 
 import 'package:mobile/presentation/controller/user_controller.dart';
+import 'package:mobile/presentation/widgets/CityDropdownField.dart';
 import 'package:mobile/presentation/widgets/appbars/main_app_bar.dart';
 import 'package:mobile/presentation/widgets/address_search_field.dart';
 
@@ -94,7 +95,7 @@ class _LocationPageState extends State<LocationPage> {
       if (coordinates != null) {
         setState(() {
           _destination = coordinates; // cập nhật điểm đến
-          _location = address.name;   // cập nhật label trên AppBar (tuỳ ý)
+          _location = address.name; // cập nhật label trên AppBar (tuỳ ý)
         });
       } else {
         if (mounted) {
@@ -143,10 +144,19 @@ class _LocationPageState extends State<LocationPage> {
               Row(
                 children: [
                   Expanded(
-                    child: AddressSearchField(
-                      hintText: 'Nhập tỉnh/quận/phường...',
-                      onAddressSelected: _onAddressSelected, // <-- GẮN HÀM Ở ĐÂY
+                    child: CityDropdownField(
+                      // Nếu cần set sẵn theo code
+                      // initialProvinceCode: '01', // ví dụ: Hà Nội
+                      onSelected: (province) {
+                        // province.code, province.name, province.fullLabel (với province thì = name)
+                      },
+                      // validator: (v) => v == null ? 'Vui lòng chọn Tỉnh/Thành phố' : null,
                     ),
+
+                    // AddressSearchField(
+                    //   hintText: 'Nhập tỉnh/quận/phường...',
+                    //   onAddressSelected: _onAddressSelected, // <-- GẮN HÀM Ở ĐÂY
+                    // ),
                   ),
                   const SizedBox(width: 12),
                   SizedBox(
@@ -185,7 +195,11 @@ class _LocationPageState extends State<LocationPage> {
                   ),
                   child: Row(
                     children: [
-                      const Icon(Icons.location_on, color: Colors.blue, size: 20),
+                      const Icon(
+                        Icons.location_on,
+                        color: Colors.blue,
+                        size: 20,
+                      ),
                       const SizedBox(width: 8),
                       Expanded(
                         child: Text(
@@ -205,7 +219,9 @@ class _LocationPageState extends State<LocationPage> {
 
               // BOX bản đồ dùng Google Maps (MapRouteBox bạn đã chuyển)
               MapRouteBox(
-                key: ValueKey(_destination.toString()), // force rebuild khi đổi dest
+                key: ValueKey(
+                  _destination.toString(),
+                ), // force rebuild khi đổi dest
                 dest: _destination,
                 apiKey: ApiConfig.googleMapsApiKey,
                 height: 260,
