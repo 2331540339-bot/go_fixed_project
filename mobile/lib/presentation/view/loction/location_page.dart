@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:mobile/common/app_button.dart';
 
 import 'package:mobile/config/assets/app_icon.dart';
 import 'package:mobile/config/assets/app_image.dart';
@@ -30,6 +31,9 @@ class _LocationPageState extends State<LocationPage> {
   UserController? _userCtrl;
   String _name = '...';
   bool _loadingName = true;
+  VietnamAddress? _p; // province
+  VietnamAddress? _d; // district
+  VietnamAddress? _w; // ward
 
   String _location = 'Q12, TP.HCM';
 
@@ -125,7 +129,7 @@ class _LocationPageState extends State<LocationPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: MainAppBar(
-        logo: Image.asset(AppImages.mainLogo, height: 100.h, width: 40.w),
+        logo: Image.asset(AppImages.mainLogo, height: 100.h, width: 100.w),
         name: _name,
         loadingName: _loadingName,
         location: _location,
@@ -149,11 +153,24 @@ class _LocationPageState extends State<LocationPage> {
                           null, // nếu có, truyền VietnamAddress của tỉnh ban đầu
                       initialDistrict:
                           null, // nếu có, truyền VietnamAddress của quận ban đầu
+                      initialWard: null,
                       onProvinceSelected: (p) {
                         debugPrint('Province: ${p?.name} (${p?.code})');
+                        setState(() {
+                          _p = p;
+                        });
                       },
                       onDistrictSelected: (d) {
                         debugPrint('District: ${d?.name} (${d?.code})');
+                        setState(() {
+                          _d = d;
+                        });
+                      },
+                      onWardSelected: (w) {
+                        debugPrint('Ward ${w?.name} (${w?.code})');
+                        setState(() {
+                          _w = w;
+                        });
                       },
                     ),
 
@@ -166,7 +183,12 @@ class _LocationPageState extends State<LocationPage> {
                   SizedBox(
                     child: ElevatedButton(
                       onPressed: () {
-                        // TODO: mở bộ lọc nâng cao
+                        debugPrint('P: ${_p?.name} (${_p?.code})');
+                        debugPrint('D: ${_d?.name} (${_d?.code})');
+                        debugPrint('W: ${_w?.name} (${_w?.code})');
+                        if (_p == null || _d == null || _w == null) {
+                          print('hãy điền đủ thông tin');
+                        }
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xffF3F8FB),
@@ -228,8 +250,17 @@ class _LocationPageState extends State<LocationPage> {
                 ), // force rebuild khi đổi dest
                 dest: _destination,
                 apiKey: ApiConfig.googleMapsApiKey,
-                height: 260,
+                height: 250.h,
                 onError: (err) => debugPrint('Map error: $err'),
+              ),
+              Spacer(),
+              Positioned(
+                right: 0,
+                bottom: 0,
+                child: Padding(
+                  padding: EdgeInsetsGeometry.all(10),
+                  child: AppButton(content: 'Xác nhận vị trí', onPressed: () {}),
+                ),
               ),
             ],
           ),

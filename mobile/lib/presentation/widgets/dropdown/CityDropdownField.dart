@@ -7,6 +7,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 class ProvinceDistrictPicker extends StatefulWidget {
   final VietnamAddress? initialProvince;
   final VietnamAddress? initialDistrict;
+  final VietnamAddress? initialWard;
 
   /// Bắn ra khi đổi province
   final void Function(VietnamAddress?)? onProvinceSelected;
@@ -14,18 +15,25 @@ class ProvinceDistrictPicker extends StatefulWidget {
   /// Bắn ra khi đổi district
   final void Function(VietnamAddress?)? onDistrictSelected;
 
+  /// Bắn ra khi đổi ward
+  final void Function(VietnamAddress?)? onWardSelected;
+
   /// Có thể truyền label
   final String provinceLabel;
   final String districtLabel;
+  final String wardLabel;
 
   const ProvinceDistrictPicker({
     super.key,
     this.initialProvince,
     this.initialDistrict,
+    this.initialWard,
     this.onProvinceSelected,
     this.onDistrictSelected,
+    this.onWardSelected,
     this.provinceLabel = 'Chọn Tỉnh/Thành phố',
     this.districtLabel = 'Chọn Quận/Huyện',
+    this.wardLabel = 'Chọn Xã/Phường',
   });
 
   @override
@@ -35,15 +43,19 @@ class ProvinceDistrictPicker extends StatefulWidget {
 class _ProvinceDistrictPickerState extends State<ProvinceDistrictPicker> {
   List<VietnamAddress> _provinces = [];
   List<VietnamAddress> _districts = [];
+  List<VietnamAddress> _wards = [];
 
   VietnamAddress? _selectedProvince;
   VietnamAddress? _selectedDistrict;
+  VietnamAddress? _selectedWard;
 
   bool _loadingProvince = true;
   bool _loadingDistrict = false;
+  bool _loadingWard = false;
 
   String? _errorProvince;
   String? _errorDistrict;
+  String? _errorWard; // FIX: thay vì _errorWord
 
   @override
   void initState() {
@@ -81,13 +93,20 @@ class _ProvinceDistrictPickerState extends State<ProvinceDistrictPicker> {
         _loadingProvince = false;
       });
 
-      // Nếu có province ban đầu, load quận tương ứng
+      // Nếu có province ban đầu, load quận (và nếu có, load tiếp xã)
       if (_selectedProvince != null) {
         await _loadDistrictsByProvince(
           _selectedProvince!.code,
           initial: widget.initialDistrict,
         );
+        if (widget.initialDistrict != null) {
+          await _loadWardsByDistrict(
+            widget.initialDistrict!.code,
+            initial: widget.initialWard,
+          );
+        }
       }
+
       widget.onProvinceSelected?.call(_selectedProvince);
     } catch (e) {
       setState(() {
@@ -106,6 +125,12 @@ class _ProvinceDistrictPickerState extends State<ProvinceDistrictPicker> {
       _errorDistrict = null;
       _districts = [];
       _selectedDistrict = null;
+
+      // Reset cấp dưới (ward) luôn khi đổi/quay lại load district
+      _wards = [];
+      _selectedWard = null;
+      _loadingWard = false;
+      _errorWard = null;
     });
     try {
       final list = await VietnamAddressApi.getDistrictsByProvinceCode(
@@ -127,10 +152,54 @@ class _ProvinceDistrictPickerState extends State<ProvinceDistrictPicker> {
       });
 
       widget.onDistrictSelected?.call(_selectedDistrict);
+
+      // Nếu có district ban đầu, load tiếp wards
+      if (_selectedDistrict != null) {
+        await _loadWardsByDistrict(
+          _selectedDistrict!.code,
+          initial: widget.initialWard,
+        );
+      }
     } catch (e) {
       setState(() {
         _errorDistrict = 'Không tải được danh sách Quận/Huyện.';
         _loadingDistrict = false;
+      });
+    }
+  }
+
+  Future<void> _loadWardsByDistrict(
+    String districtCode, {
+    VietnamAddress? initial,
+  }) async {
+    setState(() {
+      _loadingWard = true;
+      _errorWard = null;
+      _wards = [];
+      _selectedWard = null;
+    });
+    try {
+      final list = await VietnamAddressApi.getWardsByDistrictCode(districtCode);
+
+      VietnamAddress? initWard = initial;
+      if (initWard != null) {
+        initWard = list.firstWhere(
+          (e) => e.code == initWard!.code,
+          orElse: () => initWard!,
+        );
+      }
+
+      setState(() {
+        _wards = list;
+        _selectedWard = initWard;
+        _loadingWard = false;
+      });
+
+      widget.onWardSelected?.call(_selectedWard);
+    } catch (e) {
+      setState(() {
+        _errorWard = 'Không tải được danh sách Xã/Phường.';
+        _loadingWard = false;
       });
     }
   }
@@ -143,35 +212,47 @@ class _ProvinceDistrictPickerState extends State<ProvinceDistrictPicker> {
         : (_errorProvince != null
               ? _InlineError(text: _errorProvince!, onRetry: _loadProvinces)
               : SizedBox(
-                  width: 250.w,
+                  width: 150.w,
                   child: DropdownMenu<VietnamAddress>(
                     initialSelection: _selectedProvince,
                     onSelected: (v) async {
-                      setState(() => _selectedProvince = v);
+                      setState(() {
+                        _selectedProvince = v;
+                        // Reset cấp dưới khi đổi tỉnh
+                        _districts.clear();
+                        _selectedDistrict = null;
+                        _wards.clear();
+                        _selectedWard = null;
+                        _errorDistrict = null;
+                        _errorWard = null;
+                      });
                       widget.onProvinceSelected?.call(v);
 
                       if (v != null) {
                         await _loadDistrictsByProvince(v.code);
                       } else {
+                        // nếu bỏ chọn tỉnh → xoá quận/xã
                         setState(() {
                           _districts.clear();
                           _selectedDistrict = null;
+                          _wards.clear();
+                          _selectedWard = null;
                         });
                         widget.onDistrictSelected?.call(null);
+                        widget.onWardSelected?.call(null);
                       }
                     },
-                    // hiển thị nhãn & icon
-                    label: const Text('Tỉnh/Thành phố'),
+                    label: Text(widget.provinceLabel),
                     leadingIcon: const Icon(Icons.location_city),
                     trailingIcon: const Icon(Icons.keyboard_arrow_down_rounded),
 
-                    // style phần menu xổ xuống
+                    // style menu
                     menuStyle: const MenuStyle(
                       maximumSize: WidgetStatePropertyAll(Size.fromHeight(300)),
                       elevation: WidgetStatePropertyAll(4),
                     ),
 
-                    // style phần ô nhập
+                    // style ô nhập
                     inputDecorationTheme: InputDecorationTheme(
                       isDense: true,
                       labelStyle: TextStyle(color: AppColor.textColor),
@@ -194,13 +275,12 @@ class _ProvinceDistrictPickerState extends State<ProvinceDistrictPicker> {
 
                     textStyle: TextStyle(color: AppColor.secconColor),
 
-                    // danh sách item
+                    // data
                     dropdownMenuEntries: _provinces
                         .map(
                           (p) => DropdownMenuEntry<VietnamAddress>(
                             value: p,
-                            label: p
-                                .name, // DropdownMenu dùng 'label' để render text
+                            label: p.name,
                           ),
                         )
                         .toList(),
@@ -209,7 +289,7 @@ class _ProvinceDistrictPickerState extends State<ProvinceDistrictPicker> {
 
     // --- District (Quận/Huyện) ---
     final districtField = (_selectedProvince == null)
-        ? const _DisabledField(label: 'Chọn Quận/Huyện')
+        ? _DisabledField(label: widget.districtLabel)
         : (_loadingDistrict
               ? const _InlineLoading()
               : (_errorDistrict != null
@@ -222,15 +302,30 @@ class _ProvinceDistrictPickerState extends State<ProvinceDistrictPicker> {
                         },
                       )
                     : SizedBox(
-                        width: 250.w,
+                        width: 150.w,
                         child: DropdownMenu<VietnamAddress>(
                           initialSelection: _selectedDistrict,
-                          onSelected: (v) {
-                            setState(() => _selectedDistrict = v);
+                          onSelected: (v) async {
+                            setState(() {
+                              _selectedDistrict = v;
+                              // reset ward khi đổi quận
+                              _wards.clear();
+                              _selectedWard = null;
+                              _errorWard = null;
+                            });
                             widget.onDistrictSelected?.call(v);
-                          },
 
-                          label: const Text('Quận/Huyện'),
+                            if (v != null) {
+                              await _loadWardsByDistrict(v.code);
+                            } else {
+                              setState(() {
+                                _wards.clear();
+                                _selectedWard = null;
+                              });
+                              widget.onWardSelected?.call(null);
+                            }
+                          },
+                          label: Text(widget.districtLabel),
                           leadingIcon: const Icon(Icons.maps_home_work),
                           trailingIcon: const Icon(
                             Icons.keyboard_arrow_down_rounded,
@@ -278,9 +373,92 @@ class _ProvinceDistrictPickerState extends State<ProvinceDistrictPicker> {
                         ),
                       )));
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [provinceField, const SizedBox(height: 12), districtField],
+    // --- Ward (Xã/Phường) ---
+    final wardField = (_selectedDistrict == null)
+        ? _DisabledField(label: widget.wardLabel)
+        : (_loadingWard
+              ? const _InlineLoading()
+              : (_errorWard != null
+                    ? _InlineError(
+                        text: _errorWard!,
+                        onRetry: () {
+                          if (_selectedDistrict != null) {
+                            _loadWardsByDistrict(_selectedDistrict!.code);
+                          }
+                        },
+                      )
+                    : SizedBox(
+                        width: 150.w,
+                        child: DropdownMenu<VietnamAddress>(
+                          initialSelection: _selectedWard,
+                          onSelected: (v) {
+                            setState(() => _selectedWard = v);
+                            widget.onWardSelected?.call(v);
+                          },
+                          label: Text(widget.wardLabel),
+                          leadingIcon: const Icon(Icons.location_on),
+                          trailingIcon: const Icon(
+                            Icons.keyboard_arrow_down_rounded,
+                          ),
+
+                          menuStyle: const MenuStyle(
+                            maximumSize: WidgetStatePropertyAll(
+                              Size.fromHeight(300),
+                            ),
+                            elevation: WidgetStatePropertyAll(4),
+                          ),
+
+                          inputDecorationTheme: InputDecorationTheme(
+                            isDense: true,
+                            labelStyle: TextStyle(color: AppColor.textColor),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(15),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(15),
+                              borderSide: const BorderSide(color: Colors.black),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(15),
+                              borderSide: BorderSide(
+                                color: AppColor.primaryColor,
+                              ),
+                            ),
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 12,
+                            ),
+                          ),
+
+                          textStyle: TextStyle(color: AppColor.textColor),
+
+                          dropdownMenuEntries: _wards
+                              .map(
+                                (w) => DropdownMenuEntry<VietnamAddress>(
+                                  value: w,
+                                  label: w.name,
+                                ),
+                              )
+                              .toList(),
+                        ),
+                      )));
+
+    return SizedBox(
+      width: double.infinity,
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          
+          children: [
+            provinceField,
+            const SizedBox(width: 12),
+            districtField,
+            const SizedBox(width: 12),
+            wardField,
+          ],
+        ),
+      ),
     );
   }
 }

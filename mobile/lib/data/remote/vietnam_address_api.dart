@@ -115,4 +115,30 @@ class VietnamAddressApi {
       );
     }).toList()..sort((a, b) => a.name.compareTo(b.name));
   }
+  static Future<List<VietnamAddress>> getWardsByDistrictCode(String districtCode) async {
+  if (districtCode.isEmpty) return [];
+  final uri = Uri.parse('$_base/d/$districtCode?depth=2');
+  final res = await http.get(uri);
+  if (res.statusCode != 200) return [];
+
+  final data = jsonDecode(res.body);
+  final districtName = (data['name'] ?? '').toString();
+  // API thường trả kèm province_name cho cấp quận; nếu không có thì để null
+  final provinceName = (data['province_name'] ?? '').toString().isNotEmpty
+      ? (data['province_name'] as String)
+      : null;
+
+  final List wards = (data['wards'] as List?) ?? [];
+
+  return wards.map((e) {
+    return VietnamAddress(
+      code: (e['code'] ?? '').toString(),
+      name: e['name'] ?? '',
+      divisionType: e['division_type'] ?? 'ward',
+      parentName: districtName,   // cha là Quận/Huyện
+      topName: provinceName,      // Tỉnh/Thành (nếu API trả)
+    );
+  }).toList()
+    ..sort((a, b) => a.name.compareTo(b.name));
+}
 }

@@ -59,7 +59,7 @@ class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
     return AppBar(
       toolbarHeight: toolbarHeight ?? 80.h,
       leadingWidth: leadingWidth ?? 80.h,
-      backgroundColor: backgroundColor,
+      backgroundColor: backgroundColor,   
       elevation: elevation,
       leading: Padding(
         padding: EdgeInsets.only(left: 12.r),
