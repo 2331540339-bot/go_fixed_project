@@ -36,7 +36,7 @@ const User = new Schema({
     status:{
         type: String,
         enum:['online', 'offline'],
-        default:    'offline'
+        default: 'offline'
     },
     location:{
         type: {
