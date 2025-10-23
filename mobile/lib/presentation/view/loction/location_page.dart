@@ -31,7 +31,7 @@ class _LocationPageState extends State<LocationPage> {
   VietnamAddress? _p; // province
   VietnamAddress? _d; // district
   VietnamAddress? _w; // ward
-  String _street = '';
+  String _s = '';
 
   String _location = 'Q12, TP.HCM';
 
@@ -147,7 +147,7 @@ class _LocationPageState extends State<LocationPage> {
                 children: [
                   Expanded(
                     child: Showmodalbottomsheet(
-                      onStreetChanged: (t) => _street = t, // ⬅️ nhận text
+                      onStreetChanged: (t) => _s = t, // ⬅️ nhận text
                       initialProvince:
                           null, // nếu có, truyền VietnamAddress của tỉnh ban đầu
                       initialDistrict:
@@ -264,11 +264,11 @@ class _LocationPageState extends State<LocationPage> {
                         debugPrint('P: ${_p?.name} (${_p?.code})');
                         debugPrint('D: ${_d?.name} (${_d?.code})');
                         debugPrint('W: ${_w?.name} (${_w?.code})');
-                        debugPrint('S: ${_street.trim()}');
+                        debugPrint('S: ${_s.trim()}');
                         if (_p == null ||
                             _d == null ||
                             _w == null ||
-                            _street.trim().isEmpty) {
+                            _s.trim().isEmpty) {
                           print('hãy điền đủ thông tin');
                           return;
                         }

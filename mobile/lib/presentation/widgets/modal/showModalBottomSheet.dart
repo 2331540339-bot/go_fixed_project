@@ -8,8 +8,7 @@ class Showmodalbottomsheet extends StatefulWidget {
   final VietnamAddress? initialProvince;
   final VietnamAddress? initialDistrict;
   final VietnamAddress? initialWard;
-  final ValueChanged<String>? onStreetChanged; 
-
+  final ValueChanged<String>? onStreetChanged;
 
   final void Function(VietnamAddress?)? onProvinceSelected;
   final void Function(VietnamAddress?)? onDistrictSelected;
@@ -30,8 +29,7 @@ class Showmodalbottomsheet extends StatefulWidget {
     this.provinceLabel = 'Chọn Tỉnh/Thành phố',
     this.districtLabel = 'Chọn Quận/Huyện',
     this.wardLabel = 'Chọn Xã/Phường',
-     this.onStreetChanged,
-    
+    this.onStreetChanged,
   });
 
   @override
@@ -42,8 +40,6 @@ class _ShowmodalbottomsheetState extends State<Showmodalbottomsheet> {
   List<VietnamAddress> _provinces = [];
   List<VietnamAddress> _districts = [];
   List<VietnamAddress> _wards = [];
-
-  
 
   VietnamAddress? _selectedProvince;
   VietnamAddress? _selectedDistrict;
@@ -56,9 +52,6 @@ class _ShowmodalbottomsheetState extends State<Showmodalbottomsheet> {
   String? _errorProvince;
   String? _errorDistrict;
   String? _errorWard;
-
-  
-  
 
   @override
   void initState() {
@@ -506,8 +499,11 @@ class _ShowmodalbottomsheetState extends State<Showmodalbottomsheet> {
     final streetField = Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-         Text("Ghi địa chỉ cụ thể", style: TextStyle(color: AppColor.textColor, fontSize: 12)),
-          const SizedBox(height: 6),
+        Text(
+          "Ghi địa chỉ cụ thể",
+          style: TextStyle(color: AppColor.textColor, fontSize: 12),
+        ),
+        const SizedBox(height: 6),
         SizedBox(
           width: 160,
           height: 48,
@@ -515,13 +511,15 @@ class _ShowmodalbottomsheetState extends State<Showmodalbottomsheet> {
             cursorColor: AppColor.primaryColor,
             keyboardType: TextInputType.streetAddress,
             style: TextStyle(color: Colors.black),
-             controller: _streetCtrl,                       // ⬅️ dùng controller
-            onChanged: widget.onStreetChanged,             // ⬅️ bắn ra parent
+            controller: _streetCtrl, // ⬅️ dùng controller
+            onChanged: widget.onStreetChanged, // ⬅️ bắn ra parent
             textCapitalization: TextCapitalization.words,
             decoration: InputDecoration(
               hintText: 'Địa chỉ',
               isDense: true,
-              border: OutlineInputBorder(borderRadius: BorderRadius.circular(14)),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(14),
+              ),
               enabledBorder: const OutlineInputBorder(
                 borderSide: BorderSide(color: Colors.black45),
               ),
