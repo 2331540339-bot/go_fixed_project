@@ -6,19 +6,16 @@ import 'package:mobile/common/app_button.dart';
 
 import 'package:mobile/config/assets/app_icon.dart';
 import 'package:mobile/config/assets/app_image.dart';
-import 'package:mobile/config/themes/app_color.dart';
 import 'package:mobile/config/api_config.dart';
 
 import 'package:mobile/presentation/controller/user_controller.dart';
-import 'package:mobile/presentation/widgets/dropdown/CityDropdownField.dart';
 import 'package:mobile/presentation/widgets/appbars/main_app_bar.dart';
-import 'package:mobile/presentation/widgets/dropdown/address_search_field.dart';
 
 import 'package:mobile/data/model/vietnam_address.dart';
-import 'package:mobile/data/remote/geocoding_api.dart';
 
 // Google Maps widget bạn đã chuyển sang (MapRouteBox dùng Google Maps)
 import 'package:mobile/presentation/view/loction/map_screen.dart';
+import 'package:mobile/presentation/widgets/modal/showModalBottomSheet.dart';
 
 class LocationPage extends StatefulWidget {
   const LocationPage({super.key});
@@ -34,6 +31,7 @@ class _LocationPageState extends State<LocationPage> {
   VietnamAddress? _p; // province
   VietnamAddress? _d; // district
   VietnamAddress? _w; // ward
+  String _street = '';
 
   String _location = 'Q12, TP.HCM';
 
@@ -78,52 +76,52 @@ class _LocationPageState extends State<LocationPage> {
   }
 
   /// Khi chọn một địa chỉ trong popup gợi ý:
-  Future<void> _onAddressSelected(VietnamAddress? address) async {
-    if (address == null) return;
+  // Future<void> _onAddressSelected(VietnamAddress? address) async {
+  //   if (address == null) return;
 
-    setState(() {
-      _selectedAddress = address.name; // hiển thị dưới ô tìm kiếm
-    });
+  //   setState(() {
+  //     _selectedAddress = address.name; // hiển thị dưới ô tìm kiếm
+  //   });
 
-    // Loading nho nhỏ khi geocode
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (_) => const Center(child: CircularProgressIndicator()),
-    );
+  //   // Loading nho nhỏ khi geocode
+  //   showDialog(
+  //     context: context,
+  //     barrierDismissible: false,
+  //     builder: (_) => const Center(child: CircularProgressIndicator()),
+  //   );
 
-    try {
-      // Geocode ra tọa độ
-      final coordinates = await GeocodingApi.geocodeAddress(address.name);
+  //   try {
+  //     // Geocode ra tọa độ
+  //     final coordinates = await GeocodingApi.geocodeAddress(address.name);
 
-      if (coordinates != null) {
-        setState(() {
-          _destination = coordinates; // cập nhật điểm đến
-          _location = address.name; // cập nhật label trên AppBar (tuỳ ý)
-        });
-      } else {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Không tìm thấy tọa độ cho "${address.name}"'),
-              backgroundColor: Colors.red,
-            ),
-          );
-        }
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Lỗi khi tìm kiếm địa chỉ: $e'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
-    } finally {
-      if (mounted) Navigator.of(context).pop(); // tắt loading
-    }
-  }
+  //     if (coordinates != null) {
+  //       setState(() {
+  //         _destination = coordinates; // cập nhật điểm đến
+  //         _location = address.name; // cập nhật label trên AppBar (tuỳ ý)
+  //       });
+  //     } else {
+  //       if (mounted) {
+  //         ScaffoldMessenger.of(context).showSnackBar(
+  //           SnackBar(
+  //             content: Text('Không tìm thấy tọa độ cho "${address.name}"'),
+  //             backgroundColor: Colors.red,
+  //           ),
+  //         );
+  //       }
+  //     }
+  //   } catch (e) {
+  //     if (mounted) {
+  //       ScaffoldMessenger.of(context).showSnackBar(
+  //         SnackBar(
+  //           content: Text('Lỗi khi tìm kiếm địa chỉ: $e'),
+  //           backgroundColor: Colors.red,
+  //         ),
+  //       );
+  //     }
+  //   } finally {
+  //     if (mounted) Navigator.of(context).pop(); // tắt loading
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -148,7 +146,8 @@ class _LocationPageState extends State<LocationPage> {
               Row(
                 children: [
                   Expanded(
-                    child: ProvinceDistrictPicker(
+                    child: Showmodalbottomsheet(
+                      onStreetChanged: (t) => _street = t, // ⬅️ nhận text
                       initialProvince:
                           null, // nếu có, truyền VietnamAddress của tỉnh ban đầu
                       initialDistrict:
@@ -180,33 +179,33 @@ class _LocationPageState extends State<LocationPage> {
                     // ),
                   ),
                   const SizedBox(width: 12),
-                  SizedBox(
-                    child: ElevatedButton(
-                      onPressed: () {
-                        debugPrint('P: ${_p?.name} (${_p?.code})');
-                        debugPrint('D: ${_d?.name} (${_d?.code})');
-                        debugPrint('W: ${_w?.name} (${_w?.code})');
-                        if (_p == null || _d == null || _w == null) {
-                          print('hãy điền đủ thông tin');
-                        }
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xffF3F8FB),
-                        foregroundColor: Colors.white,
-                        side: BorderSide(color: AppColor.primaryColor),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        minimumSize: const Size(48, 48),
-                        padding: EdgeInsets.zero,
-                      ),
-                      child: Icon(
-                        Icons.location_on,
-                        color: Colors.black,
-                        size: 16.w,
-                      ),
-                    ),
-                  ),
+                  // SizedBox(
+                  //   child: ElevatedButton(
+                  //     onPressed: () {
+                  //       debugPrint('P: ${_p?.name} (${_p?.code})');
+                  //       debugPrint('D: ${_d?.name} (${_d?.code})');
+                  //       debugPrint('W: ${_w?.name} (${_w?.code})');
+                  //       if (_p == null || _d == null || _w == null) {
+                  //         print('hãy điền đủ thông tin');
+                  //       }
+                  //     },
+                  //     style: ElevatedButton.styleFrom(
+                  //       backgroundColor: const Color(0xffF3F8FB),
+                  //       foregroundColor: Colors.white,
+                  //       side: BorderSide(color: AppColor.primaryColor),
+                  //       shape: RoundedRectangleBorder(
+                  //         borderRadius: BorderRadius.circular(12),
+                  //       ),
+                  //       minimumSize: const Size(48, 48),
+                  //       padding: EdgeInsets.zero,
+                  //     ),
+                  //     child: Icon(
+                  //       Icons.location_on,
+                  //       color: Colors.black,
+                  //       size: 16.w,
+                  //     ),
+                  //   ),
+                  // ),
                 ],
               ),
 
@@ -254,13 +253,29 @@ class _LocationPageState extends State<LocationPage> {
                 onError: (err) => debugPrint('Map error: $err'),
               ),
               Spacer(),
-              Positioned(
-                right: 0,
-                bottom: 0,
-                child: Padding(
-                  padding: EdgeInsetsGeometry.all(10),
-                  child: AppButton(content: 'Xác nhận vị trí', onPressed: () {}),
-                ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Padding(
+                    padding: EdgeInsetsGeometry.only(right: 15),
+                    child: AppButton(
+                      content: 'Xác nhận vị trí',
+                      onPressed: () {
+                        debugPrint('P: ${_p?.name} (${_p?.code})');
+                        debugPrint('D: ${_d?.name} (${_d?.code})');
+                        debugPrint('W: ${_w?.name} (${_w?.code})');
+                        debugPrint('S: ${_street.trim()}');
+                        if (_p == null ||
+                            _d == null ||
+                            _w == null ||
+                            _street.trim().isEmpty) {
+                          print('hãy điền đủ thông tin');
+                          return;
+                        }
+                      },
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
