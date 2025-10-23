@@ -39,9 +39,10 @@ const User = new Schema({
         default: 'offline'
     },
     location:{
-        text: {
-            type: String,
-            require: true
+        type: { 
+            type: String, 
+            enum: ["Point"], 
+            default: "Point" 
         },
         coordinates:{
             type: [Number],

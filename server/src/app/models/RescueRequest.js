@@ -22,13 +22,14 @@ const RescueRequest = new schema(
         status:{
             type: String,
             require: true,
-            enum:['pending', 'accepted', 'accepted', 'completed', 'cancelled'],
+            enum:['pending', 'accepted', 'in_progress' , 'completed', 'cancelled'],
             default: "pending"
         },
-        loctation:{
-            text:{
+        location:{
+            type:{
                 type: String,
-                require:true
+                enum: ["Point"], 
+                default: "Point" 
             },
             coordinates:{
                 type: [Number],
@@ -49,5 +50,6 @@ const RescueRequest = new schema(
     }
 
 )
+RescueRequest.index({location:'2dsphere'});
 module.exports = mongoose.model('RescueRequest', RescueRequest);
 

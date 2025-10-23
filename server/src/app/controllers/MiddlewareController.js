@@ -2,7 +2,8 @@ const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
 const { response } = require('express');
 dotenv.config();
-const service= require('../models/Service');
+const services= require('../models/Service');
+const Service = require('../models/Service');
 
 const middlewareController = {
     //verify token
@@ -38,10 +39,15 @@ const middlewareController = {
     //verify services exist
     verifyService: (req, res, next) => {
         middlewareController.verifyToken(req, res, () => {
-            const {id} = req.params.id;
-            service.findOne(id)
-            .then(services => res.json(services))
-            .catch(err => res.status(500).json({error: err.message}))
+            const {id} = req.params;
+            console.log(id);
+            services.findById(id)
+            .then(service => {
+                if(service){
+                    next();
+                }
+            })
+            .catch(err => res.status(401).json({err: "Not found service",error: err.message}))
         })
     }
 
