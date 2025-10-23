@@ -1,5 +1,6 @@
 const { model } = require('mongoose');
-const Service = require('../models/Service')
+const Service = require('../models/Service');
+const rescueRequest = require('../models/RescueRequest');
 class ServiceController{
     //GET - /service/get
     async showall(req, res){
@@ -42,6 +43,21 @@ class ServiceController{
         }
     }
 
+
+    //[POST] - /service/rescue/:id
+    rescue(req, res){
+        
+        const RescueRequest = new rescueRequest({
+            user_id: req.user.id,
+            service_id: req.params.id,
+            description: req.body.description,
+            location: req.body.location,
+            price_estimate: req.body.price_estimate,
+        });
+        RescueRequest.save()
+        .then(() => res.json('Request Created'))
+        .catch(err => res.json({err: err.message}))
+    }
 }
 
 module.exports = new ServiceController()

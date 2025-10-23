@@ -4,6 +4,7 @@ const ServiceSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
+    unique: true
   },
   base_price: {
     type: String,
@@ -15,7 +16,7 @@ const ServiceSchema = new mongoose.Schema({
   },
   kind_services: {
     type: String,
-    enum: ['simple_services'], // cố định là "simple_services"
+    enum: ['simple_services', 'advance_services'], 
     default: 'simple_services',
   },
 });
