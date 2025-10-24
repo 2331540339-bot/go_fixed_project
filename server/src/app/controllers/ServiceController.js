@@ -46,7 +46,7 @@ class ServiceController{
 
     //[POST] - /service/rescue/:id
     rescue(req, res){
-        
+        const io = req.app.get('io');
         const RescueRequest = new rescueRequest({
             user_id: req.user.id,
             service_id: req.params.id,
@@ -55,8 +55,11 @@ class ServiceController{
             price_estimate: req.body.price_estimate,
         });
         RescueRequest.save()
-        .then(() => res.json('Request Created'))
-        .catch(err => res.json({err: err.message}))
+        .then( () => {
+            io.to('Mechanics').emit('rescue_request', RescueRequest);
+            res.json('Request Created');
+        })
+        .catch(err => res.status(500).json({err: err.message}))
     }
 }
 

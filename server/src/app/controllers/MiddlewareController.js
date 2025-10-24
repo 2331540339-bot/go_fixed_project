@@ -40,7 +40,7 @@ const middlewareController = {
     verifyService: (req, res, next) => {
         middlewareController.verifyToken(req, res, () => {
             const {id} = req.params;
-            console.log(id);
+            console.log("id service:",id);
             services.findById(id)
             .then(service => {
                 if(service){

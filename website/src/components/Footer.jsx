@@ -35,21 +35,21 @@ function Footer(){
                 <div className='flex justify-between w-full h-40'>
                     <div className='flex flex-col justify-between h-full'>
                         <h2 className='px-2 py-1 text-xl font-semibold w-fit font-grostek bg-p-500 rounded-xl text-n-50'>Contact Us:</h2>
-                        <p className='text-xl font-grostek text-n-50'>Email: DanhThanh@gofix.com</p>    
-                        <p className='text-xl font-grostek text-n-50'>Phone: 0919-308-888</p> 
-                        <p className='text-xl font-grostek text-n-50'>Address: Bitexco, 1st Distict, Ho Chi Minh City</p> 
+                        <p className='font-light text-md font-grostek text-n-50'>Email: DanhThanh@gofix.com</p>    
+                        <p className='font-light text-md font-grostek text-n-50'>Phone: 0919-308-888</p> 
+                        <p className='font-light text-md font-grostek text-n-50'>Address: Bitexco, 1st Distict, Ho Chi Minh City</p> 
                     </div>
 
-                    <div className='w-[calc(50%)] h-full bg-n-700 rounded-2xl flex justify-evenly items-center'>
+                    <div className='hidden w-[calc(50%)] h-full bg-n-700 rounded-2xl md:flex md:justify-evenly md:items-center'>
                         <input className='px-2 tracking-wider border h-17 w-85 rounded-xl text-n-50 font-grostek border-n-50' placeholder='Email'></input>
                         <button className='font-semibold tracking-wider h-17 w-85 bg-p-500 rounded-xl text-n-50 font-grostek hover:bg-transparent hover:border border-p-500'  type='button'>Subcribe to news</button>
                     </div>
                 </div>
-            </div>
+            </div> 
 
-            <div className="w-full h-20 ">
+            <div className="flex items-end w-full h-20 border-t border-n-50 ">
 
-                <h1>div2</h1>
+                <p className='font-light text-md font-grostek text-n-50 '>© 2025 danhthanhGoFix. All Rights Reserved.</p>
             </div>
         </section>
     )
