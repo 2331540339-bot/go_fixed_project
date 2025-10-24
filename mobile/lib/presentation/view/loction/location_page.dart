@@ -126,6 +126,7 @@ class _LocationPageState extends State<LocationPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: MainAppBar(
         logo: Image.asset(AppImages.mainLogo, height: 100.h, width: 100.w),
         name: _name,
@@ -149,9 +150,9 @@ class _LocationPageState extends State<LocationPage> {
                     child: Showmodalbottomsheet(
                       onStreetChanged: (t) => _s = t, // ⬅️ nhận text
                       initialProvince:
-                          null, // nếu có, truyền VietnamAddress của tỉnh ban đầu
+                          null, 
                       initialDistrict:
-                          null, // nếu có, truyền VietnamAddress của quận ban đầu
+                          null, 
                       initialWard: null,
                       onProvinceSelected: (p) {
                         debugPrint('Province: ${p?.name} (${p?.code})');

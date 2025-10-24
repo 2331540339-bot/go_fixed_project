@@ -26,6 +26,7 @@ class App extends StatelessWidget {
           const SystemUiOverlayStyle(statusBarBrightness: Brightness.light),
         );
         return MaterialApp(
+          
           theme: AppTheme.appTheme,
           debugShowCheckedModeBanner: false,
           home: child,                  // quan trọng: dùng child để giữ context ScreenUtil
