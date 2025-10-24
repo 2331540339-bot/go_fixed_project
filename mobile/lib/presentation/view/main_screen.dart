@@ -26,6 +26,7 @@ class _MainscreenState extends State<Mainscreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       extendBody: true, // để nav bar "nổi" trên nền mờ
       body: IndexedStack(
         // giữ nguyên trạng thái từng tab

@@ -214,6 +214,7 @@ class _ShowmodalbottomsheetState extends State<Showmodalbottomsheet> {
         return StatefulBuilder(
           builder: (ctx, setMState) {
             return SafeArea(
+              
               child: Container(
                 decoration: BoxDecoration(
                   color: Colors.white,
@@ -505,8 +506,7 @@ class _ShowmodalbottomsheetState extends State<Showmodalbottomsheet> {
         ),
         const SizedBox(height: 6),
         SizedBox(
-          width: 160,
-          height: 48,
+          width: 150.w,    
           child: TextFormField(
             cursorColor: AppColor.primaryColor,
             keyboardType: TextInputType.streetAddress,
@@ -514,6 +514,7 @@ class _ShowmodalbottomsheetState extends State<Showmodalbottomsheet> {
             controller: _streetCtrl, // ⬅️ dùng controller
             onChanged: widget.onStreetChanged, // ⬅️ bắn ra parent
             textCapitalization: TextCapitalization.words,
+            autocorrect: true,
             decoration: InputDecoration(
               hintText: 'Địa chỉ',
               isDense: true,
