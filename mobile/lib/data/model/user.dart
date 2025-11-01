@@ -3,28 +3,28 @@ import 'enums.dart';
 import 'common.dart';
 
 class User {
-  final String id;
+  final String? id;
   final String fullname;
   final String email;
   final String phone;
   final GeoPoint? currentLocation;
   final String? avatarUrl;
-  final UserRole role;
+  final UserRole? role;
   final bool isActive;
   final DateTime? createdAt;
   final DateTime? updatedAt;
 
   const User({
-    required this.id,
+    this.id,
     required this.fullname,
     required this.email,
     required this.phone,
     this.currentLocation,
     this.avatarUrl,
-    required this.role,
+     this.role,
     required this.isActive,
     this.createdAt,
-    this.updatedAt,
+    this.updatedAt, String? address,
   });
 
   factory User.fromJson(Map<String, dynamic> j) {
@@ -49,7 +49,7 @@ class User {
     'phone': phone,
     'current_location': currentLocation?.toJson(),
     'avatar_url': avatarUrl,
-    'role': role.json,
+    'role': role?.json,
     'is_active': isActive ? 1 : 0,
     'created_at': createdAt?.toIso8601String(),
     'updated_at': updatedAt?.toIso8601String(),

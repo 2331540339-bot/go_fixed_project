@@ -43,10 +43,10 @@ class _SearchMechanicState extends State<SearchMechanic> {
     _userCtrl = await UserController.create();
     if (!mounted) return;
     try {
-      final n = await _userCtrl!.fetchDisplayName();
+      final n = await _userCtrl!.getProfile();
       if (!mounted) return;
       setState(() {
-        _name = n;
+        _name = n!.fullname;
         _loadingName = false;
       });
     } catch (_) {

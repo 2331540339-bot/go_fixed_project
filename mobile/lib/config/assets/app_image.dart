@@ -7,4 +7,5 @@ class AppImages {
   static const String img_facebook = '${base}image_facebook$format';
   static const String img_login = '${base}component_login$format';
   static const String img_man = '${base}image_man$format';
+  static const String avt_con_meo = '${base}avt_conmeo$format';
 }

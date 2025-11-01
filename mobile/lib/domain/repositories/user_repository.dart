@@ -19,12 +19,19 @@ class UserRepository {
 
   String? get displayName => _sp.getString('user_fullname');
 
+  String? get email => _sp.getString('user_email');
+
+  String? get phone => _sp.getString('user_phone');
+
+
   Future<bool> login(String email, String password) async {
     // 💡 Nhận toàn bộ dữ liệu từ API
     final data = await _api.login(email: email, password: password); 
     
     final t = data['accessToken'] as String?;
-    final n = data['fullname'] as String?; // 🎯 LẤY TÊN
+   final user = User.fromJson(data);
+
+     // 💡 LƯU EMAIL VÀ PHONE VÀO SHARED PREFERENCE
 
     if (t == null || t.isEmpty) {
       debugPrint('UserRepository: Token nhận được là null/rỗng.');
@@ -33,16 +40,31 @@ class UserRepository {
 
     // 💡 LƯU CẢ TÊN VÀ TOKEN VÀO SHARED PREFERENCES
     await _sp.setString('token', t);
-    if (n != null) {
-      await _sp.setString('user_fullname', n); // 🎯 LƯU TÊN
+    await _sp.setString('user_fullname', user.fullname);
+    await _sp.setString('user_email', user.email);
+    if (user.phone.isNotEmpty) {
+      await _sp.setString('user_phone', user.phone);
+    } else {
+      await _sp.remove('user_phone'); 
     }
+    
 
-    debugPrint('UserRepository: Token và Tên đã lưu thành công: $t, $n');
+    debugPrint('UserRepository: Token và Tên đã lưu thành công: $t');
     return true;
 }
-  Future<User> me() {
-  
-    return _api.me();
+User? get localUser {
+    final name = _sp.getString('user_fullname');
+    final email = _sp.getString('user_email');
+    final phone = _sp.getString('user_phone');
+    
+    if (name == null || email == null) return null;
+
+    return User(fullname: name, email: email, phone: phone!, id: null, isActive: true);
+  }
+
+  // 💡 HÀM getProfile() trong Controller bây giờ sẽ gọi hàm này:
+  Future<User?> getStoredProfile() async {
+    return localUser;
   }
 
   Future<void> logout() async => _sp.remove('token');

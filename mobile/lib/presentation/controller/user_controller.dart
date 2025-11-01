@@ -1,3 +1,5 @@
+import 'package:mobile/data/model/user.dart';
+
 import '../../domain/repositories/user_repository.dart';
 
 class UserController {
@@ -17,20 +19,10 @@ class UserController {
     return _repo.login(email, password);
   }
 
- // user_controller.dart
-// ...
-  Future<String> fetchDisplayName() async {
-    // 💡 Thay vì gọi API /me, lấy tên từ SP
-    final name = _repo.displayName; // Cần thêm getter displayName vào UserRepository
-    if (name != null && name.isNotEmpty) {
-      return name;
-    }
-    
-    // Nếu chưa có, gọi API /me (Dự phòng)
-    final u = await _repo.me();
-    return u.fullname; 
+  Future<User?> getProfile() async {
+    // Lấy dữ liệu đã được lưu sau khi login thành công
+    return _repo.getStoredProfile(); 
   }
-// ...
 
   Future<void> logout() => _repo.logout();
 
