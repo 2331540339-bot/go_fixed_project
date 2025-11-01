@@ -1,3 +1,4 @@
+import 'package:flutter/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../data/remote/user_api.dart';
 import '../../data/model/user.dart';
@@ -10,20 +11,39 @@ class UserRepository {
 
   static Future<UserRepository> create() async {
     final api = await ApiClient.create();
-    final sp  = await SharedPreferences.getInstance();
+    final sp = await SharedPreferences.getInstance();
     return UserRepository(UserApi(api), sp);
   }
 
   String? get token => _sp.getString('token');
 
-  Future<bool> login(String email, String password) async {
-    final t = await _api.login(email: email, password: password);
-    if (t == null || t.isEmpty) return false;
-    await _sp.setString('token', t);
-    return true;
-  }
+  String? get displayName => _sp.getString('user_fullname');
 
-  Future<User> me() => _api.me();
+  Future<bool> login(String email, String password) async {
+    // 💡 Nhận toàn bộ dữ liệu từ API
+    final data = await _api.login(email: email, password: password); 
+    
+    final t = data['accessToken'] as String?;
+    final n = data['fullname'] as String?; // 🎯 LẤY TÊN
+
+    if (t == null || t.isEmpty) {
+      debugPrint('UserRepository: Token nhận được là null/rỗng.');
+      return false;
+    }
+
+    // 💡 LƯU CẢ TÊN VÀ TOKEN VÀO SHARED PREFERENCES
+    await _sp.setString('token', t);
+    if (n != null) {
+      await _sp.setString('user_fullname', n); // 🎯 LƯU TÊN
+    }
+
+    debugPrint('UserRepository: Token và Tên đã lưu thành công: $t, $n');
+    return true;
+}
+  Future<User> me() {
+  
+    return _api.me();
+  }
 
   Future<void> logout() async => _sp.remove('token');
 }

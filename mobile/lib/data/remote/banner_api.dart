@@ -10,7 +10,7 @@ class BannerApi {
 
   /// GET /banners → { items: [ {id,image_url,...}, ... ] }
   Future<List<Banner>> fetchBanners() async {
-    final uri = Uri.parse('$baseUrl/banners');
+    final uri = Uri.parse('$baseUrl/banners/get');
     final res = await _client
         .get(uri, headers: {'Accept': 'application/json'})
         .timeout(const Duration(seconds: 15));

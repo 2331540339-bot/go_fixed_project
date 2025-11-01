@@ -51,6 +51,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // resizeToAvoidBottomInset: false,
       body: SafeArea(
         child: SingleChildScrollView(
           padding: EdgeInsets.only(bottom: 24.h),
@@ -137,18 +138,25 @@ class _LoginPageState extends State<LoginPage> {
                                   password: pwd,
                                   // useHashKey: true, // bật nếu server dùng 'password_hash'
                                 );
-                                if (!mounted || !ok) return;
-                                _showSnack('Đăng nhập thành công!');
-                                await Future.delayed(
-                                  const Duration(milliseconds: 500),
-                                );
                                 if (!mounted) return;
-                                Navigator.pushReplacement(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (_) => const Mainscreen(),
-                                  ),
-                                );
+                                if (ok) {
+                                  _showSnack('Đăng nhập thành công!');
+                                  await Future.delayed(
+                                    const Duration(milliseconds: 500),
+                                  );
+                                  if (!mounted) return;
+                                  Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => const Mainscreen(),
+                                    ),
+                                  );
+                                } else {
+                                  // 💡 Nếu ok=false (đăng nhập thất bại nhưng không ném lỗi)
+                                  _showSnack(
+                                    'Email hoặc mật khẩu không đúng. (ok=false)',
+                                  );
+                                }
                               } catch (e) {
                                 _showSnack(e.toString());
                               } finally {

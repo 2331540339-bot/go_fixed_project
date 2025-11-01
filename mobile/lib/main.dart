@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:mobile/config/themes/app_theme.dart';
-import 'package:mobile/presentation/view/home/home_page.dart';
-import 'package:mobile/presentation/view/home/services_page.dart';
+import 'package:mobile/presentation/view/loction/detail_price_page.dart';
+import 'package:mobile/presentation/view/loction/services_page.dart';
 import 'package:mobile/presentation/view/login_page.dart';
 import 'package:mobile/presentation/view/main_screen.dart';
 
@@ -25,14 +25,13 @@ class App extends StatelessWidget {
         SystemChrome.setSystemUIOverlayStyle(
           const SystemUiOverlayStyle(statusBarBrightness: Brightness.light),
         );
-        return MaterialApp(
-          
+        return MaterialApp(       
           theme: AppTheme.appTheme,
           debugShowCheckedModeBanner: false,
           home: child,                  // quan trọng: dùng child để giữ context ScreenUtil
         );
       },
-      child: const Mainscreen(),         // màn hình khởi đầu
+      child: LoginPage(),         // màn hình khởi đầu
     );
   }
 }
