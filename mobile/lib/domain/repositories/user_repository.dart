@@ -1,3 +1,4 @@
+import 'package:flutter/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../data/remote/user_api.dart';
 import '../../data/model/user.dart';
@@ -10,20 +11,61 @@ class UserRepository {
 
   static Future<UserRepository> create() async {
     final api = await ApiClient.create();
-    final sp  = await SharedPreferences.getInstance();
+    final sp = await SharedPreferences.getInstance();
     return UserRepository(UserApi(api), sp);
   }
 
   String? get token => _sp.getString('token');
 
+  String? get displayName => _sp.getString('user_fullname');
+
+  String? get email => _sp.getString('user_email');
+
+  String? get phone => _sp.getString('user_phone');
+
+
   Future<bool> login(String email, String password) async {
-    final t = await _api.login(email: email, password: password);
-    if (t == null || t.isEmpty) return false;
+    // 💡 Nhận toàn bộ dữ liệu từ API
+    final data = await _api.login(email: email, password: password); 
+    
+    final t = data['accessToken'] as String?;
+   final user = User.fromJson(data);
+
+     // 💡 LƯU EMAIL VÀ PHONE VÀO SHARED PREFERENCE
+
+    if (t == null || t.isEmpty) {
+      debugPrint('UserRepository: Token nhận được là null/rỗng.');
+      return false;
+    }
+
+    // 💡 LƯU CẢ TÊN VÀ TOKEN VÀO SHARED PREFERENCES
     await _sp.setString('token', t);
+    await _sp.setString('user_fullname', user.fullname);
+    await _sp.setString('user_email', user.email);
+    if (user.phone.isNotEmpty) {
+      await _sp.setString('user_phone', user.phone);
+    } else {
+      await _sp.remove('user_phone'); 
+    }
+    
+
+    debugPrint('UserRepository: Token và Tên đã lưu thành công: $t');
     return true;
+}
+User? get localUser {
+    final name = _sp.getString('user_fullname');
+    final email = _sp.getString('user_email');
+    final phone = _sp.getString('user_phone');
+    
+    if (name == null || email == null) return null;
+
+    return User(fullname: name, email: email, phone: phone!, id: null, isActive: true);
   }
 
-  Future<User> me() => _api.me();
+  // 💡 HÀM getProfile() trong Controller bây giờ sẽ gọi hàm này:
+  Future<User?> getStoredProfile() async {
+    return localUser;
+  }
 
   Future<void> logout() async => _sp.remove('token');
 }

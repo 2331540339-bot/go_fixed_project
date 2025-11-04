@@ -5,81 +5,87 @@ import 'package:latlong2/latlong.dart';
 import 'package:mobile/config/api_config.dart';
 
 class GeocodingApi {
-  // Chuyển đổi địa chỉ thành tọa độ sử dụng Google Geocoding API
+  /// Forward geocoding: địa chỉ -> toạ độ (Goong)
   static Future<LatLng?> geocodeAddress(String address) async {
     try {
       final params = {
         'address': address,
-        'key': ApiConfig.googleMapsApiKey,
-        'region': 'VN', // Ưu tiên kết quả Việt Nam
+        'api_key': ApiConfig.goongMapsApiKey, // ⚠️ Goong dùng api_key
       };
-      
-      final uri = Uri.https('maps.googleapis.com', '/maps/api/geocoding/json', params);
-      
-      debugPrint('Geocoding request: $uri');
-      
-      final response = await http.get(
+
+      // Theo docs Goong: https://rsapi.goong.io/geocode?address=...&api_key=...
+      final uri = Uri.https('rsapi.goong.io', '/geocode', params);
+      debugPrint('Goong Geocode request: $uri');
+
+      final res = await http.get(
         uri,
-        headers: {
+        headers: const {
           'Accept': 'application/json',
           'User-Agent': 'Flutter App',
         },
       ).timeout(const Duration(seconds: 10));
 
-      debugPrint('Geocoding response status: ${response.statusCode}');
-      debugPrint('Geocoding response body: ${response.body}');
+      debugPrint('Goong Geocode status: ${res.statusCode}');
+      debugPrint('Goong Geocode body: ${res.body}');
 
-      if (response.statusCode == 200) {
-        final json = jsonDecode(response.body);
-        
-        if (json['status'] == 'OK' && json['results'].isNotEmpty) {
-          final location = json['results'][0]['geometry']['location'];
-          final latLng = LatLng(
-            location['lat'].toDouble(),
-            location['lng'].toDouble(),
+      if (res.statusCode != 200) return null;
+
+      final data = jsonDecode(res.body);
+      // Goong giữ format gần như Google: results[], status: "OK"
+      if (data is Map &&
+          (data['status'] == 'OK') &&
+          (data['results'] is List) &&
+          (data['results'] as List).isNotEmpty) {
+        final loc = data['results'][0]['geometry']?['location'];
+        if (loc is Map && loc['lat'] != null && loc['lng'] != null) {
+          return LatLng(
+            (loc['lat'] as num).toDouble(),
+            (loc['lng'] as num).toDouble(),
           );
-          debugPrint('Geocoding result: $latLng');
-          return latLng;
         }
       }
-      
       return null;
     } catch (e) {
-      debugPrint('Geocoding error: $e');
+      debugPrint('Goong geocode error: $e');
       return null;
     }
   }
 
-  // Chuyển đổi tọa độ thành địa chỉ sử dụng Google Reverse Geocoding API
+  /// Reverse geocoding: toạ độ -> địa chỉ (Goong)
   static Future<String?> reverseGeocode(LatLng location) async {
     try {
       final params = {
         'latlng': '${location.latitude},${location.longitude}',
-        'key': ApiConfig.googleMapsApiKey,
-        'language': 'vi', // Ngôn ngữ tiếng Việt
+        'api_key': ApiConfig.goongMapsApiKey, // ⚠️ Goong dùng api_key
       };
-      
-      final uri = Uri.https('maps.googleapis.com', '/maps/api/geocoding/json', params);
-      
-      final response = await http.get(
+
+      // Theo docs Goong: https://rsapi.goong.io/Geocode?latlng=...&api_key=...
+      final uri = Uri.https('rsapi.goong.io', '/Geocode', params);
+      debugPrint('Goong Reverse request: $uri');
+
+      final res = await http.get(
         uri,
-        headers: {
+        headers: const {
           'Accept': 'application/json',
           'User-Agent': 'Flutter App',
         },
       ).timeout(const Duration(seconds: 10));
 
-      if (response.statusCode == 200) {
-        final json = jsonDecode(response.body);
-        
-        if (json['status'] == 'OK' && json['results'].isNotEmpty) {
-          return json['results'][0]['formatted_address'];
-        }
+      debugPrint('Goong Reverse status: ${res.statusCode}');
+      debugPrint('Goong Reverse body: ${res.body}');
+
+      if (res.statusCode != 200) return null;
+
+      final data = jsonDecode(res.body);
+      if (data is Map &&
+          (data['status'] == 'OK') &&
+          (data['results'] is List) &&
+          (data['results'] as List).isNotEmpty) {
+        return data['results'][0]['formatted_address'] as String?;
       }
-      
       return null;
     } catch (e) {
-      debugPrint('Reverse geocoding error: $e');
+      debugPrint('Goong reverse geocode error: $e');
       return null;
     }
   }
