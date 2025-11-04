@@ -40,9 +40,9 @@ function Footer(){
                         <p className='font-light text-md font-grostek text-n-50'>Address: Bitexco, 1st Distict, Ho Chi Minh City</p> 
                     </div>
 
-                    <div className='hidden w-[calc(50%)] h-full bg-n-700 rounded-2xl md:flex md:justify-evenly md:items-center'>
-                        <input className='px-2 tracking-wider border h-17 w-85 rounded-xl text-n-50 font-grostek border-n-50' placeholder='Email'></input>
-                        <button className='font-semibold tracking-wider h-17 w-85 bg-p-500 rounded-xl text-n-50 font-grostek hover:bg-transparent hover:border border-p-500'  type='button'>Subcribe to news</button>
+                    <div className='hidden w-[calc(50%)] h-full bg-n-700 rounded-2xl md:flex md:justify-evenly md:items-center px-4'>
+                        <input className='px-2 mx-4 tracking-wider border h-[35%] w-85 rounded-xl text-n-50 font-grostek border-n-50' placeholder='Email'></input>
+                        <button className='font-semibold mx-4 tracking-wider h-[35%] w-85 bg-p-500 rounded-xl text-n-50 font-grostek hover:bg-transparent hover:border border-p-500'  type='button'>Subcribe to news</button>
                     </div>
                 </div>
             </div> 

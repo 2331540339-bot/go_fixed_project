@@ -2,6 +2,7 @@ import { createBrowserRouter } from "react-router-dom"
 import App from "../App"
 import Home from "../pages/Home"
 import Services from "../pages/Services"
+import ServiceBooking from "../pages/ServiceBooking"    
 
 export const router = createBrowserRouter([
     {
@@ -9,7 +10,10 @@ export const router = createBrowserRouter([
         element:<App/>,
         children:[
             {index:true , element: <Home/>},
-            {path:"services", element: <Services/> }
+            {path:"services", element: <Services/> },
+            {path:"services/:id", element: <ServiceBooking/> },
         ]
     }
 ])
+
+

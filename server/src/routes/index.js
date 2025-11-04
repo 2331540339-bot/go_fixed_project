@@ -6,4 +6,4 @@ function route(app){
     app.use('/service', serviceRouter)
 }
 
-module.exports = route
+module.exports = route  
