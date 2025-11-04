@@ -13,7 +13,7 @@ axiosClient.interceptors.request.use((config) => {
         console.log("Token not found");
     }
     if(token){
-        config.headers.Authorization = `Baerer ${token}`;
+        config.headers.token  = `Bearer ${token}`;
     };
     return config;
 });

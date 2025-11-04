@@ -3,7 +3,7 @@ import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 
-// ✅ biểu tượng marker mặc định (Leaflet v4 cần khai báo thủ công)
+
 const defaultIcon = L.icon({
   iconUrl:
     "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
@@ -12,10 +12,10 @@ const defaultIcon = L.icon({
 });
 L.Marker.prototype.options.icon = defaultIcon;
 
-function UserMap() {
+function UserMap({onPositionChange}) {
   const [position, setPosition] = useState(null);
 
-  // 📍 Lấy vị trí thật của user
+
   useEffect(() => {
     if (!navigator.geolocation) {
       alert("Trình duyệt của bạn không hỗ trợ định vị GPS!");
@@ -25,14 +25,17 @@ function UserMap() {
     navigator.geolocation.getCurrentPosition(
       (pos) => {
         const { latitude, longitude } = pos.coords;
+        const coords = [latitude, longitude];
         setPosition([latitude, longitude]);
+        console.log(coords)
+        if(onPositionChange) onPositionChange(coords);
       },
       (err) => {
         console.error("Không thể lấy vị trí:", err);
         alert("Bạn cần cho phép truy cập vị trí!");
       }
     );
-  }, []);
+  }, [onPositionChange]);
 
   if (!position) return <p className="mt-10 text-center">⏳ Đang xác định vị trí của bạn...</p>;
 

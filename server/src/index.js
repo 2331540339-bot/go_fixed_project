@@ -36,7 +36,7 @@ const corsOptions = {
   origin: true, //Active All Domain Can Access
   credentials: true,
   methods: ['GET','POST','PUT','PATCH','DELETE','OPTIONS'],
-  allowedHeaders: ['Content-Type','Authorization'],
+  allowedHeaders: ['Content-Type','Authorization', 'token'],
 };
 app.use(cors(corsOptions));
 app.options(/.*/, cors(corsOptions));  

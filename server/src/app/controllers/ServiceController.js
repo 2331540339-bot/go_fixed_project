@@ -57,7 +57,7 @@ class ServiceController{
         RescueRequest.save()
         .then( () => {
             io.to('Mechanics').emit('rescue_request', RescueRequest);
-            res.json('Request Created');
+            res.status(200).json({'noti': 'Tạo cứu hộ thành công'});
         })
         .catch(err => res.status(500).json({err: err.message}))
     }

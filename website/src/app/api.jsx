@@ -18,3 +18,12 @@ const serviceAPI = () => {
     .then((res) => res.data)
     .catch((err) => {throw err})
 }; export {serviceAPI}
+
+const rescue_requestAPI = (description, location, price_estimate, idService) =>{
+    return axiosClient
+    .post(`service/rescue/${idService}`, {description, location, price_estimate})
+    .then((res) => res.data)
+    .catch(err => {
+        throw err
+    })
+}; export {rescue_requestAPI}
