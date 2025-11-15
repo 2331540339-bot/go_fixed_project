@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:mechanic/common/app_button.dart';
 import 'package:mechanic/config/assets/app_image.dart';
-import 'package:mechanic/config/themes/app_color.dart';
+import 'package:mechanic/presentation/view/login_page.dart';
 
 class SignInAndSignUp extends StatelessWidget {
   const SignInAndSignUp({super.key});
@@ -25,14 +25,14 @@ class SignInAndSignUp extends StatelessWidget {
               child: SizedBox(
                 width: double.infinity,
                 child: AppButton(content: "Sign In Here", onPressed: () { 
-                  // Navigator.push(context, MaterialPageRoute(builder: (_)=> const LoginPage()));
+                  Navigator.push(context, MaterialPageRoute(builder: (_)=> const LoginPage()));
                 }),
               ),
             ),
             SizedBox(height: 20),
           
           ],
-        ),
+        ), 
       ),
     );
   }

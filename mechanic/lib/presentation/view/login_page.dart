@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:mobile/common/app_button.dart';
-import 'package:mobile/config/assets/app_image.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:mobile/config/themes/app_color.dart';
-import 'package:mobile/presentation/controller/user_controller.dart';
-import 'package:mobile/presentation/view/main_screen.dart';
-
+import 'package:mechanic/common/app_button.dart';
+import 'package:mechanic/config/assets/app_image.dart';
+import 'package:mechanic/config/themes/app_color.dart';
+import 'package:mechanic/presentation/controllers/user_controller.dart';
+import 'package:mechanic/presentation/view/home_page.dart';
 
 
 class LoginPage extends StatefulWidget {
@@ -128,38 +127,40 @@ class _LoginPageState extends State<LoginPage> {
                                 return;
                               }
 
-                              FocusScope.of(context).unfocus(); // ẩn bàn phím
-
+                              FocusScope.of(context).unfocus();
                               setState(() => _loading = true);
                               try {
                                 final ok = await _userCtrl!.login(
                                   email: email,
                                   password: pwd,
-                                  // useHashKey: true, // bật nếu server dùng 'password_hash'
                                 );
-                                if (!mounted) return;
+
+                                if (!context.mounted) return;
+
                                 if (ok) {
-                                  _showSnack('Đăng nhập thành công!');
-                                  await Future.delayed(
-                                    const Duration(milliseconds: 500),
-                                  );
-                                  if (!mounted) return;
-                                  Navigator.pushReplacement(
-                                    context,
+                                  // Điều hướng ngay, không cần delay
+                                  // Navigator.of(context).pushReplacement(
+                                  //   MaterialPageRoute(builder: (_) => const HomePage()),
+                                  // );
+
+                                  //xoá stack cũ luôn
+                                  Navigator.of(context).pushAndRemoveUntil(
                                     MaterialPageRoute(
-                                      builder: (_) => const Mainscreen(),
+                                      builder: (_) => const HomePage(),
                                     ),
+                                    (route) => false,
                                   );
-                                } else {
-                                  // 💡 Nếu ok=false (đăng nhập thất bại nhưng không ném lỗi)
-                                  _showSnack(
-                                    'Email hoặc mật khẩu không đúng. (ok=false)',
-                                  );
+                                } else {                               
+                                  final msg =
+                                      _userCtrl!.lastError ??
+                                      'Đăng nhập thất bại. Vui lòng kiểm tra thông tin.';
+                                  _showSnack(msg);
                                 }
                               } catch (e) {
-                                _showSnack(e.toString());
+                                if (context.mounted) _showSnack(e.toString());
                               } finally {
-                                if (mounted) setState(() => _loading = false);
+                                if (context.mounted)
+                                  setState(() => _loading = false);
                               }
                             },
                     ),

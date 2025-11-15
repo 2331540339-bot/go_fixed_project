@@ -1,4 +1,5 @@
-import 'package:mobile/config/router/app_router.dart';
+
+import 'package:mechanic/config/route/app_router.dart';
 
 class Endpoints {
   static final base = AppRouter.main_domain; 
