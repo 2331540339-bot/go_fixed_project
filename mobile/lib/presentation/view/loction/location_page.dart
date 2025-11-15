@@ -24,6 +24,9 @@ import 'package:mobile/data/model/vietnam_address.dart';
 // Google Maps widget bạn đã chuyển sang (MapRouteBox dùng Google Maps)
 import 'package:mobile/presentation/widgets/modal/showModalBottomSheet.dart';
 
+import 'package:provider/provider.dart';
+import 'package:mobile/presentation/controller/rescue_flow_controller.dart';
+
 class LocationPage extends StatefulWidget {
   const LocationPage({super.key});
 
@@ -78,7 +81,7 @@ class _LocationPageState extends State<LocationPage> {
       final n = await _userCtrl!.getProfile();
       if (!mounted) return;
       setState(() {
-        _name = n!.fullname; 
+        _name = n!.fullname;
         _loadingName = false;
       });
     } catch (_) {
@@ -255,19 +258,17 @@ class _LocationPageState extends State<LocationPage> {
 
               const SizedBox(height: 20),
 
-            
               // MapRouteBox(
-              //   dest: LatLng(10.7852743, 106.6519676), 
-              //   apiKey: ApiConfig.goongMapsApiKey, 
-              //   mapTilerKey: ApiConfig.goongMaptilesApiKey, 
-              //   vehicle: 'bike', 
+              //   dest: LatLng(10.7852743, 106.6519676),
+              //   apiKey: ApiConfig.goongMapsApiKey,
+              //   mapTilerKey: ApiConfig.goongMaptilesApiKey,
+              //   vehicle: 'bike',
               // ),
               // const SizedBox(height: 20),
               MapOnlyBox(
-                center: _mapCenter, 
+                center: _mapCenter,
                 userPosition: _userMarker,
-                mapTilerKey: ApiConfig
-                    .goongMaptilesApiKey, 
+                mapTilerKey: ApiConfig.goongMaptilesApiKey,
                 zoom: 16,
               ),
 
@@ -293,9 +294,15 @@ class _LocationPageState extends State<LocationPage> {
                         }
                         _geocodeSelectedAddress();
                         String fullAddress = _buildFullAddress();
-                        Navigator.push(context, MaterialPageRoute(
-                          builder: (context) => ServicesPage(),
-                        ));
+                        context.read<RescueFlowController>().setDescription(
+                          fullAddress,
+                        );
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ServicesPage(),
+                          ),
+                        );
                         if (fullAddress == '') {
                           print('Vui lòng chọn địa chỉ đầy đủ');
                         } else {

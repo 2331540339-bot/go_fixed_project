@@ -19,12 +19,24 @@ class UserController {
     return _repo.login(email, password);
   }
 
+  Future<bool> register({
+    required String fullname,
+    required String email,
+    required String phone,
+    required String password,
+  }) {
+    return _repo.register(
+      fullname: fullname,
+      email: email,
+      phone: phone,
+      password: password,
+    );
+  }
+
   Future<User?> getProfile() async {
     // Lấy dữ liệu đã được lưu sau khi login thành công
-    return _repo.getStoredProfile(); 
+    return _repo.getStoredProfile();
   }
 
   Future<void> logout() => _repo.logout();
-
-  
 }

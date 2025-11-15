@@ -2,14 +2,26 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:mobile/config/themes/app_theme.dart';
+import 'package:mobile/presentation/controller/rescue_flow_controller.dart';
+import 'package:mobile/presentation/view/intro_page.dart';
 import 'package:mobile/presentation/view/loction/detail_price_page.dart';
 import 'package:mobile/presentation/view/loction/services_page.dart';
 import 'package:mobile/presentation/view/login_page.dart';
 import 'package:mobile/presentation/view/main_screen.dart';
+import 'package:provider/provider.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(const App());
+  runApp(MultiProvider(
+    providers: [
+        ChangeNotifierProvider(
+          create: (_) => RescueFlowController(),
+        ),
+        // Có thể thêm các controller khác sau này
+      ],
+      child: const App(),
+    ),
+  );
 }
 
 class App extends StatelessWidget {
@@ -31,7 +43,7 @@ class App extends StatelessWidget {
           home: child,                  // quan trọng: dùng child để giữ context ScreenUtil
         );
       },
-      child: LoginPage(),         // màn hình khởi đầu
+      child: Intropage(),         // màn hình khởi đầu
     );
   }
 }

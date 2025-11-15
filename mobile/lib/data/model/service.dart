@@ -21,15 +21,18 @@ class Service {
     this.updatedAt,
   });
 
-  factory Service.fromJson(Map<String, dynamic> j) => Service(
-    id: (j['id'] ?? '').toString(),
-    name: (j['name'] ?? '').toString(),
-    basePrice: numToDouble(j['base_price']),
-    iconUrl: j['icon_url'] as String?,
-    kind: ServiceKindX.from(j['kind']?.toString()),
-    createdAt: readDate(j['created_at']),
-    updatedAt: readDate(j['updated_at']),
-  );
+  factory Service.fromJson(Map<String, dynamic> j) {
+    print('Service JSON: $j');
+    return Service(
+      id: (j['_id'] ?? j['id'])?.toString() ?? '',
+      name: (j['name'] ?? '').toString(),
+      basePrice: numToDouble(j['base_price']),
+      iconUrl: j['icon_url'] as String?,
+      kind: ServiceKindX.from(j['kind']?.toString()),
+      createdAt: readDate(j['created_at']),
+      updatedAt: readDate(j['updated_at']),
+    );
+  }
 
   Map<String, dynamic> toJson() => clean({
     'id': id,

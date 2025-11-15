@@ -6,7 +6,40 @@ import '../model/user.dart';
 class UserApi {
   UserApi(this._api);
   final ApiClient _api;
+ Future<void> register({
+    required String fullname,
+    required String email,
+    required String phone,
+    required String password,
+  }) async {
+    final res = await _api.post(
+      Endpoints.register, 
+      body: jsonEncode({
+        'fullname': fullname,
+        'email': email,
+        'phone': phone,
+        'password_hash': password, 
+      }),
+    );
 
+    if (res.statusCode != 200 && res.statusCode != 201) {
+      
+      String msg;
+      try {
+        final body = res.body.isNotEmpty ? jsonDecode(res.body) : null;
+        if (body is Map<String, dynamic>) {
+          msg = body['error']?.toString() ??
+              body['message']?.toString() ??
+              res.body;
+        } else {
+          msg = res.body;
+        }
+      } catch (_) {
+        msg = res.body;
+      }
+      throw Exception('Register failed: $msg');
+    }
+  }
   Future<Map<String, dynamic>> login({
     required String email,
     required String password,
@@ -19,10 +52,6 @@ class UserApi {
       throw Exception('Login failed: ${res.body}');
     }
     final map = jsonDecode(res.body) as Map<String, dynamic>;
-    // final token = map['token'] ?? map['accessToken'];
-    // if (token == null || token is! String || token.isEmpty) {
-    //   throw Exception('Đăng nhập thành công nhưng không có token.');
-    // }
     return map;
   }
 

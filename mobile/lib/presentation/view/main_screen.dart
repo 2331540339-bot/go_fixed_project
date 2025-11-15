@@ -17,21 +17,28 @@ class Mainscreen extends StatefulWidget {
 
 class _MainscreenState extends State<Mainscreen> {
   int _index = 0;
-  final _pages = const [
-    HomePage(), // Fragment 1
-    InboxPage(),   
-    LocationPage(), 
-    SettingsPage(), 
-  ];
+
   @override
   Widget build(BuildContext context) {
+    final pages = [
+      HomePage(
+        onGoToLocation: () {
+          setState(() {
+            _index = 2; // 👈 index của LocationPage trong pages
+          });
+        },
+      ),
+      InboxPage(),
+      LocationPage(),
+      SettingsPage(),
+    ];
     return Scaffold(
       resizeToAvoidBottomInset: false,
       extendBody: true, // để nav bar "nổi" trên nền mờ
       body: IndexedStack(
         // giữ nguyên trạng thái từng tab
         index: _index,
-        children: _pages,
+        children: pages,
       ),
       bottomNavigationBar: Padding(
         padding: EdgeInsets.fromLTRB(15.w, 0, 15.w, 15.h),
@@ -54,26 +61,25 @@ class _MainscreenState extends State<Mainscreen> {
                 data: Theme.of(context).copyWith(
                   navigationBarTheme: NavigationBarThemeData(
                     // Màu + style LABEL
-                    labelTextStyle:
-                        WidgetStateProperty.resolveWith<TextStyle>((states) {
-                          final selected = states.contains(
-                            WidgetState.selected,
-                          );
-                          return TextStyle(
-                            fontSize: selected ? 12.sp : 11.sp,
-                            fontWeight: selected
-                                ? FontWeight.w700
-                                : FontWeight.w500,
-                            color: selected
-                                ? AppColor.primaryColor
-                                :  Colors.white.withOpacity(0.9),
-                          );
-                        }),
+                    labelTextStyle: WidgetStateProperty.resolveWith<TextStyle>((
+                      states,
+                    ) {
+                      final selected = states.contains(WidgetState.selected);
+                      return TextStyle(
+                        fontSize: selected ? 12.sp : 11.sp,
+                        fontWeight: selected
+                            ? FontWeight.w700
+                            : FontWeight.w500,
+                        color: selected
+                            ? AppColor.primaryColor
+                            : Colors.white.withOpacity(0.9),
+                      );
+                    }),
                   ),
                 ),
                 child: NavigationBar(
                   height: 40.h,
-                 backgroundColor: Colors.white.withOpacity(0.9),
+                  backgroundColor: Colors.white.withOpacity(0.9),
                   elevation: 0,
                   surfaceTintColor: Colors.transparent,
                   indicatorColor: AppColor.primaryColor,
@@ -87,17 +93,26 @@ class _MainscreenState extends State<Mainscreen> {
                       label: 'Home',
                     ),
                     NavigationDestination(
-                      icon: Icon(Icons.message_outlined, color: Color(0xff000000)),
+                      icon: Icon(
+                        Icons.message_outlined,
+                        color: Color(0xff000000),
+                      ),
                       selectedIcon: Icon(Icons.message),
                       label: 'message',
                     ),
-                     NavigationDestination(
-                      icon: Icon(Icons.location_on_outlined, color: Color(0xff000000)),
+                    NavigationDestination(
+                      icon: Icon(
+                        Icons.location_on_outlined,
+                        color: Color(0xff000000),
+                      ),
                       selectedIcon: Icon(Icons.location_on),
                       label: 'location',
                     ),
                     NavigationDestination(
-                      icon: Icon(Icons.person_outline, color: Color(0xff000000)),
+                      icon: Icon(
+                        Icons.person_outline,
+                        color: Color(0xff000000),
+                      ),
                       selectedIcon: Icon(Icons.person),
                       label: 'Profile',
                     ),

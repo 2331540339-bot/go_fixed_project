@@ -3,6 +3,7 @@ class Endpoints {
 
   // user
   static const login = '$base/account/login';
+  static const register = '$base/account/create';
   static const me    = '$base/account/me';
 
   // services

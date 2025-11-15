@@ -40,6 +40,8 @@ dependencies:
   google_maps_flutter: ^2.9.0
   flutter_polyline_points: ^3.1.0
   image_picker: ^1.2.0
+  flutter_native_splash: ^2.4.7
+  provider: ^6.1.5+1
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -100,3 +102,7 @@ flutter_launcher_icons:
   android: true
   ios: true
   image_path: "assets/images/mainLogo.png"   
+flutter_native_splash:
+  color: "#F3F8FB"
+  image: assets/images/mainLogo.png
+  ios_content_mode: scaleAspectFill

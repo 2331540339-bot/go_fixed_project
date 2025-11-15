@@ -4,24 +4,24 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:mobile/config/themes/app_color.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
+import 'package:mobile/presentation/controller/rescue_flow_controller.dart';
 import 'package:mobile/presentation/controller/user_controller.dart';
 import 'package:mobile/presentation/view/loction/detail_price_page.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 
 class ServicesPage extends StatefulWidget {
   const ServicesPage({super.key});
-  
+
   static const _red = TextStyle(color: AppColor.primaryColor);
   static const _back = TextStyle(color: Colors.black);
 
   @override
   State<ServicesPage> createState() => _ServicesPageState();
-  
 }
 
 class _ServicesPageState extends State<ServicesPage> {
-   UserController? _userCtrl;
+  UserController? _userCtrl;
   final _searchCtl = TextEditingController();
   final _descCtl = TextEditingController();
   XFile? _imageFile;
@@ -43,26 +43,25 @@ class _ServicesPageState extends State<ServicesPage> {
     maxLines: 2,
   );
 
-  Future <void> _openCamera() async {
+  Future<void> _openCamera() async {
     final ImagePicker _picker = ImagePicker();
     final XFile? photo = await _picker.pickImage(source: ImageSource.camera);
-   if (photo != null) {
+    if (photo != null) {
       setState(() {
         _imageFile = photo;
       });
     }
   }
 
-  Future <void> _openGallery() async {
+  Future<void> _openGallery() async {
     final ImagePicker _picker = ImagePicker();
     final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
-   if (image != null) {
+    if (image != null) {
       setState(() {
         _imageFile = image;
       });
     }
   }
-
 
   @override
   void dispose() {
@@ -107,9 +106,8 @@ class _ServicesPageState extends State<ServicesPage> {
             ],
           ),
         ),
-      
+
         body: SafeArea(
-          
           child: Padding(
             padding: EdgeInsets.all(16),
             child: Column(
@@ -147,7 +145,9 @@ class _ServicesPageState extends State<ServicesPage> {
                           isDense: true,
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide(color: AppColor.primaryColor),
+                            borderSide: BorderSide(
+                              color: AppColor.primaryColor,
+                            ),
                           ),
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10),
@@ -155,7 +155,9 @@ class _ServicesPageState extends State<ServicesPage> {
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10),
-                            borderSide: BorderSide(color: AppColor.primaryColor),
+                            borderSide: BorderSide(
+                              color: AppColor.primaryColor,
+                            ),
                           ),
                         ),
                       ),
@@ -215,7 +217,7 @@ class _ServicesPageState extends State<ServicesPage> {
                   ),
                 ),
                 SizedBox(height: 20.h),
-      
+
                 _fieldDescribe('Hãy mô tả'),
                 Spacer(),
                 Row(
@@ -235,19 +237,25 @@ class _ServicesPageState extends State<ServicesPage> {
                               borderRadius: BorderRadius.circular(15),
                             ),
                             child: InkWell(
-                              onTap:  _openGallery,
+                              onTap: _openGallery,
                               child: Container(
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(15),
                                   image: _imageFile == null
                                       ? null
                                       : DecorationImage(
-                                          image: FileImage(File(_imageFile!.path)),
+                                          image: FileImage(
+                                            File(_imageFile!.path),
+                                          ),
                                           fit: BoxFit.cover,
                                         ),
                                 ),
                                 child: _imageFile == null
-                                    ? Icon(Icons.camera, size: 50.sp, color: Colors.black38)
+                                    ? Icon(
+                                        Icons.camera,
+                                        size: 50.sp,
+                                        color: Colors.black38,
+                                      )
                                     : null,
                               ),
                             ),
@@ -272,7 +280,7 @@ class _ServicesPageState extends State<ServicesPage> {
                     ),
                   ],
                 ),
-      
+
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -280,8 +288,6 @@ class _ServicesPageState extends State<ServicesPage> {
                       width: 100.w,
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          
-                          
                           backgroundColor: Colors.grey.shade300,
                         ),
                         onPressed: () {
@@ -289,7 +295,11 @@ class _ServicesPageState extends State<ServicesPage> {
                         },
                         child: Padding(
                           padding: EdgeInsets.symmetric(vertical: 12.h),
-                          child: Icon(Icons.camera_enhance, color: Colors.black54, size: 30.sp)
+                          child: Icon(
+                            Icons.camera_enhance,
+                            color: Colors.black54,
+                            size: 30.sp,
+                          ),
                         ),
                       ),
                     ),
@@ -300,7 +310,15 @@ class _ServicesPageState extends State<ServicesPage> {
                         backgroundColor: AppColor.primaryColor,
                       ),
                       onPressed: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => const DetailPricePage()));
+                        context.read<RescueFlowController>().setDescription(
+                          _descCtl.text.trim(),
+                        );
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const DetailPricePage(),
+                          ),
+                        );
                       },
                       child: Padding(
                         padding: EdgeInsets.symmetric(vertical: 12.h),

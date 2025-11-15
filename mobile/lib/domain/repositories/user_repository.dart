@@ -23,7 +23,6 @@ class UserRepository {
 
   String? get phone => _sp.getString('user_phone');
 
-
   Future<bool> login(String email, String password) async {
     // 💡 Nhận toàn bộ dữ liệu từ API
     final data = await _api.login(email: email, password: password); 
@@ -52,7 +51,7 @@ class UserRepository {
     debugPrint('UserRepository: Token và Tên đã lưu thành công: $t');
     return true;
 }
-User? get localUser {
+  User? get localUser {
     final name = _sp.getString('user_fullname');
     final email = _sp.getString('user_email');
     final phone = _sp.getString('user_phone');
@@ -60,6 +59,25 @@ User? get localUser {
     if (name == null || email == null) return null;
 
     return User(fullname: name, email: email, phone: phone!, id: null, isActive: true);
+  }
+
+   Future<bool> register({
+    required String fullname,
+    required String email,
+    required String phone,
+    required String password,
+  }) async {
+    await _api.register(
+      fullname: fullname,
+      email: email,
+      phone: phone,
+      password: password,
+    );
+
+    // Với backend hiện tại chỉ trả 'Account Created'
+    // → mình chỉ trả true. Nếu sau này backend trả token + user,
+    //   bạn có thể lưu giống như login.
+    return true;
   }
 
   // 💡 HÀM getProfile() trong Controller bây giờ sẽ gọi hàm này:

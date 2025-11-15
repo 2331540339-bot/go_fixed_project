@@ -21,8 +21,12 @@ import 'package:mobile/presentation/widgets/appbars/main_app_bar.dart';
 import 'package:mobile/presentation/widgets/banner/banner_carousel.dart';
 import 'package:mobile/presentation/widgets/banner/dots_indicator.dart';
 
+import 'package:provider/provider.dart';
+import 'package:mobile/presentation/controller/rescue_flow_controller.dart';
+
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  final VoidCallback? onGoToLocation;
+  const HomePage({super.key, this.onGoToLocation});
   @override
   State<HomePage> createState() => _HomePageState();
 }
@@ -37,10 +41,8 @@ class _HomePageState extends State<HomePage> {
   BannerController? _bannerCtrl;
   int _bannerIndex = 0;
 
-  // --- Services ---
   ServiceController? _svcCtrl;
 
-  // mock location
   final String _location = 'Q12, TP.HCM';
 
   final _searchCtl = TextEditingController();
@@ -48,32 +50,25 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    // Bắt đầu tải dữ liệu ngay lập tức
+
     _initControllers();
   }
 
   Future<void> _initControllers() async {
-    // 1. Khởi tạo Controllers
     _userCtrl = await UserController.create();
     _bannerCtrl = await BannerController.create();
     _svcCtrl = await ServiceController.create();
 
     if (!mounted) return;
 
-    // 2. Xử lý Tên người dùng (Ưu tiên)
     await _loadUserName();
 
-    // 3. Xử lý Banner
     _bannerCtrl!.addListener(_onBannerChanged);
     await _bannerCtrl!.load();
     if (!mounted) return;
-    // setState({}); // Không cần gọi lại nếu _onBannerChanged đã notify
-
-    // 4. Xử lý Services
     _svcCtrl!.addListener(_onServiceChanged);
     await _svcCtrl!.load(limit: 6);
     if (!mounted) return;
-    // setState({}); // Không cần gọi lại nếu _onServiceChanged đã notify
   }
 
   Future<void> _loadUserName() async {
@@ -90,7 +85,6 @@ class _HomePageState extends State<HomePage> {
       debugPrint('LỖI KHI TẢI TÊN NGƯỜI DÙNG: $e');
       String displayName = 'Lỗi dữ liệu';
 
-      // 🎯 Logic xác định lỗi 401/lỗi xác thực
       final error = e.toString().toLowerCase();
       if (error.contains('401') ||
           error.contains('unauthorized') ||
@@ -120,14 +114,13 @@ class _HomePageState extends State<HomePage> {
     _bannerCtrl?.removeListener(_onBannerChanged);
     _svcCtrl?.removeListener(_onServiceChanged);
     _bannerCtrl?.dispose();
-    _svcCtrl?.dispose(); // 💡 Đảm bảo dispose cả service controller
+    _svcCtrl?.dispose();
     _searchCtl.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    // Luôn kiểm tra null an toàn trước khi truy cập
     final loadingBanners = _bannerCtrl?.loading ?? true;
     final bannerError = _bannerCtrl?.error;
     final bannerItems = _bannerCtrl?.items ?? const [];
@@ -143,7 +136,6 @@ class _HomePageState extends State<HomePage> {
         loadingName: _loadingName,
         location: _location,
         onAvatarTap: () {
-          // TODO: Điều hướng đến trang Profile / Login nếu _name là 'Chưa đăng nhập'
           debugPrint('Tapping avatar, current name: $_name');
         },
         avatarWidget: SvgPicture.asset(AppIcon.user),
@@ -154,9 +146,7 @@ class _HomePageState extends State<HomePage> {
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
           child: Column(
             children: [
-              // ---- Tìm kiếm + nút bên phải (Giữ nguyên)
               Row(
-                // ... (Logic tìm kiếm)
                 children: [
                   Expanded(
                     child: TextField(
@@ -202,9 +192,7 @@ class _HomePageState extends State<HomePage> {
                   const SizedBox(width: 12),
                   SizedBox(
                     child: ElevatedButton(
-                      onPressed: () {
-                        /* TODO: mở bộ lọc nâng cao */
-                      },
+                      onPressed: () {},
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xffF3F8FB),
                         foregroundColor: Colors.white,
@@ -226,8 +214,6 @@ class _HomePageState extends State<HomePage> {
 
               SizedBox(height: 20.h),
 
-              // ---- Banner + indicator
-              // Logic hiển thị banner được tối ưu hóa để xử lý cả trường hợp rỗng
               if (loadingBanners)
                 const SizedBox(
                   height: 200,
@@ -235,7 +221,7 @@ class _HomePageState extends State<HomePage> {
                 )
               else if (bannerError != null)
                 Text('Lỗi banner: $bannerError')
-              else if (bannerItems.isEmpty) // 🎯 XỬ LÝ KHI DANH SÁCH RỖNG
+              else if (bannerItems.isEmpty)
                 const SizedBox(
                   height: 150,
                   child: Center(
@@ -250,9 +236,7 @@ class _HomePageState extends State<HomePage> {
                       autoPlay: true,
                       autoPlayInterval: const Duration(seconds: 4),
                       onIndexChanged: (i) => setState(() => _bannerIndex = i),
-                      onTap: (i) {
-                        /* TODO: mở bannerItems[i].linkUrl nếu có */
-                      },
+                      onTap: (i) {},
                     ),
                     SizedBox(height: 10.h),
                     DotsIndicator(
@@ -262,8 +246,6 @@ class _HomePageState extends State<HomePage> {
                   ],
                 ),
               SizedBox(height: 20.h),
-
-              // ... (Phần hiển thị Services giữ nguyên)
               Expanded(
                 child: Builder(
                   builder: (_) {
@@ -274,12 +256,10 @@ class _HomePageState extends State<HomePage> {
                       return Center(child: Text('Lỗi services: $svcError'));
                     }
                     if (svcItems.isEmpty) {
-                      // 💡 Xử lý trường hợp service trống
                       return const Center(
                         child: Text('Không tìm thấy dịch vụ nào.'),
                       );
                     }
-                    // ... (Gridview.builder)
                     return GridView.builder(
                       padding: const EdgeInsets.only(bottom: 16),
                       gridDelegate:
@@ -303,14 +283,23 @@ class _HomePageState extends State<HomePage> {
                                 ),
                                 child: InkWell(
                                   borderRadius: BorderRadius.circular(12),
-                                  onTap: () {},
+                                  onTap: () {
+                                    final rescueFlow = context
+                                        .read<RescueFlowController>();
+
+                                    // Lưu service đã chọn
+                                    rescueFlow.setService(s);
+
+                                    widget.onGoToLocation?.call();
+                                    print('dịch vụ ${s.name}');
+                                    print('dịch vụ ${s.id}');
+                                  },
                                   child: SizedBox(
                                     height: 120.h,
                                     width: 120.w,
                                     child:
                                         (s.iconUrl != null &&
                                             s.iconUrl!.isNotEmpty)
-                                        // 💡 Sử dụng toán tử 3 ngôi (Ternary Operator) cho gọn
                                         ? Image.network(
                                             s.iconUrl!,
                                             height: 60.h,
@@ -319,7 +308,6 @@ class _HomePageState extends State<HomePage> {
                                             errorBuilder:
                                                 (context, error, stackTrace) {
                                                   return const Icon(
-                                                    // Icon khi load lỗi
                                                     Icons.home_repair_service,
                                                     size: 40,
                                                   );
@@ -335,16 +323,16 @@ class _HomePageState extends State<HomePage> {
                               ),
                             ),
                             SizedBox(height: 6.h),
-                              Text(
-                                s.name,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                  fontSize: 12.sp,
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.black87,
-                                ),
+                            Text(
+                              s.name,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontSize: 12.sp,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.black87,
                               ),
+                            ),
                           ],
                         );
                       },

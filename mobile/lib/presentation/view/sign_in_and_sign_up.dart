@@ -3,6 +3,8 @@ import 'package:mobile/common/app_button.dart';
 import 'package:mobile/config/assets/app_image.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:mobile/config/themes/app_color.dart';
+import 'package:mobile/presentation/view/login_page.dart';
+import 'package:mobile/presentation/view/sign_up_page.dart';
 
 class SignInAndSignUp extends StatelessWidget {
   const SignInAndSignUp({super.key});
@@ -24,7 +26,9 @@ class SignInAndSignUp extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 50),
               child: SizedBox(
                 width: double.infinity,
-                child: AppButton(content: "Sign In Here", onPressed: () {}),
+                child: AppButton(content: "Sign In Here", onPressed: () { 
+                  Navigator.push(context, MaterialPageRoute(builder: (_)=> const LoginPage()));
+                }),
               ),
             ),
             SizedBox(height: 20),
@@ -34,7 +38,9 @@ class SignInAndSignUp extends StatelessWidget {
                 width: double.infinity,
                 child: AppButtonReverse(
                   content: "Sign Up Now",
-                  onPressed: () {},
+                  onPressed: () {
+                     Navigator.push(context, MaterialPageRoute(builder: (_)=> const SignUpPage()));
+                  },
                 ),
               ),
             ),
