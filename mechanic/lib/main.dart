@@ -1,22 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:mobile/config/themes/app_theme.dart';
-import 'package:mobile/presentation/controller/rescue_flow_controller.dart';
-import 'package:mobile/presentation/view/intro_page.dart';
-import 'package:provider/provider.dart';
+import 'package:mechanic/config/themes/app_theme.dart';
+import 'package:mechanic/presentation/view/intro_page.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(MultiProvider(
-    providers: [
-        ChangeNotifierProvider(
-          create: (_) => RescueFlowController(),
-        ),
-        // Có thể thêm các controller khác sau này
-      ],
-      child: const App(),
-    ),
+  runApp(App()
   );
 }
 
