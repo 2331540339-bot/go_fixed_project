@@ -1,8 +1,12 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:mobile/config/assets/app_image.dart';
+import 'package:mobile/data/remote/geocoding_api.dart';
 import 'package:mobile/presentation/controller/user_controller.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -21,10 +25,17 @@ class _SettingsPageState extends State<SettingsPage> {
   String _phone = '...';
   String _address = '...';
 
+  LatLng? _currentLocation; // Vị trí tọa độ hiện tại (tùy chọn)
+  String _currentAddress =
+      'Đang tải vị trí...'; // Địa chỉ để hiển thị trên AppBar
+  bool _loadingLocation = true; // Cờ để hiển thị loading
+
+  StreamSubscription<Position>? _positionStreamSubscription;
+
   @override
   void initState() {
     super.initState();
-    // Bắt đầu tải dữ liệu ngay lập tức
+    _startLocationStream();
     _initControllers();
   }
 
@@ -52,14 +63,12 @@ class _SettingsPageState extends State<SettingsPage> {
       if (!mounted) return;
 
       debugPrint('LỖI KHI TẢI TÊN NGƯỜI DÙNG: $e');
-     
 
       // 🎯 Logic xác định lỗi 401/lỗi xác thực
       final error = e.toString().toLowerCase();
       if (error.contains('401') ||
           error.contains('unauthorized') ||
-          error.contains('not authenticated')) {
-      }
+          error.contains('not authenticated')) {}
 
       setState(() {
         _name = 'Chưa đăng nhập';
@@ -79,6 +88,95 @@ class _SettingsPageState extends State<SettingsPage> {
         _imageFile = image;
       });
     }
+  }
+
+  Future<void> _startLocationStream() async {
+    // 1. Kiểm tra quyền và dịch vụ (Giữ nguyên logic từ trước)
+    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      if (mounted) setState(() => _currentAddress = 'Vị trí bị tắt');
+      return Future.error('Dịch vụ Vị trí đã bị tắt.');
+    }
+
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        if (mounted) setState(() => _currentAddress = 'Từ chối truy cập');
+        return Future.error('Quyền truy cập vị trí đã bị từ chối.');
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      if (mounted) setState(() => _currentAddress = 'Bị từ chối vĩnh viễn');
+      return Future.error('Quyền bị từ chối vĩnh viễn.');
+    }
+
+    // 2. Định cấu hình Stream
+    const LocationSettings locationSettings = LocationSettings(
+      accuracy: LocationAccuracy.high,
+      distanceFilter: 50, // Cập nhật khi di chuyển 50 mét
+    );
+
+    // Hủy Stream cũ nếu có
+    _positionStreamSubscription?.cancel();
+
+    // Lấy vị trí ban đầu
+    try {
+      Position initialPosition = await Geolocator.getCurrentPosition();
+      await _updateLocation(initialPosition);
+    } catch (e) {
+      if (mounted)
+        setState(() {
+          _currentAddress = 'Không lấy được vị trí ban đầu';
+          _loadingLocation = false;
+        });
+    }
+
+    // 3. Bắt đầu lắng nghe Stream
+    _positionStreamSubscription =
+        Geolocator.getPositionStream(locationSettings: locationSettings).listen(
+          (Position position) {
+            _updateLocation(position); // Gọi hàm cập nhật vị trí và địa chỉ
+          },
+          onError: (error) {
+            if (mounted) {
+              setState(() {
+                _currentAddress = 'Lỗi theo dõi vị trí';
+                _loadingLocation = false;
+              });
+            }
+            debugPrint('Lỗi theo dõi vị trí: $error');
+          },
+        );
+  }
+
+  // Hàm mới để xử lý cập nhật vị trí và chuyển đổi sang địa chỉ
+  Future<void> _updateLocation(Position position) async {
+    final location = LatLng(position.latitude, position.longitude);
+
+    // Tạm thời đặt cờ loading là true khi đang chờ chuyển đổi
+    if (mounted) {
+      setState(() {
+        _currentLocation = location;
+        _loadingLocation = true;
+      });
+    }
+
+    final address = await GeocodingApi.reverseGeocode(location);
+
+    if (mounted) {
+      setState(() {
+        _currentAddress = address ?? 'Không xác định được địa chỉ';
+        _loadingLocation = false;
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _positionStreamSubscription?.cancel();
+    super.dispose();
   }
 
   @override
@@ -106,13 +204,15 @@ class _SettingsPageState extends State<SettingsPage> {
             ),
             const SizedBox(height: 20),
             Container(
+              width: double.infinity,
               padding: EdgeInsets.all(16.0),
               decoration: BoxDecoration(
                 color: Colors.grey[200],
                 borderRadius: BorderRadius.circular(8.0),
               ),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   InkWell(
                     onTap: () {
@@ -157,7 +257,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   ),
                   SizedBox(height: 8),
                   Text(
-                    'Address: 123 Main St, City, Country',
+                    "Address: ${_loadingLocation ? 'Đang tải...' : _currentAddress}",
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,

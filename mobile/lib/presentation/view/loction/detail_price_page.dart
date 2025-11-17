@@ -1,6 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:latlong2/latlong.dart';
+import 'package:mobile/data/remote/geocoding_api.dart';
 import 'package:provider/provider.dart';
 
 import 'package:mobile/config/assets/app_icon.dart';
@@ -29,7 +34,14 @@ class _DetailPricePageState extends State<DetailPricePage> {
   bool _loadingName = true;
   bool _isCallingRescue = false;
 
-  final String _location = 'Q12, TP.HCM';
+
+  LatLng? _currentLocation; // Vị trí tọa độ hiện tại (tùy chọn)
+  String _currentAddress =
+      'Đang tải vị trí...'; // Địa chỉ để hiển thị trên AppBar
+  bool _loadingLocation = true; // Cờ để hiển thị loading
+
+  StreamSubscription<Position>? _positionStreamSubscription;
+
 
   final _baseStyle = TextStyle(
     fontSize: 20.sp,
@@ -45,9 +57,91 @@ class _DetailPricePageState extends State<DetailPricePage> {
   @override
   void initState() {
     super.initState();
+     _startLocationStream();
     _initControllers();
   }
+Future<void> _startLocationStream() async {
+    // 1. Kiểm tra quyền và dịch vụ (Giữ nguyên logic từ trước)
+    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      if (mounted) setState(() => _currentAddress = 'Vị trí bị tắt');
+      return Future.error('Dịch vụ Vị trí đã bị tắt.');
+    }
 
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        if (mounted) setState(() => _currentAddress = 'Từ chối truy cập');
+        return Future.error('Quyền truy cập vị trí đã bị từ chối.');
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      if (mounted) setState(() => _currentAddress = 'Bị từ chối vĩnh viễn');
+      return Future.error('Quyền bị từ chối vĩnh viễn.');
+    }
+
+    // 2. Định cấu hình Stream
+    const LocationSettings locationSettings = LocationSettings(
+      accuracy: LocationAccuracy.high,
+      distanceFilter: 50, // Cập nhật khi di chuyển 50 mét
+    );
+
+    // Hủy Stream cũ nếu có
+    _positionStreamSubscription?.cancel();
+
+    // Lấy vị trí ban đầu
+    try {
+      Position initialPosition = await Geolocator.getCurrentPosition();
+      await _updateLocation(initialPosition);
+    } catch (e) {
+      if (mounted)
+        setState(() {
+          _currentAddress = 'Không lấy được vị trí ban đầu';
+          _loadingLocation = false;
+        });
+    }
+
+    // 3. Bắt đầu lắng nghe Stream
+    _positionStreamSubscription =
+        Geolocator.getPositionStream(locationSettings: locationSettings).listen(
+          (Position position) {
+            _updateLocation(position); // Gọi hàm cập nhật vị trí và địa chỉ
+          },
+          onError: (error) {
+            if (mounted) {
+              setState(() {
+                _currentAddress = 'Lỗi theo dõi vị trí';
+                _loadingLocation = false;
+              });
+            }
+            debugPrint('Lỗi theo dõi vị trí: $error');
+          },
+        );
+  }
+
+  // Hàm mới để xử lý cập nhật vị trí và chuyển đổi sang địa chỉ
+  Future<void> _updateLocation(Position position) async {
+    final location = LatLng(position.latitude, position.longitude);
+
+    // Tạm thời đặt cờ loading là true khi đang chờ chuyển đổi
+    if (mounted) {
+      setState(() {
+        _currentLocation = location;
+        _loadingLocation = true;
+      });
+    }
+
+    final address = await GeocodingApi.reverseGeocode(location);
+
+    if (mounted) {
+      setState(() {
+        _currentAddress = address ?? 'Không xác định được địa chỉ';
+        _loadingLocation = false;
+      });
+    }
+  }
   Future<void> _initControllers() async {
     _userCtrl = await UserController.create();
     _serviceCtrl = await ServiceController.create();
@@ -127,6 +221,11 @@ class _DetailPricePageState extends State<DetailPricePage> {
     }
   }
 
+ @override
+  void dispose() {
+    _positionStreamSubscription?.cancel();
+    super.dispose();
+  }
   @override
   Widget build(BuildContext context) {
     final String? authToken = _userCtrl?.userRepository.token;
@@ -146,7 +245,7 @@ class _DetailPricePageState extends State<DetailPricePage> {
         logo: Image.asset(AppImages.mainLogo, height: 100.h, width: 100.w),
         name: _name,
         loadingName: _loadingName,
-        location: _location,
+        location: _loadingLocation ? 'Đang tải...' : _currentAddress,
         onAvatarTap: () {},
         avatarWidget: SvgPicture.asset(AppIcon.user),
       ),

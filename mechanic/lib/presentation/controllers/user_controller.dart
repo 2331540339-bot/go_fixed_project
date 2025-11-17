@@ -17,27 +17,29 @@ class UserController {
   UserRepository get userRepository => _repo;
 
   String? get token => _repo.token;
+  String? _currentUserId;
+  String? get currentUserId => _currentUserId;
 
-  /// Chỉ đăng nhập thành công nếu role là 'mechanic'
+
   Future<bool> login({required String email, required String password}) async {
     _lastError = null;
+    _currentUserId = null; 
 
-    // 1) gọi repo
+
     final ok = await _repo.login(email, password);
     if (!ok) {
       _lastError = _repo.lastError ?? 'Đăng nhập thất bại';
       return false;
     }
 
-    // 2) đọc profile/role đã lưu
     final user = await _repo.getStoredProfile();
-    final role = user?.role; // enum UserRole?
+    final role = user?.role; 
+    final userId = user?.id; 
 
-    if (role == UserRole.mechanic) {
+    if (role == UserRole.mechanic && userId != null) {
+      _currentUserId = userId;
       return true;
     }
-
-    // 3) không phải thợ -> huỷ phiên + báo lỗi
     _lastError = 'Chỉ tài khoản THỢ (mechanic) được phép đăng nhập.';
     await _repo.logout();
     return false;

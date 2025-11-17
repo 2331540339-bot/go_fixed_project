@@ -4,12 +4,13 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
-import 'package:mobile/config/api_config.dart';
+import 'package:mechanic/config/api_config.dart';
+
 
 class MapRouteBox extends StatefulWidget {
   const MapRouteBox({
+    
     super.key,
-    this.initialOrigin, 
     this.dest,             
     required this.apiKey,   
     this.height = 260,
@@ -20,12 +21,11 @@ class MapRouteBox extends StatefulWidget {
     this.showUserMarker = true,
     this.showDestMarker = true,
     this.padding = const EdgeInsets.all(12),
-    this.vehicle = 'car',         
-    this.mapTilerKey,               
+    this.vehicle = 'bike',           // car | bike | truck | hd | taxi
+    this.mapTilerKey,              
   });
-
-  final LatLng? initialOrigin; 
-  final LatLng? dest; 
+  
+  final LatLng? dest;
   final String apiKey;
   final double height;
   final double borderRadius;
@@ -44,12 +44,11 @@ class MapRouteBox extends StatefulWidget {
 
 class _MapRouteBoxState extends State<MapRouteBox> {
   final _mapController = MapController();
-
   late final String _mapTilerKey =
       widget.mapTilerKey ?? ApiConfig.goongMaptilesApiKey;
 
-  LatLng? _origin;                 
-  List<LatLng> _route = [];       
+  LatLng? _origin;                
+  List<LatLng> _route = [];        
   bool _loading = true;
   String? _error;
   bool _apiKeyInvalid = false;
@@ -59,6 +58,7 @@ class _MapRouteBoxState extends State<MapRouteBox> {
   
   static const LatLng _defaultCenter = LatLng(21.028511, 105.804817); 
 
+  // Giới hạn khoảng cách gọi route (tránh call xuyên lục địa)
   bool _tooFar(LatLng a, LatLng b, {double maxKm = 800}) {
     const d = Distance();
     return d.as(LengthUnit.Kilometer, a, b) > maxKm;
@@ -89,12 +89,12 @@ class _MapRouteBoxState extends State<MapRouteBox> {
     }
   }
   
-
+  // Hàm set camera về vị trí hiện tại
   void _fitToCurrentLocation(LatLng location) {
     final fit = CameraFit.bounds(
       bounds: LatLngBounds.fromPoints( [location]),
       padding: const EdgeInsets.all(32),
-      minZoom: 16.0, 
+      minZoom: 16.0, // Zoom sát hơn vào vị trí hiện tại
     );
     if (_mapReady) {
       _mapController.fitCamera(fit);
@@ -108,72 +108,47 @@ class _MapRouteBoxState extends State<MapRouteBox> {
     super.initState();
     _initRoute();
   }
-  
-  //  Nếu Widget được cập nhật với vị trí mới, chúng ta cần tính toán lại route
-  @override
-  void didUpdateWidget(covariant MapRouteBox oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    
-    // Kiểm tra nếu origin hoặc destination thay đổi
-    if (widget.initialOrigin != oldWidget.initialOrigin || 
-        widget.dest != oldWidget.dest) {
-      // Đặt lại trạng thái loading và tính toán lại route
-      setState(() {
-        _loading = true;
-        _route = [];
-        _error = null;
-      });
-      _initRoute();
-    }
-  }
-
 
   Future<void> _initRoute() async {
     try {
-      LatLng current;
-      
-      // 1) KIỂM TRA ORIGIN ĐÃ ĐƯỢC TRUYỀN VÀO CHƯA
-      if (widget.initialOrigin != null) {
-        current = widget.initialOrigin!;
-        debugPrint('Using external origin: $current');
-      } else {
-        // 2) Nếu không có Origin, gọi Geolocator để lấy vị trí hiện tại
-        LocationPermission perm = await Geolocator.checkPermission();
-        if (perm == LocationPermission.denied) {
-          perm = await Geolocator.requestPermission();
-        }
-        if (perm == LocationPermission.denied ||
-            perm == LocationPermission.deniedForever) {
-          throw 'Location permission denied';
-        }
-
-        final pos = await Geolocator.getCurrentPosition(
-          desiredAccuracy: LocationAccuracy.high,
-          timeLimit: ApiConfig.locationTimeout,
-        );
-        current = LatLng(pos.latitude, pos.longitude);
-        debugPrint('Current location (Geolocator): $current');
+      // 1) Quyền vị trí (luôn cần để lấy _origin)
+      LocationPermission perm = await Geolocator.checkPermission();
+      if (perm == LocationPermission.denied) {
+        perm = await Geolocator.requestPermission();
+      }
+      if (perm == LocationPermission.denied ||
+          perm == LocationPermission.deniedForever) {
+        throw 'Location permission denied';
       }
 
-      // --- PHẦN LOGIC XỬ LÝ KHI CÓ VỊ TRÍ ORIGIN ---
-      
+      // 2) Lấy vị trí hiện tại
+      final pos = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+        timeLimit: ApiConfig.locationTimeout,
+      );
+      final current = LatLng(pos.latitude, pos.longitude);
+      debugPrint('Current location: $current');
+
       if (widget.dest == null) {
-        // Không có Dest, chỉ hiển thị Origin
         setState(() {
           _origin = current;
           _route = [];
           _loading = false;
           _error = null;
         });
+      
         _fitToCurrentLocation(current);
         return; 
       }
+      
+      // 3) Kiểm tra Goong REST key (chỉ khi có dest để gọi Directions)
       if (widget.apiKey.isEmpty || widget.apiKey.length < 10) {
         throw 'Goong API key không hợp lệ. Vui lòng kiểm tra REST API key.';
       }
       
-      final dest = widget.dest!; 
+      final dest = widget.dest!; // Dùng ! vì đã kiểm tra null ở trên
 
+      // 4) Nếu khoảng cách quá xa → không gọi Directions, chỉ hiển thị markers
       if (_tooFar(current, dest)) {
         setState(() {
           _origin = current;
@@ -187,7 +162,7 @@ class _MapRouteBoxState extends State<MapRouteBox> {
         return;
       }
 
-     
+      // 5) Gọi Goong Directions API
       final params = {
         'origin': '${current.latitude},${current.longitude}',
         'destination': '${dest.latitude},${dest.longitude}',
@@ -420,7 +395,7 @@ class _MapRouteBoxState extends State<MapRouteBox> {
                 if (showUser || showDest)
                   MarkerLayer(
                     markers: [
-                      // Marker vị trí người dùng (_origin)
+                    
                       if (showUser)
                         Marker(
                           point: _origin!,

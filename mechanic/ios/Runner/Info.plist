@@ -2,6 +2,12 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Ứng dụng cần quyền truy cập vị trí liên tục để theo dõi dịch vụ và hỗ trợ người dùng ngay cả khi không sử dụng ứng dụng.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Ứng dụng cần quyền truy cập vị trí để cung cấp các dịch vụ liên quan đến vị trí của bạn.</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>Ứng dụng cần quyền truy cập vị trí liên tục để hoạt động tốt nhất.</string>
 	<key>NSAppTransportSecurity</key>
 	<dict>
   		<key>NSAllowsArbitraryLoads</key><true/>

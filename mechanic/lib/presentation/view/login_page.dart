@@ -6,7 +6,6 @@ import 'package:mechanic/config/themes/app_color.dart';
 import 'package:mechanic/presentation/controllers/user_controller.dart';
 import 'package:mechanic/presentation/view/home_page.dart';
 
-
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
@@ -23,6 +22,7 @@ class _LoginPageState extends State<LoginPage> {
 
   UserController? _userCtrl;
   bool _ctrlReady = false;
+
   @override
   void initState() {
     super.initState();
@@ -31,6 +31,7 @@ class _LoginPageState extends State<LoginPage> {
 
   Future<void> _initCtrl() async {
     _userCtrl = await UserController.create();
+
     if (!mounted) return;
     setState(() => _ctrlReady = true);
   }
@@ -138,19 +139,25 @@ class _LoginPageState extends State<LoginPage> {
                                 if (!context.mounted) return;
 
                                 if (ok) {
-                                  // Điều hướng ngay, không cần delay
-                                  // Navigator.of(context).pushReplacement(
-                                  //   MaterialPageRoute(builder: (_) => const HomePage()),
-                                  // );
+                                  // 💡 LẤY ID TỪ INSTANCE CỦA CONTROLLER SAU KHI ĐĂNG NHẬP THÀNH CÔNG
+                                  final mechanicId = _userCtrl!.currentUserId;
 
-                                  //xoá stack cũ luôn
-                                  Navigator.of(context).pushAndRemoveUntil(
-                                    MaterialPageRoute(
-                                      builder: (_) => const HomePage(),
-                                    ),
-                                    (route) => false,
-                                  );
-                                } else {                               
+                                  if (mechanicId != null) {
+                                    // Điều hướng và truyền ID thợ
+                                    Navigator.of(context).pushAndRemoveUntil(
+                                      MaterialPageRoute(
+                                        builder: (_) => HomePage(
+                                          mechanicId: mechanicId,
+                                        ), 
+                                      ),
+                                      (route) => false,
+                                    );
+                                  } else {                                  
+                                    _showSnack(
+                                      'Đăng nhập thành công, nhưng không tìm thấy ID.',
+                                    );
+                                  }
+                                } else {
                                   final msg =
                                       _userCtrl!.lastError ??
                                       'Đăng nhập thất bại. Vui lòng kiểm tra thông tin.';

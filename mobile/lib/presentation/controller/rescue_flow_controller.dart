@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:mobile/data/model/service.dart';
 
 class RescueFlowController extends ChangeNotifier {
@@ -14,6 +15,18 @@ class RescueFlowController extends ChangeNotifier {
   double? get priceEstimate => _priceEstimate;
 
   // SETTER + notify
+  LatLng? get latLngLocation {
+    if (_location == null) return null;
+
+    // Giả định Map lưu trữ 'lat' và 'lng' dưới dạng double
+    final lat = _location!['lat'] as double?;
+    final lng = _location!['lng'] as double?;
+
+    if (lat != null && lng != null) {
+      return LatLng(lat, lng);
+    }
+    return null;
+  }
 
   void setService(Service service) {
     _service = service;
