@@ -1,11 +1,13 @@
+import 'package:mobile/config/router/app_router.dart';
+
 class Endpoints {
-  static const base = 'http://localhost:8000'; // đổi theo môi trường
+  static final base = AppRouter.main_domain; 
 
   // user
-  static const login = '$base/account/login';
-  static const register = '$base/account/create';
-  static const me    = '$base/account/me';
+  static final login = '$base/account/login';
+  static final register = '$base/account/create';
+  static final me    = '$base/account/me';
 
   // services
-  static const services = '$base/services';
+  static final services = '$base/services';
 }

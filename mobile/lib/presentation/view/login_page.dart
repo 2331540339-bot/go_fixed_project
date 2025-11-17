@@ -4,10 +4,9 @@ import 'package:mobile/config/assets/app_image.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:mobile/config/themes/app_color.dart';
 import 'package:mobile/presentation/controller/user_controller.dart';
-import 'package:mobile/config/router/app_router.dart';
 import 'package:mobile/presentation/view/main_screen.dart';
 
-const String kBaseUrl = AppRouter.main_domain;
+
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
