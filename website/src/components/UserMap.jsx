@@ -14,7 +14,7 @@ L.Marker.prototype.options.icon = defaultIcon;
 
 function UserMap({onPositionChange}) {
   const [position, setPosition] = useState(null);
-
+  const [positionMechanic, setPositionMechanic] = useState(null);
 
   useEffect(() => {
     if (!navigator.geolocation) {
@@ -37,7 +37,7 @@ function UserMap({onPositionChange}) {
     );
   }, [onPositionChange]);
 
-  if (!position) return <p className="mt-10 text-center">⏳ Đang xác định vị trí của bạn...</p>;
+  if (!position) return <p className="mt-10 text-center text-n-50">Đang xác định vị trí của bạn...</p>;
 
   return (  
     <div className="w-[50%] overflow-hidden shadow-lg h-70 rounded-xl">
@@ -55,8 +55,13 @@ function UserMap({onPositionChange}) {
 
         {/* Marker người dùng */}
         <Marker position={position}>
-          <Popup>Bạn đang ở đây 📍</Popup>
+          <Popup>Bạn đang ở đây</Popup>
         </Marker>
+
+        {/* Marker mechanic */}
+        {positionMechanic != null ? <Marker position={[10.825367998402108, 106.63069386043213]} className="hidden">
+          <Popup>Thợ máy đang ở đây</Popup>
+        </Marker>: console.log("Chưa có vị trí thợ")}
       </MapContainer>
     </div>
   );

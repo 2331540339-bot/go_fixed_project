@@ -7,7 +7,7 @@ const morgan = require('morgan');
 const cookieParser = require('cookie-parser');
 const dotenv = require('dotenv');
 const {Server} = require('socket.io');
-const socketInit = require('./socket/socketHandler');
+const {socketInit} = require('./socket/socketHandler');
 //env config
 dotenv.config();
 //Parse Json

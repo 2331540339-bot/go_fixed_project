@@ -22,7 +22,7 @@ const RescueRequest = new schema(
     status: {
       type: String,
       require: true,
-      enum: ["pending", "accepted", "in_progress", "completed", "cancelled"],
+      enum: ["pending", "accepted", "in_progress", "completed", "cancelled", "not-accepted"],
       default: "pending",
     },
     location: {

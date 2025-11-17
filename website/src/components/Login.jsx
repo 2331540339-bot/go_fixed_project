@@ -1,5 +1,3 @@
-// src/components/LoginModal.jsx
-import React from "react";
 import { loginAPI } from "../app/api";
 import { useState } from "react";
 import logo from "../assets/logo.png";
