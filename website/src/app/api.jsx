@@ -1,7 +1,9 @@
 import axios from 'axios';
 import axiosClient from './axiosClient';
 const ACCOUNT_URL = "http://localhost:8000/account";
-const SERVICE_URL = "http://localhost:8000/service";
+const CART_URL = "http://localhost:8000/cart";
+const CATALOG_URL = "http://localhost:8000/catalog";
+const COMMERCE_URL = "http://localhost:8000/commerce";
 
 const loginAPI = (email, password_hash) => {
     return axios
@@ -27,3 +29,46 @@ const rescue_requestAPI = (description, location, price_estimate, idService) =>{
         throw err
     })
 }; export {rescue_requestAPI}
+
+const catalogAPI_showall = () => {
+    return axios
+    .get(`${COMMERCE_URL}/catalog/showall`)
+    .then((res) => res.data)
+    .catch((err) => {throw err})
+}; export {catalogAPI_showall}
+
+const productAPI_showall = () => {
+    return axios
+    .get(`${COMMERCE_URL}/product/showall`)
+    .then((res) => res.data)
+    .catch((err) => {throw err})
+}; export {productAPI_showall}
+
+const productAPI_detail = (product_id) => {
+    return axios
+    .get(`${COMMERCE_URL}/product/detail/${product_id}`)
+    .then((res) => res.data)
+    .catch((err) => {throw err})
+}; export {productAPI_detail}
+
+const orderAPI_create = (items, payment_method, shipping_address) => {
+    return axiosClient
+    .post(`order/create/`, {items, payment_method, shipping_address})
+    .then((res) => res.data)
+    .catch((err) => {throw err})
+}; export {orderAPI_create}
+
+const cartAPI_add = (product_id, quantity) => {
+    return axiosClient
+    .post(`${CART_URL}/add`, {product_id, quantity})
+    .then((res) => res.data)
+    .catch((err) => {throw err})
+}; export {cartAPI_add}
+
+const cartAPI_get = () => {
+    return axiosClient
+    .get(`${CART_URL}/get`)
+    .then((res) => res.data)
+    .catch((err) => {throw err})
+}; export {cartAPI_get}
+

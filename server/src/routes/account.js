@@ -3,7 +3,7 @@ const router = express.Router();
 const accountController = require('../app/controllers/AccountController')
 const middlewareController = require('../app/controllers/MiddlewareController')
 
-router.get('/showall', middlewareController.verifyToken,  accountController.showall)
+router.get('/showall', middlewareController.verifyTokenAndAdmin,  accountController.showall)
 router.post('/login', accountController.login)
 router.post('/create', accountController.create)
 router.delete('/delete/:id', middlewareController.verifyTokenAndAdmin , accountController.delete)

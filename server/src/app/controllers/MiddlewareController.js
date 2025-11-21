@@ -1,9 +1,7 @@
 const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
-const { response } = require('express');
 dotenv.config();
 const services= require('../models/Service');
-const Service = require('../models/Service');
 
 const middlewareController = {
     //verify token
