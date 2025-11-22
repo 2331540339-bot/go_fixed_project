@@ -33,6 +33,19 @@ void showModalSuccess(BuildContext context) {
   );
 }
 
+void showModalConfirm(
+  BuildContext context, {
+  required String message,
+  required VoidCallback onConfirm,
+}) {
+  showDialog(
+    context: context,
+    builder: (context) => ShowModalCancel(
+      message: message,
+      onConfirm: onConfirm,
+    ),
+  );
+}
 
 class ShowModalCancel extends StatelessWidget {
   const ShowModalCancel({
@@ -106,10 +119,6 @@ class ShowModalCancel extends StatelessWidget {
     );
   }
 }
-
-// ------------------------------------------
-// 2. WIDGET MODAL THÀNH CÔNG
-// ------------------------------------------
 
 class ShowModalSuccess extends StatelessWidget {
   const ShowModalSuccess({

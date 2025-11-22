@@ -5,7 +5,7 @@ import 'package:latlong2/latlong.dart';
 import 'package:mechanic/config/api_config.dart';
 import 'package:mechanic/presentation/services/socket_service.dart';
 import 'package:mechanic/presentation/view/map_screen.dart';
-import 'package:mechanic/presentation/view/open_map.dart';
+import 'package:mechanic/presentation/widgets/modal/showModalCenterSheet.dart';
 
 class HomePage extends StatefulWidget {
   final String mechanicId;
@@ -24,6 +24,21 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     _socketService.initializeSocket(widget.mechanicId, isMechanic: true);
+    _socketService.onIncomingRescueRequest = (data) {
+      if (!mounted) return;
+      showModalConfirm(
+        context,
+        message: 'Bạn có muốn nhận yêu cầu cứu hộ này không?',
+        onConfirm: () {
+          // Gửi sự kiện chấp nhận yêu cầu cứu hộ đến server
+          _socketService.socket.emit('accept_rescue_request', {
+            'mechanicId': widget.mechanicId,
+            'requestId': data['_id'],
+          });
+         
+        },
+      );
+    };
     _determinePosition();
   }
 

@@ -9,6 +9,7 @@ import 'package:mobile/config/themes/app_color.dart';
 import 'package:mobile/data/remote/geocoding_api.dart';
 import 'package:mobile/presentation/controller/rescue_flow_controller.dart';
 import 'package:mobile/presentation/controller/user_controller.dart';
+import 'package:mobile/presentation/services/socket_service.dart';
 import 'package:mobile/presentation/view/loction/map_screen.dart';
 import 'package:mobile/presentation/widgets/appbars/main_app_bar.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -34,12 +35,23 @@ class _SearchMechanicState extends State<SearchMechanic> {
   bool _loadingLocation = true; 
 
   StreamSubscription<Position>? _positionStreamSubscription;
+  final SocketService _socketService = SocketService();
 
   @override
   void initState() {
     super.initState();
     _initControllers();
     _startLocationStream();
+  _socketService.initializeSocket("69183c7c8149e7fe96495bc6", isMechanic: false);
+  _socketService.onAcceptedStatusRescue = (data) {
+      final msg = data['message'] ?? 'Yêu cầu cứu hộ đã được cập nhật';
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(msg.toString())),
+      );
+
+      // hoặc show dialog / chuyển trang / update trạng thái...
+    };
   }
 
   void _handleDestinationSelected(LatLng newDest) {
