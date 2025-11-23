@@ -113,7 +113,8 @@ class CartController{
 
     async removeItem  (req, res){
         try {
-            const {product_id } = req.body;
+            console.log(req.body);
+            const product_id= req.body.product_id;
             const user_id = req.user.id;
             let cart = await Cart.findOne({ user_id });
 

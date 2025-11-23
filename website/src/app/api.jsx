@@ -72,3 +72,16 @@ const cartAPI_get = () => {
     .catch((err) => {throw err})
 }; export {cartAPI_get}
 
+const cartAPI_update = (product_id, quantity) => {
+    return axiosClient
+    .patch(`${CART_URL}/update`, {product_id, quantity})
+    .then((res) => res.data)
+    .catch((err) => {throw err})
+}; export {cartAPI_update}
+
+const cartAPI_delete = (product_id) => {
+    return axiosClient
+    .delete(`${CART_URL}/delete`, {data: { product_id }})
+    .then((res) => res.data)
+    .catch((err) => {throw err})
+}; export {cartAPI_delete}

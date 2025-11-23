@@ -1,0 +1,77 @@
+[{
+  "_id": {
+    "$oid": "6922bbf44ee3b593e2e6cc11"
+  },
+  "catalog_name": "Nhớt – Dầu bôi trơn",
+  "image": "https://cdn-icons-png.flaticon.com/512/1048/1048949.png"
+},
+{
+  "_id": {
+    "$oid": "6922bbf44ee3b593e2e6cc12"
+  },
+  "catalog_name": "Lốp – Vỏ xe",
+  "image": "https://cdn-icons-png.flaticon.com/512/7137/7137265.png"
+},
+{
+  "_id": {
+    "$oid": "6922bbf44ee3b593e2e6cc13"
+  },
+  "catalog_name": "Ắc Quy – Điện xe",
+  "image": "https://cdn-icons-png.flaticon.com/512/6311/6311000.png"
+},
+{
+  "_id": {
+    "$oid": "6922bbf44ee3b593e2e6cc14"
+  },
+  "catalog_name": "Phanh – Thắng xe",
+  "image": "https://cdn-icons-png.flaticon.com/512/6011/6011712.png"
+},
+{
+  "_id": {
+    "$oid": "6922bbf44ee3b593e2e6cc15"
+  },
+  "catalog_name": "Phụ tùng động cơ",
+  "image": "https://cdn-icons-png.flaticon.com/512/3183/3183362.png"
+},
+{
+  "_id": {
+    "$oid": "6922bbf44ee3b593e2e6cc16"
+  },
+  "catalog_name": "Phuộc – Giảm xóc",
+  "image": "https://cdn-icons-png.flaticon.com/512/6814/6814969.png"
+},
+{
+  "_id": {
+    "$oid": "6922bbf44ee3b593e2e6cc17"
+  },
+  "catalog_name": "Đèn – Bóng xe",
+  "image": "https://cdn-icons-png.flaticon.com/512/1041/1041916.png"
+},
+{
+  "_id": {
+    "$oid": "6922bbf44ee3b593e2e6cc18"
+  },
+  "catalog_name": "Gương – Kính",
+  "image": "https://cdn-icons-png.flaticon.com/512/2490/2490291.png"
+},
+{
+  "_id": {
+    "$oid": "6922bbf44ee3b593e2e6cc19"
+  },
+  "catalog_name": "Bộ dụng cụ sửa xe",
+  "image": "https://cdn-icons-png.flaticon.com/512/895/895039.png"
+},
+{
+  "_id": {
+    "$oid": "6922bbf44ee3b593e2e6cc1a"
+  },
+  "catalog_name": "Đồ chơi – Trang trí xe",
+  "image": "https://cdn-icons-png.flaticon.com/512/1785/1785351.png"
+},
+{
+  "_id": {
+    "$oid": "6922bbf44ee3b593e2e6cc1b"
+  },
+  "catalog_name": "Phụ kiện bảo hộ",
+  "image": "https://cdn-icons-png.flaticon.com/512/1041/1041880.png"
+}]
