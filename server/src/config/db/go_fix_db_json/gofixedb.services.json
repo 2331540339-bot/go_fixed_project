@@ -1,0 +1,54 @@
+[{
+  "_id": {
+    "$oid": "68ea1226a641c3a9e17e90f5"
+  },
+  "name": "Vá lốp",
+  "base_price": "15000",
+  "icon_url": "https://cdn-icons-png.flaticon.com/512/1160/1160358.png",
+  "kind_services": "simple_services"
+},
+{
+  "_id": {
+    "$oid": "68ea1226a641c3a9e17e90f6"
+  },
+  "name": "Nhiên liệu",
+  "base_price": "25000",
+  "icon_url": "https://cdn-icons-png.flaticon.com/512/1160/1160358.png",
+  "kind_services": "simple_services"
+},
+{
+  "_id": {
+    "$oid": "68ea1226a641c3a9e17e90f7"
+  },
+  "name": "Điện xe",
+  "base_price": "Chờ kiểm tra",
+  "icon_url": "https://cdn-icons-png.flaticon.com/512/1160/1160358.png",
+  "kind_services": "advances_services"
+},
+{
+  "_id": {
+    "$oid": "68ea1226a641c3a9e17e90f8"
+  },
+  "name": "Động cơ",
+  "base_price": "Chờ kiểm tra",
+  "icon_url": "https://cdn-icons-png.flaticon.com/512/1160/1160358.png",
+  "kind_services": "advances_services"
+},
+{
+  "_id": {
+    "$oid": "68ea1226a641c3a9e17e90f9"
+  },
+  "name": "Cứu hộ",
+  "base_price": "25000",
+  "icon_url": "https://cdn-icons-png.flaticon.com/512/1160/1160358.png",
+  "kind_services": "rescue_vehicles"
+},
+{
+  "_id": {
+    "$oid": "6904cadd8a329607cbc710f9"
+  },
+  "name": "Đẩy hộ",
+  "base_price": "15000",
+  "icon_url": "https://cdn-icons-png.flaticon.com/512/1160/1160358.png",
+  "kind_services": "simple_services"
+}]

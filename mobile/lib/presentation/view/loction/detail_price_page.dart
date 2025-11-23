@@ -236,7 +236,7 @@ Future<void> _startLocationStream() async {
     final service = rescueFlow.service;
     final desc = rescueFlow.description ?? 'Không có mô tả';
     final base = rescueFlow.priceEstimate ?? service?.basePrice ?? 0;
-    final plus = 100000;
+    final  plus = 100000;
 
     final totalPrice = base + plus;
 

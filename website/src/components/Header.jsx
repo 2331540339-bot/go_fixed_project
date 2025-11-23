@@ -34,8 +34,8 @@ function Header({onAuthChange}){
                 <div className='items-center hidden md:flex md:gap-x-12'>
                         <Link to='#' className='font-semibold text-md font-grostek text-n-800'>About us</Link>
                         <Link to="/services" className='font-semibold text-md font-grostek text-n-800'>Services</Link>
-                        <Link to='#' className='font-semibold text-md font-grostek text-n-800'>Use Cases</Link>
-                        <Link to='#' className='font-semibold text-md font-grostek text-n-800'>Genuine Parts </Link>
+                        <Link to='/cart' className='font-semibold text-md font-grostek text-n-800'>Carts</Link>
+                        <Link to='/genuine-part' className='font-semibold text-md font-grostek text-n-800'>Genuine Parts </Link>
                 </div>
 
                 <div className="items-center hidden md:flex md:gap-x-12 md:mr-5" >
