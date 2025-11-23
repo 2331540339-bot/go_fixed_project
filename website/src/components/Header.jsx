@@ -1,15 +1,27 @@
 import { Link } from 'react-router-dom'
 import logo from '../assets/logo.png'
 import Login from '../components/Login'
-import { useState } from 'react'
-function Header(){
+import { useEffect, useState } from 'react'
+import LoginCheck from "./LoginCheck";
+function Header({onAuthChange}){
 
     const [isClicked, setIsClicked] = useState(false);
-
+    const [loginCheck, setLoginCheck] = useState(false);
     const handleLogin = () => {
         setIsClicked(true);
+        onAuthChange();
         console.log(isClicked);
     };
+
+    const handleLogout = () => {
+        localStorage.removeItem('token');
+        setLoginCheck(false);
+        onAuthChange();
+    }
+    useEffect(() =>{
+        setLoginCheck(LoginCheck)
+        console.log("Trạng thái đăng nhập:", loginCheck);
+    },[])
     return(
         
         
@@ -27,7 +39,11 @@ function Header(){
                 </div>
 
                 <div className="items-center hidden md:flex md:gap-x-12 md:mr-5" >
-                    <Link onClick={() => handleLogin()} className='inline-block px-4 py-2 font-bold border font-grostek text-n-800 border-p-500 rounded-xl hover:bg-p-500 hover:text-n-50'>Login here <span>&rarr;</span></Link>
+                    {loginCheck?
+                        <Link onClick={() => handleLogout()} className='inline-block px-4 py-2 font-bold border font-grostek text-n-800 border-p-500 rounded-xl hover:bg-p-500 hover:text-n-50'>Đăng xuất<span>&rarr;</span></Link>
+                        :
+                        <Link onClick={() => handleLogin()} className='inline-block px-4 py-2 font-bold border font-grostek text-n-800 border-p-500 rounded-xl hover:bg-p-500 hover:text-n-50'>Đăng nhập <span>&rarr;</span></Link>
+                    }
                 </div>
                 
 
@@ -42,7 +58,7 @@ function Header(){
             </nav>
 
             <div>
-                {isClicked?<Login onClose = {() => setIsClicked(false)}/>:console.log("no")}
+                {isClicked?<Login onClose = {() => setIsClicked(false)} onSuccess = {() => setLoginCheck(true)} onAuth = {() => onAuthChange()}/>:console.log("no")}
             </div>
         </>
         

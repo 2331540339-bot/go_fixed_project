@@ -70,7 +70,7 @@ class ServiceController{
         })
         .catch(err => res.status(500).json({err : err.message}))
 
-            //[FUNCTION] - SORT MECHANIC DISTANCE
+        //[FUNCTION] - SORT MECHANIC DISTANCE
         async function sortMechanicByDistance(location){
             console.log("5", location);
             const mechanics = await User.aggregate([

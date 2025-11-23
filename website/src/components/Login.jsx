@@ -4,7 +4,8 @@ import logo from "../assets/logo.png";
 import apple_icon from "../assets/apple_icon.png";
 import google_icon from "../assets/google_icon.png";
 
-function LoginModal({ onClose }) {
+
+function LoginModal({ onClose, onSuccess, onAuth }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [err, setErr] = useState("");
@@ -15,6 +16,8 @@ function LoginModal({ onClose }) {
     .then((res) => {
       console.log("Login successfully");
       localStorage.setItem("token", res.accessToken);
+      onSuccess();
+      onAuth();
       onClose();
     })
     .catch(err => {
@@ -62,11 +65,12 @@ function LoginModal({ onClose }) {
          required/>
 
         <p className="text-sm font-light md:text-md font-grostek text-p-700">{err}</p>
-        <button 
-          className="w-full mb-5 h-[8%] rounded-xl text-sl font-light md:text-xl cursor-pointer bg-p-600 hover:bg-p-800 text-n-50 flex justify-center items-center"
-          onClick={handleLogin}
-          >Sign In
-        </button>
+          <button 
+              className="w-full mb-5 h-[8%] rounded-xl text-sl font-light md:text-xl cursor-pointer bg-p-600 hover:bg-p-800 text-n-50 flex justify-center items-center"
+              onClick={handleLogin}
+              >Sign In
+          </button>
+        
 
         <p className="text-sm font-light md:text-md font-grostek text-n-700">Did you get account ? <span className="font-bold">Register Here</span></p>
       </div>

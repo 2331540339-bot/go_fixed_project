@@ -40,7 +40,7 @@ function UserMap({onPositionChange}) {
   if (!position) return <p className="mt-10 text-center text-n-50">Đang xác định vị trí của bạn...</p>;
 
   return (  
-    <div className="w-[50%] overflow-hidden shadow-lg h-70 rounded-xl">
+    <div className="w-full overflow-hidden shadow-lg h-70 rounded-xl">
       <MapContainer
         center={position}
         zoom={16}
