@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:mobile/config/themes/app_theme.dart';
 import 'package:mobile/presentation/controller/rescue_flow_controller.dart';
 import 'package:mobile/presentation/view/intro_page.dart';
+import 'package:mobile/presentation/view/store/store_page.dart';
 import 'package:provider/provider.dart';
 
 void main() {
@@ -39,7 +40,7 @@ class App extends StatelessWidget {
           home: child,                  // quan trọng: dùng child để giữ context ScreenUtil
         );
       },
-      child: Intropage(),         // màn hình khởi đầu
+      child: StorePage(),         // màn hình khởi đầu
     );
   }
 }

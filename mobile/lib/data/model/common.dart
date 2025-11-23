@@ -45,7 +45,7 @@ double numToDouble(dynamic v) {
   return 0;
 }
 
-Map<String, dynamic> clean(Map<String, dynamic> m) {
+Map<String, dynamic>  clean(Map<String, dynamic> m) {
   m.removeWhere((k, v) => v == null);
   return m;
 }
