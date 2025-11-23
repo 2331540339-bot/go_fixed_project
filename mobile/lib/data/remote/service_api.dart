@@ -43,6 +43,28 @@ class ServiceApi {
     required double priceEstimate,
     required String authToken,
   }) async {
+    double? _toDouble(dynamic v) {
+      if (v == null) return null;
+      if (v is num) return v.toDouble();
+      if (v is String) return double.tryParse(v);
+      return null;
+    }
+
+    // Backend (Mongo $geoNear) cần GeoJSON: {type:"Point", coordinates:[lng, lat]}
+    final lat = _toDouble(
+      location['lat'] ?? location['latitude'] ?? location['y'],
+    );
+    final lng = _toDouble(
+      location['lng'] ?? location['longitude'] ?? location['x'],
+    );
+    if (lat == null || lng == null) {
+      throw Exception('Thiếu tọa độ, vui lòng chọn lại vị trí.');
+    }
+    final geoLocation = {
+      'type': 'Point',
+      'coordinates': [lng, lat],
+    };
+
     final uri = Uri.parse('$_base/service/rescue/$serviceId');
     // final token = _getAuthToken(); // Lấy token xác thực
     // Kiểm tra token trước khi gửi request
@@ -52,7 +74,7 @@ class ServiceApi {
 
     final body = jsonEncode({
       'description': description,
-      'location': location,
+      'location': geoLocation,
       'price_estimate': priceEstimate,
     });
     debugPrint('ServiceApi: Gửi yêu cầu cứu hộ với body: $body');

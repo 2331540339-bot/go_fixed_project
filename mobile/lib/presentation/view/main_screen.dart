@@ -7,6 +7,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:mobile/presentation/view/loction/location_page.dart';
 import 'package:mobile/presentation/view/messenger/inbox_page.dart';
 import 'package:mobile/presentation/view/setting/settings_page.dart';
+import 'package:mobile/presentation/view/store/store_page.dart';
 
 class Mainscreen extends StatefulWidget {
   const Mainscreen({super.key});
@@ -24,10 +25,11 @@ class _MainscreenState extends State<Mainscreen> {
       HomePage(
         onGoToLocation: () {
           setState(() {
-            _index = 2; // 👈 index của LocationPage trong pages
+            _index = 3; // 👈 index của LocationPage trong pages
           });
         },
       ),
+      StorePage(),
       InboxPage(),
       LocationPage(),
       SettingsPage(),
@@ -90,6 +92,11 @@ class _MainscreenState extends State<Mainscreen> {
                     NavigationDestination(
                       icon: Icon(Icons.home_outlined, color: Color(0xff000000)),
                       selectedIcon: Icon(Icons.home),
+                      label: 'Home',
+                    ),
+                    NavigationDestination(
+                      icon: Icon(Icons.storefront_outlined, color: Color(0xff000000)),
+                      selectedIcon: Icon(Icons.storefront_rounded),
                       label: 'Home',
                     ),
                     NavigationDestination(

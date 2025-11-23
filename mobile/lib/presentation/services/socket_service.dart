@@ -1,42 +1,49 @@
-
+import 'package:flutter/material.dart';
 import 'package:mobile/config/router/app_router.dart';
+import 'package:mobile/presentation/view/main_screen.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:flutter/foundation.dart';
 
 class SocketService with ChangeNotifier {
   late IO.Socket socket;
-  final String serverUrl = AppRouter.main_domain; 
-  
+  final String serverUrl = AppRouter.main_domain;
+  BuildContext? _navContext;
+
   bool _isConnected = false;
   bool get isConnected => _isConnected;
 
-// { message: 'Thợ đã chấp nhận yêu cầu của bạn' }
+  // { message: 'Thợ đã chấp nhận yêu cầu của bạn' }
   void Function(Map<String, dynamic> data)? onAcceptedStatusRescue;
 
-  void initializeSocket(String userId, {bool isMechanic = false}) {
+  void initializeSocket(
+    String userId, {
+    bool isMechanic = false,
+    BuildContext? context,
+  }) {
     try {
+      _navContext = context;
       socket = IO.io(
-        serverUrl, 
+        serverUrl,
         IO.OptionBuilder()
-          .setTransports(['websocket'])
-          .disableAutoConnect()
-          .build()
+            .setTransports(['websocket'])
+            .disableAutoConnect()
+            .build(),
       );
 
       socket.onConnect((_) {
         print('Socket.IO: Connected');
         _isConnected = true;
-        notifyListeners(); 
+        notifyListeners();
 
         _sendSubscriptionEvent(userId, isMechanic);
       });
-      
+
       socket.onDisconnect((_) {
         print('Socket.IO: Disconnected');
         _isConnected = false;
         notifyListeners();
       });
-      
+
       socket.onError((err) => print('Socket.IO Error: $err'));
 
       // LẮNG NGHE THỢ CHẤP NHẬN YÊU CẦU
@@ -46,11 +53,18 @@ class SocketService with ChangeNotifier {
         }
         if (data is Map && onAcceptedStatusRescue != null) {
           onAcceptedStatusRescue!(Map<String, dynamic>.from(data));
+          if (_navContext != null) {
+            Navigator.of(_navContext!).pushAndRemoveUntil(
+              MaterialPageRoute(builder: (_) => const Mainscreen()),
+              (Route<dynamic> route) => false,
+            );
+          } else {
+            debugPrint('SocketService: thiếu context, không thể điều hướng.');
+          }
         }
       });
 
-      socket.connect(); 
-
+      socket.connect();
     } catch (e) {
       print('Socket connection failed: $e');
     }
@@ -59,13 +73,13 @@ class SocketService with ChangeNotifier {
   void _sendSubscriptionEvent(String userId, bool isMechanic) {
     if (isMechanic) {
       // Sự kiện: subcribe_mechanic (thợ)
-      socket.emit('subcribe_mechanic', {'mechanicID': userId}); 
+      socket.emit('subcribe_mechanic', {'mechanicID': userId});
     } else {
       // Sự kiện: subscribe_user (người dùng)
-      socket.emit('subscribe_user', userId); 
+      socket.emit('subscribe_user', userId);
     }
   }
-  
+
   void disconnect() {
     socket.disconnect();
   }

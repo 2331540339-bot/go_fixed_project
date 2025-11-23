@@ -171,6 +171,16 @@ Future<void> _startLocationStream() async {
     final desc = rescueFlow.description ?? '';
     final loc = rescueFlow.location ?? <String, dynamic>{};
     final price = rescueFlow.priceEstimate ?? service?.basePrice ?? 0;
+    final totalPrice = price + 100000;
+
+    if (loc.isEmpty || loc['lat'] == null || loc['lng'] == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Thiếu tọa độ, vui lòng xác nhận vị trí trước khi gửi.'),
+        ),
+      );
+      return;
+    }
 
     if (service == null) {
       debugPrint('DetailPricePage: service null, không thể gửi rescue request');
@@ -195,7 +205,7 @@ Future<void> _startLocationStream() async {
         serviceId: service.id,
         description: desc,
         location: loc,
-        priceEstimate: price,
+        priceEstimate: totalPrice,
         authToken: token,
       );
 

@@ -16,9 +16,9 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  LatLng _mapCenter = LatLng(10.82327, 106.66312);
   final SocketService _socketService = SocketService();
 
+  LatLng? _customerDest;
   StreamSubscription<Position>? _positionStreamSubscription;
   @override
   void initState() {
@@ -35,7 +35,16 @@ class _HomePageState extends State<HomePage> {
             'mechanicId': widget.mechanicId,
             'requestId': data['_id'],
           });
-         
+          final dest = _parseCustomerLatLng(data['location']);
+          if (dest != null) {
+            setState(() => _customerDest = dest);
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Không tìm được tọa độ khách, chỉ hiển thị vị trí của bạn.'),
+              ),
+            );
+          }
         },
       );
     };
@@ -77,11 +86,8 @@ class _HomePageState extends State<HomePage> {
     _positionStreamSubscription =
         Geolocator.getPositionStream(locationSettings: locationSettings).listen(
           (Position position) {
-            // 3. Cập nhật trạng thái _mapCenter
-            setState(() {
-              _mapCenter = LatLng(position.latitude, position.longitude);
-              print('Vị trí mới: $_mapCenter');
-            });
+            // Theo dõi vị trí hiện tại để phục vụ định tuyến, MapRouteBox sẽ tự lấy.
+            debugPrint('Vị trí mới: ${position.latitude}, ${position.longitude}');
           },
           onError: (error) {
             // Xử lý lỗi trong quá trình theo dõi vị trí
@@ -91,10 +97,32 @@ class _HomePageState extends State<HomePage> {
 
     Position position = await Geolocator.getCurrentPosition();
     print('Vị trí hiện tại: $position');
-    Position initialPosition = await Geolocator.getCurrentPosition();
-    setState(() {
-      _mapCenter = LatLng(initialPosition.latitude, initialPosition.longitude);
-    });
+  }
+
+  LatLng? _parseCustomerLatLng(dynamic location) {
+    if (location == null) return null;
+    try {
+      if (location is Map) {
+        // Backend lưu GeoJSON: {type: "Point", coordinates: [lng, lat]}
+        final coords = location['coordinates'];
+        if (coords is List && coords.length >= 2) {
+          final lng = coords[0];
+          final lat = coords[1];
+          if (lng is num && lat is num) {
+            return LatLng(lat.toDouble(), lng.toDouble());
+          }
+        }
+        // Fallback nếu backend trả {lat, lng}
+        final lat = location['lat'] ?? location['latitude'];
+        final lng = location['lng'] ?? location['longitude'];
+        if (lat is num && lng is num) {
+          return LatLng(lat.toDouble(), lng.toDouble());
+        }
+      }
+    } catch (_) {
+      // Bỏ qua và trả null
+    }
+    return null;
   }
 
   @override
@@ -108,9 +136,9 @@ class _HomePageState extends State<HomePage> {
       body: SafeArea(
         child: Center(
           child: MapRouteBox(
-            dest: _mapCenter,
+            dest: _customerDest,
             apiKey: ApiConfig.goongMapsApiKey,
-            showDestMarker: false,
+            showDestMarker: _customerDest != null,
           ),
         ),
       ),

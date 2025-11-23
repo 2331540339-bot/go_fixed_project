@@ -18,8 +18,8 @@ class GeoPoint {
       return GeoPoint(lat, lng);
     }
     if (json is Map) {
-      final lat = (json['lat'] ?? json['latitude'] ?? json['y']);
-      final lng = (json['lng'] ?? json['longitude'] ?? json['x']);
+      final lat = (json['lat'] ?? json['latitude'] ?? json['1']);
+      final lng = (json['lng'] ?? json['longitude'] ?? json['0']);
       return GeoPoint(
         numToDouble(lat),
         numToDouble(lng),

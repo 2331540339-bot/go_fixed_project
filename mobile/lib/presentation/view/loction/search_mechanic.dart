@@ -11,6 +11,7 @@ import 'package:mobile/presentation/controller/rescue_flow_controller.dart';
 import 'package:mobile/presentation/controller/user_controller.dart';
 import 'package:mobile/presentation/services/socket_service.dart';
 import 'package:mobile/presentation/view/loction/map_screen.dart';
+import 'package:mobile/presentation/view/main_screen.dart';
 import 'package:mobile/presentation/widgets/appbars/main_app_bar.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -42,16 +43,6 @@ class _SearchMechanicState extends State<SearchMechanic> {
     super.initState();
     _initControllers();
     _startLocationStream();
-  _socketService.initializeSocket("69183c7c8149e7fe96495bc6", isMechanic: false);
-  _socketService.onAcceptedStatusRescue = (data) {
-      final msg = data['message'] ?? 'Yêu cầu cứu hộ đã được cập nhật';
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(msg.toString())),
-      );
-
-      // hoặc show dialog / chuyển trang / update trạng thái...
-    };
   }
 
   void _handleDestinationSelected(LatLng newDest) {
@@ -78,6 +69,27 @@ class _SearchMechanicState extends State<SearchMechanic> {
         _loadingName = false;
       });
     }
+    _initSocket();
+  }
+
+  Future<void> _initSocket() async {
+    final uid = _userCtrl?.userRepository.userId;
+    if (uid == null || uid.isEmpty) {
+      debugPrint('SearchMechanic: userId rỗng, không thể đăng ký socket.');
+      return;
+    }
+    _socketService.initializeSocket(
+      uid,
+      isMechanic: false,
+      context: context,
+    );
+    _socketService.onAcceptedStatusRescue = (data) {
+      final msg = data['message'] ?? 'Yêu cầu cứu hộ đã được cập nhật';
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(msg.toString())),
+      );
+    };
   }
 
   Future<void> _startLocationStream() async {

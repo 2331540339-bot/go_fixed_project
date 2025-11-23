@@ -21,6 +21,8 @@ class UserRepository {
 
   String? get email => _sp.getString('user_email');
 
+  String? get userId => _sp.getString('user_id');
+
   String? get phone => _sp.getString('user_phone');
 
   Future<bool> login(String email, String password) async {
@@ -41,6 +43,9 @@ class UserRepository {
     await _sp.setString('token', t);
     await _sp.setString('user_fullname', user.fullname);
     await _sp.setString('user_email', user.email);
+    if (user.id != null && user.id!.isNotEmpty) {
+      await _sp.setString('user_id', user.id!);
+    }
     if (user.phone.isNotEmpty) {
       await _sp.setString('user_phone', user.phone);
     } else {
@@ -55,10 +60,11 @@ class UserRepository {
     final name = _sp.getString('user_fullname');
     final email = _sp.getString('user_email');
     final phone = _sp.getString('user_phone');
+    final id = _sp.getString('user_id');
     
     if (name == null || email == null) return null;
 
-    return User(fullname: name, email: email, phone: phone!, id: null, isActive: true);
+    return User(fullname: name, email: email, phone: phone ?? '', id: id, isActive: true);
   }
 
    Future<bool> register({
@@ -85,5 +91,11 @@ class UserRepository {
     return localUser;
   }
 
-  Future<void> logout() async => _sp.remove('token');
+  Future<void> logout() async {
+    await _sp.remove('token');
+    await _sp.remove('user_id');
+    await _sp.remove('user_fullname');
+    await _sp.remove('user_email');
+    await _sp.remove('user_phone');
+  }
 }

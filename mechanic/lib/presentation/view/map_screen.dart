@@ -109,6 +109,21 @@ class _MapRouteBoxState extends State<MapRouteBox> {
     _initRoute();
   }
 
+  @override
+  void didUpdateWidget(covariant MapRouteBox oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Khi thay đổi điểm đích (ví dụ sau khi nhận đơn khách) thì tính lại route.
+    if (oldWidget.dest != widget.dest) {
+      setState(() {
+        _loading = true;
+        _error = null;
+        _route = [];
+        _origin = null;
+      });
+      _initRoute();
+    }
+  }
+
   Future<void> _initRoute() async {
     try {
       // 1) Quyền vị trí (luôn cần để lấy _origin)
