@@ -36,6 +36,17 @@ class ProductController extends ChangeNotifier {
       notifyListeners();
     }
   }
+  
+  Future<Product?> loadDetail(String id) async {
+    try {
+      final product = await _api.fetchProductDetail(id);
+      return product;
+    } catch (e) {
+      _error = e.toString();
+      notifyListeners();
+      return null;
+    }
+  }
 
   @override
   void dispose() {

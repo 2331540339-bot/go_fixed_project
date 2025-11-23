@@ -25,5 +25,19 @@ class ProductApi {
         .toList();
   }
 
+  Future<Product> fetchProductDetail(String id) async {
+    final uri = Uri.parse('$_base/commerce/product/show/$id');
+    final res = await _client
+        .get(uri, headers: {'Accept': 'application/json'})
+        .timeout(const Duration(seconds: 15));
+
+    if (res.statusCode != 200) {
+      throw Exception('Fetch product detail failed (${res.statusCode})');
+    }
+
+    final data = jsonDecode(res.body);
+    return Product.fromJson(Map<String, dynamic>.from(data));
+  }
+
   void dispose() => _client.close();
 }

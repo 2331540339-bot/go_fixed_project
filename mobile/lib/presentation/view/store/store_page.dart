@@ -6,8 +6,10 @@ import 'package:mobile/data/model/product.dart';
 import 'package:mobile/presentation/controller/banner_controller.dart';
 import 'package:mobile/presentation/controller/catalog_controller.dart';
 import 'package:mobile/presentation/controller/product_controller.dart';
+import 'package:mobile/presentation/view/store/store_cart_page.dart';
 import 'package:mobile/presentation/widgets/banner/banner_carousel.dart';
 import 'package:mobile/presentation/widgets/banner/dots_indicator.dart';
+import 'package:mobile/presentation/view/store/store_detail_page.dart';
 
 class StorePage extends StatefulWidget {
   const StorePage({super.key});
@@ -84,7 +86,27 @@ class _StorePageState extends State<StorePage> {
             .where((p) => (p.category ?? p.id) == _selectedCatalogId)
             .toList();
     return Scaffold(
-      appBar: AppBar(title: const Text('Store Page')),
+      appBar: AppBar(title: Row(
+        children: [
+         
+         InkWell(
+          onTap: () {
+            Scaffold.of(context).openDrawer();
+          },
+          child: Icon(Icons.menu, size: 24.sp,)
+         ),
+         Spacer(),
+          InkWell(
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => const StoreCartPage(),
+                ),
+              );
+            },
+            child: Icon(Icons.storefront, size: 24.sp,)),
+        ],
+      )),
       body: Column(
         children: [
           SizedBox(height: 30.h),
@@ -252,74 +274,86 @@ class _StorePageState extends State<StorePage> {
         final img = (p.images != null && p.images!.isNotEmpty)
             ? p.images!.first
             : null;
-        return Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(12.r),
-            color: Colors.white,
-            border: Border.all(color: Colors.black12),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.05),
-                blurRadius: 6,
-                offset: const Offset(0, 2),
-              ),
-            ],
-          ),
-          clipBehavior: Clip.antiAlias,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Expanded(
-                child: img != null
-                    ? Image.network(
-                        img,
-                        fit: BoxFit.cover,
-                        errorBuilder: (_, __, ___) =>
-                            const Center(child: Icon(Icons.broken_image)),
-                      )
-                    : Container(
-                        color: Colors.grey.shade200,
-                        child: const Center(child: Icon(Icons.image)),
-                      ),
-              ),
-              Padding(
-                padding:
-                    EdgeInsets.symmetric(horizontal: 8.w, vertical: 8.h),
-                child: Text(
-                  p.name,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    color: Colors.black87,
-                    fontWeight: FontWeight.w600,
-                    fontSize: 14.sp,
-                  ),
+        return GestureDetector(
+          onTap: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (_) => StoreDetailPage(
+                  productId: p.id,
+                  initialProduct: p,
                 ),
               ),
-              Padding(
-                padding:
-                    EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
-                child: Text(
-                  '${p.price.toStringAsFixed(0)} VND',
-                  style: TextStyle(
-                    color: AppColor.primaryColor,
-                    fontWeight: FontWeight.w700,
-                    fontSize: 13.sp,
+            );
+          },
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12.r),
+              color: Colors.white,
+              border: Border.all(color: Colors.black12),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.05),
+                  blurRadius: 6,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            clipBehavior: Clip.antiAlias,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Expanded(
+                  child: img != null
+                      ? Image.network(
+                          img,
+                          fit: BoxFit.cover,
+                          errorBuilder: (_, __, ___) =>
+                              const Center(child: Icon(Icons.broken_image)),
+                        )
+                      : Container(
+                          color: Colors.grey.shade200,
+                          child: const Center(child: Icon(Icons.image)),
+                        ),
+                ),
+                Padding(
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 8.w, vertical: 8.h),
+                  child: Text(
+                    p.name,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      color: Colors.black87,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 14.sp,
+                    ),
                   ),
                 ),
-              ),
-              Padding(
-                padding:
-                    EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
-                child: Text(
-                  p.stock > 0 ? 'Còn ${p.stock}' : 'Hết hàng',
-                  style: TextStyle(
-                    color: Colors.black54,
-                    fontSize: 12.sp,
+                Padding(
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+                  child: Text(
+                    '${p.price.toStringAsFixed(0)} VND',
+                    style: TextStyle(
+                      color: AppColor.primaryColor,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 13.sp,
+                    ),
                   ),
                 ),
-              ),
-            ],
+                Padding(
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+                  child: Text(
+                    p.stock > 0 ? 'Còn ${p.stock}' : 'Hết hàng',
+                    style: TextStyle(
+                      color: Colors.black54,
+                      fontSize: 12.sp,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         );
       },
