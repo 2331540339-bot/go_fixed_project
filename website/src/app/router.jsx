@@ -7,6 +7,7 @@ import GenuinePart from "../pages/GenuinePart"
 import DetailPart from "../pages/DetailPart"
 import Checkout from "../components/Checkout"
 import Cart from "../pages/Cart"
+import SuccessPayment from "../components/SuccessPayment"
 export const router = createBrowserRouter([
     {
         path:"/",
@@ -19,6 +20,7 @@ export const router = createBrowserRouter([
             {path:"genuine-part/:id", element: <DetailPart/>},
             {path:"/checkout/:productId/:quantity", element:<Checkout />},
             {path:"/cart", element: <Cart/>},
+            {path:"/success-payment", element:<SuccessPayment />},
         ]
     }
 ])
