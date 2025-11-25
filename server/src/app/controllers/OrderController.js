@@ -5,7 +5,7 @@ class OrderController{
         try {
             const {items, payment_method, shipping_address } = req.body;
             const user_id = req.user.id
-            console.log(req.user.id)
+            console.log(items)
             if (!items || items.length === 0) {
                 return res.status(400).json({ success: false, message: "Không có sản phẩm nào trong đơn hàng." });
             }

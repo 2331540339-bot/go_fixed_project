@@ -1,14 +1,34 @@
 import { use, useEffect, useState } from "react";
+import {orderAPI_create} from '../app/api'
 function Checkout_Cart({checkedList}){
     const [shippingAddress, setShippingAddress] = useState("");
     const [paymentMethod, setPaymentMethod] = useState("cod");
     const [totalPrice, setTotalPrice] = useState(0);    
-
+    const [items, setItems] = useState([]);
     useEffect(() => {
         checkedList.map((item) => {
             setTotalPrice((prev) => prev + (item.quantity*item.price));
-        })  
+        })
+        
+        const newItems = checkedList.map(item => ({
+                product_id: item.product_id._id,
+                quantity: item.quantity,
+                price: item.price
+            }));
+
+        setItems(newItems);
     }, [])
+
+    const handleConfirmOrder = () => {
+        if (!shippingAddress.trim()) {
+            alert("Vui lòng nhập địa chỉ giao hàng!");
+            return;
+        }
+        console.log(items);
+        orderAPI_create(items,paymentMethod, shippingAddress)
+        .then((res) => alert("Tạo đơn thành công"))
+        .catch((err) => console.log("Tạo đơn thất bại", err.message))
+    };
     return(
         <>
             <div className="flex justify-center w-full min-h-screen py-10 bg-n-50">
@@ -134,7 +154,7 @@ function Checkout_Cart({checkedList}){
                             </div>
 
                             <button
-                                // onClick={handleConfirmOrder}
+                                onClick={handleConfirmOrder}
                                 className="w-full py-3 mt-5 text-sm font-semibold text-white transition shadow-md rounded-xl bg-p-500 hover:bg-p-600"
                             >
                                 Xác nhận đặt hàng
