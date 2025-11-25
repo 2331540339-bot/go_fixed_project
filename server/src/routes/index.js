@@ -4,6 +4,7 @@ const bannerRouter = require('./banner.route')
 const commerceRouter = require('./commerce')
 const cartRouter = require('./cart')
 const orderRouter = require('./order')
+const paymentRouter = require('./payment')
 function route(app){
     app.use('/account', accountRouter)
     app.use('/service', serviceRouter)
@@ -11,6 +12,7 @@ function route(app){
     app.use('/commerce', commerceRouter)
     app.use('/cart', cartRouter)
     app.use('/order', orderRouter)
+    app.use('/payment_online', paymentRouter)
 }
 
 module.exports = route  
