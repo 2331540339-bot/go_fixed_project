@@ -45,7 +45,7 @@ class App extends StatelessWidget {
           home: child,                  // quan trọng: dùng child để giữ context ScreenUtil
         );
       },
-      child: Mainscreen(),               // màn hình khởi đầu
+      child: Intropage(),               // màn hình khởi đầu
     );
   }
 }

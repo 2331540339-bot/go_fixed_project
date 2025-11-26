@@ -75,7 +75,9 @@ class _StoreDetailPageState extends State<StoreDetailPage> {
   Widget build(BuildContext context) {
     final product = _product;
     return Scaffold(
-      appBar: AppBar(title: Text(product?.name ?? 'Chi tiết sản phẩm')),
+      appBar: AppBar(
+        backgroundColor: AppColor.primaryColor,
+        title: Text(product?.name ?? 'Chi tiết sản phẩm')),
       body: SafeArea(child: _buildBody(product)),
       bottomNavigationBar: _buildBottomBar(product),
     );

@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:mobile/config/themes/app_color.dart';
+import 'package:mobile/data/remote/order_api.dart';
+import 'package:mobile/data/remote/payment_api.dart';
 import 'package:mobile/presentation/controller/cart_controller.dart';
 import 'package:mobile/presentation/controller/user_controller.dart';
 import 'package:provider/provider.dart';
+import 'package:http/http.dart' as http;
 
 class StorePaymentPage extends StatefulWidget {
   const StorePaymentPage({super.key});
@@ -24,6 +27,7 @@ class _StorePaymentPageState extends State<StorePaymentPage> {
   final TextEditingController _noteCtrl = TextEditingController();
 
   String _paymentMethod = 'cod';
+  bool _submitting = false;
 
   double get _shippingFee => 30000;
 
@@ -73,7 +77,9 @@ class _StorePaymentPageState extends State<StorePaymentPage> {
     final total = subtotal + (isEmpty ? 0 : _shippingFee);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Thanh toán')),
+      appBar: AppBar(
+        backgroundColor: AppColor.primaryColor,
+        title: const Text('Thanh toán')),
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16),
@@ -240,15 +246,9 @@ class _StorePaymentPageState extends State<StorePaymentPage> {
             SizedBox(
               height: 48,
               child: ElevatedButton(
-                onPressed: isEmpty
+                onPressed: isEmpty || _submitting
                     ? null
-                    : () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Đặt hàng thành công (demo)'),
-                          ),
-                        );
-                      },
+                    : () => _handlePlaceOrder(context, cart, total),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColor.primaryColor,
                   foregroundColor: Colors.white,
@@ -266,6 +266,133 @@ class _StorePaymentPageState extends State<StorePaymentPage> {
       ),
     );
   }
+
+  Future<void> _handlePlaceOrder(
+    BuildContext context,
+    CartController cart,
+    double total,
+  ) async {
+    final items = cart.items;
+    if (items.isEmpty) return;
+
+    final address = _addressCtrl.text.trim();
+    if (address.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Vui lòng nhập địa chỉ giao hàng')),
+      );
+      return;
+    }
+
+    // Đảm bảo đã có UserController & token
+    _userCtrl ??= await UserController.create();
+    final token = _userCtrl!.token;
+    if (token == null || token.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Bạn cần đăng nhập trước khi đặt hàng.'),
+        ),
+      );
+      return;
+    }
+
+    // Map phương thức thanh toán theo backend
+    String methodForServer;
+    switch (_paymentMethod) {
+      case 'bank':
+        methodForServer = 'banking';
+        break;
+      case 'wallet':
+        methodForServer = 'momo';
+        break;
+      case 'cod':
+      default:
+        methodForServer = 'cod';
+    }
+
+    // Map cart items -> payload backend
+    final payloadItems = items
+        .map((e) => {
+              'product_id': e.productId,
+              'quantity': e.quantity,
+              'price': e.price,
+            })
+        .toList();
+
+    setState(() {
+      _submitting = true;
+    });
+
+    try {
+      final orderApi = OrderApi(HttpClientSingleton.client);
+      final orderRes = await orderApi.createOrder(
+        items: payloadItems,
+        paymentMethod: methodForServer,
+        shippingAddress: address,
+        authToken: token,
+      );
+
+      final order = orderRes['order'] ?? orderRes;
+      final orderId =
+          (order['_id'] ?? order['id'] ?? order['order_id'])?.toString();
+
+      if (orderId == null || orderId.isEmpty) {
+        throw Exception('Không nhận được mã đơn hàng từ server');
+      }
+
+      // Nếu COD: không cần thanh toán online
+      if (methodForServer == 'cod') {
+        cart.clear();
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Đặt hàng thành công!')),
+        );
+        Navigator.of(context).pop(); // quay lại giỏ hàng
+        return;
+      }
+
+      // Online payment: gọi VNPay
+      final paymentApi = PaymentApi(HttpClientSingleton.client);
+      final paymentUrl = await paymentApi.createVnPayPaymentUrl(
+        amount: total,
+        orderId: orderId,
+      );
+
+      if (!mounted) return;
+      // Ở đây, để đơn giản, hiển thị URL thanh toán.
+      // Bạn có thể tích hợp url_launcher để mở trình duyệt ngoài.
+      showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+          title: const Text('Thanh toán online'),
+          content: SelectableText(
+            'Vui lòng mở link sau để thanh toán:\n\n$paymentUrl',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Đóng'),
+            ),
+          ],
+        ),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Đặt hàng thất bại: $e')),
+      );
+    } finally {
+      if (mounted) {
+        setState(() {
+          _submitting = false;
+        });
+      }
+    }
+  }
+}
+
+/// Dùng chung một http.Client cho OrderApi / PaymentApi để tránh tạo nhiều instance.
+class HttpClientSingleton {
+  static final client = http.Client();
 }
 
 class _SectionCard extends StatelessWidget {

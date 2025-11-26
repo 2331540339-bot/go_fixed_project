@@ -86,7 +86,11 @@ class _StorePageState extends State<StorePage> {
             .where((p) => (p.category ?? p.id) == _selectedCatalogId)
             .toList();
     return Scaffold(
-      appBar: AppBar(title: Row(
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        backgroundColor: AppColor.primaryColor,
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
          
          InkWell(
@@ -95,7 +99,7 @@ class _StorePageState extends State<StorePage> {
           },
           child: Icon(Icons.menu, size: 24.sp,)
          ),
-         Spacer(),
+        Text("Cửa hàng"),
           InkWell(
             onTap: () {
               Navigator.of(context).push(
