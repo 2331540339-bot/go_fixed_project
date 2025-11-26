@@ -10,7 +10,7 @@ import 'package:latlong2/latlong.dart';
 import 'package:mobile/config/assets/app_icon.dart';
 import 'package:mobile/config/assets/app_image.dart';
 import 'package:mobile/config/themes/app_color.dart';
-import 'package:mobile/data/remote/geocoding_api.dart';
+import 'package:mobile/api/geocoding_api.dart';
 
 // Controllers
 import 'package:mobile/presentation/controller/user_controller.dart';
@@ -18,7 +18,7 @@ import 'package:mobile/presentation/controller/banner_controller.dart';
 import 'package:mobile/presentation/controller/service_controller.dart';
 
 // Models
-import 'package:mobile/data/model/service.dart';
+import 'package:mobile/presentation/model/service.dart';
 import 'package:mobile/presentation/widgets/appbars/main_app_bar.dart';
 
 // UI widgets cho banner

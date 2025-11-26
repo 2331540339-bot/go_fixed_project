@@ -4,8 +4,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:mobile/config/themes/app_theme.dart';
 import 'package:mobile/presentation/controller/cart_controller.dart';
 import 'package:mobile/presentation/controller/rescue_flow_controller.dart';
-import 'package:mobile/presentation/view/intro_page.dart';
-import 'package:mobile/presentation/view/main_screen.dart';
+import 'package:mobile/presentation/view/start/intro_page.dart';
+import 'package:mobile/presentation/view/start/main_screen.dart';
 import 'package:mobile/presentation/view/store/store_page.dart';
 import 'package:provider/provider.dart';
 

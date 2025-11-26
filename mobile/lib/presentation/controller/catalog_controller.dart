@@ -1,8 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:mobile/config/router/app_router.dart';
-import 'package:mobile/data/model/catalog.dart';
-import 'package:mobile/data/remote/catalog_api.dart';
+import 'package:mobile/presentation/model/catalog.dart';
+import 'package:mobile/api/catalog_api.dart';
 
 class CatalogController extends ChangeNotifier {
   CatalogController(this._api);

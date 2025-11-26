@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mobile/config/themes/app_color.dart';
-import 'package:mobile/data/model/product.dart';
+import 'package:mobile/presentation/model/product.dart';
 import 'package:mobile/presentation/controller/cart_controller.dart';
 import 'package:mobile/presentation/controller/product_controller.dart';
 import 'package:mobile/presentation/view/store/store_cart_page.dart';

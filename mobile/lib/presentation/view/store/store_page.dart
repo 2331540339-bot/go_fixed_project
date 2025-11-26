@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:mobile/config/themes/app_color.dart';
-import 'package:mobile/data/model/catalog.dart';
-import 'package:mobile/data/model/product.dart';
+import 'package:mobile/presentation/model/catalog.dart';
+import 'package:mobile/presentation/model/product.dart';
 import 'package:mobile/presentation/controller/banner_controller.dart';
 import 'package:mobile/presentation/controller/catalog_controller.dart';
 import 'package:mobile/presentation/controller/product_controller.dart';

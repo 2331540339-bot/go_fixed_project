@@ -5,7 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:mobile/data/remote/geocoding_api.dart';
+import 'package:mobile/api/geocoding_api.dart';
 import 'package:provider/provider.dart';
 
 import 'package:mobile/config/assets/app_icon.dart';

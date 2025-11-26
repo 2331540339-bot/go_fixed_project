@@ -13,7 +13,7 @@ import 'package:mobile/common/app_button.dart';
 import 'package:mobile/config/assets/app_icon.dart';
 import 'package:mobile/config/assets/app_image.dart';
 import 'package:mobile/config/api_config.dart';
-import 'package:mobile/data/remote/geocoding_api.dart';
+import 'package:mobile/api/geocoding_api.dart';
 
 import 'package:mobile/presentation/controller/user_controller.dart';
 import 'package:mobile/presentation/view/loction/detailed_repair_page.dart';
@@ -22,7 +22,7 @@ import 'package:mobile/presentation/view/loction/services_page.dart';
 // import 'package:mobile/presentation/view/loction/services_page.dart';
 import 'package:mobile/presentation/widgets/appbars/main_app_bar.dart';
 
-import 'package:mobile/data/model/vietnam_address.dart';
+import 'package:mobile/presentation/model/vietnam_address.dart';
 
 // Google Maps widget bạn đã chuyển sang (MapRouteBox dùng Google Maps)
 import 'package:mobile/presentation/widgets/modal/showModalBottomSheet.dart';

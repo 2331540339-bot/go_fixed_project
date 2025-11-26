@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mobile/config/themes/app_color.dart';
-import 'package:mobile/data/remote/order_api.dart';
-import 'package:mobile/data/remote/payment_api.dart';
+import 'package:mobile/api/order_api.dart';
+import 'package:mobile/api/payment_api.dart';
 import 'package:mobile/presentation/controller/cart_controller.dart';
 import 'package:mobile/presentation/controller/user_controller.dart';
 import 'package:provider/provider.dart';

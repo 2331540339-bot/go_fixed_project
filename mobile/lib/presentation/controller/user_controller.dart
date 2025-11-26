@@ -1,6 +1,6 @@
-import 'package:mobile/data/model/user.dart';
+import 'package:mobile/presentation/model/user.dart';
 
-import '../../domain/repositories/user_repository.dart';
+import '../../repositories/user_repository.dart';
 
 class UserController {
   UserController(this._repo);

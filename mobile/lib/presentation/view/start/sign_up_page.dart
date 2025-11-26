@@ -4,7 +4,7 @@ import 'package:mobile/config/assets/app_image.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:mobile/config/themes/app_color.dart';
 import 'package:mobile/presentation/controller/user_controller.dart';
-import 'package:mobile/presentation/view/login_page.dart';
+import 'package:mobile/presentation/view/start/login_page.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});

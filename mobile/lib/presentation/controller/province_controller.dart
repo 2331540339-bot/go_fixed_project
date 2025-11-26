@@ -1,6 +1,6 @@
 // province_controller.dart
-import '../../data/remote/province_api.dart';
-import '../../data/model/province.dart';
+import '../../api/province_api.dart';
+import '../model/province.dart';
 
 class AddressController {
   List<Province> provinces = [];

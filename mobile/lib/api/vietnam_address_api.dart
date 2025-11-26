@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:mobile/data/model/vietnam_address.dart';
+import 'package:mobile/presentation/model/vietnam_address.dart';
 
 class VietnamAddressApi {
   static const _base = 'https://provinces.open-api.vn/api/v1';

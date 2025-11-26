@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mobile/config/router/app_router.dart';
-import 'package:mobile/presentation/view/main_screen.dart';
+import 'package:mobile/presentation/view/start/main_screen.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:flutter/foundation.dart';
 
@@ -12,7 +12,6 @@ class SocketService with ChangeNotifier {
   bool _isConnected = false;
   bool get isConnected => _isConnected;
 
-  // { message: 'Thợ đã chấp nhận yêu cầu của bạn' }
   void Function(Map<String, dynamic> data)? onAcceptedStatusRescue;
 
   void initializeSocket(
@@ -46,7 +45,6 @@ class SocketService with ChangeNotifier {
 
       socket.onError((err) => print('Socket.IO Error: $err'));
 
-      // LẮNG NGHE THỢ CHẤP NHẬN YÊU CẦU
       socket.on('accepted-status-rescue', (data) {
         if (kDebugMode) {
           print('EVENT accepted-status-rescue: $data');
@@ -72,10 +70,8 @@ class SocketService with ChangeNotifier {
 
   void _sendSubscriptionEvent(String userId, bool isMechanic) {
     if (isMechanic) {
-      // Sự kiện: subcribe_mechanic (thợ)
       socket.emit('subcribe_mechanic', {'mechanicID': userId});
     } else {
-      // Sự kiện: subscribe_user (người dùng)
       socket.emit('subscribe_user', userId);
     }
   }

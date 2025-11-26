@@ -1,22 +1,12 @@
 import 'dart:convert';
-
 import 'package:http/http.dart' as http;
-import 'package:mobile/config/router/app_router.dart';
+import 'package:mobile/core/network/endpoints.dart';
 
 class OrderApi {
   OrderApi(this._client);
 
   final http.Client _client;
 
-  static String get _base => AppRouter.main_domain;
-
-  /// Tạo đơn hàng mới
-  ///
-  /// Gửi lên backend:
-  /// - items: [{product_id, quantity, price}]
-  /// - payment_method: "cod" | "banking" | "momo"
-  /// - shipping_address: String
-  /// Yêu cầu header `token: Bearer <accessToken>`
   Future<Map<String, dynamic>> createOrder({
     required List<Map<String, dynamic>> items,
     required String paymentMethod,
@@ -27,7 +17,7 @@ class OrderApi {
       throw Exception('Bạn cần đăng nhập để đặt hàng.');
     }
 
-    final uri = Uri.parse('$_base/order/create');
+    final uri = Uri.parse(Endpoints.createOrder);
 
     final body = jsonEncode({
       'items': items,

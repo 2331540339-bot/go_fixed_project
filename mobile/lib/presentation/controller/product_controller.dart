@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
-import 'package:mobile/data/model/product.dart';
-import 'package:mobile/data/remote/product_api.dart';
+import 'package:mobile/presentation/model/product.dart';
+import 'package:mobile/api/product_api.dart';
 
 class ProductController extends ChangeNotifier {
   ProductController(this._api);

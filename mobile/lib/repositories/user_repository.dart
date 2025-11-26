@@ -1,8 +1,8 @@
 import 'package:flutter/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../data/remote/user_api.dart';
-import '../../data/model/user.dart';
-import '../../core/network/api_client.dart';
+import '../api/user_api.dart';
+import '../presentation/model/user.dart';
+import '../api/api_client.dart';
 
 class UserRepository {
   UserRepository(this._api, this._sp);

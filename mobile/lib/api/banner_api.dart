@@ -1,16 +1,16 @@
 // lib/data/remote/banner_api.dart
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:mobile/data/model/banner.dart';
+import 'package:mobile/core/network/endpoints.dart';
+import 'package:mobile/presentation/model/banner.dart';
 
 class BannerApi {
   BannerApi(this._client, this.baseUrl);
   final http.Client _client;
   final String baseUrl;
 
-  /// GET /banners → { items: [ {id,image_url,...}, ... ] }
   Future<List<Banner>> fetchBanners() async {
-    final uri = Uri.parse('$baseUrl/banners/get');
+    final uri = Uri.parse(Endpoints.banners);
     final res = await _client
         .get(uri, headers: {'Accept': 'application/json'})
         .timeout(const Duration(seconds: 15));

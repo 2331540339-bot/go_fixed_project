@@ -1,8 +1,8 @@
 // lib/controller/banner_controller.dart
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
-import 'package:mobile/data/remote/banner_api.dart';
-import 'package:mobile/data/model/banner.dart';
+import 'package:mobile/api/banner_api.dart';
+import 'package:mobile/presentation/model/banner.dart';
 import 'package:mobile/config/router/app_router.dart';
 
 class BannerController extends ChangeNotifier {

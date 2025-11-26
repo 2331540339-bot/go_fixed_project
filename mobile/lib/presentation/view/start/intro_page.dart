@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:mobile/common/app_button.dart';
 import 'package:mobile/config/themes/app_color.dart';
-import 'package:mobile/presentation/view/sign_in_and_sign_up.dart';
+import 'package:mobile/presentation/view/start/sign_in_and_sign_up.dart';
 
 class Intropage extends StatelessWidget {
   const Intropage({super.key});

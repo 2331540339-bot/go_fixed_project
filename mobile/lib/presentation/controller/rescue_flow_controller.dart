@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:mobile/data/model/service.dart';
+import 'package:mobile/presentation/model/service.dart';
 
 class RescueFlowController extends ChangeNotifier {
   Service? _service;
