@@ -15,4 +15,9 @@ router.post(
   middlewareController.verifyPayment,
   vnPayController.createVnPayQR
 );
+router.get(
+  "/vnpay-return",
+  // middlewareController.verifyPayment,
+  vnPayController.vnpayReturn
+);
 module.exports = router;

@@ -8,6 +8,7 @@ import DetailPart from "../pages/DetailPart"
 import Checkout from "../components/Checkout"
 import Cart from "../pages/Cart"
 import SuccessPayment from "../components/SuccessPayment"
+import FailedPayment from "../components/FailedPayment"
 export const router = createBrowserRouter([
     {
         path:"/",
@@ -21,6 +22,7 @@ export const router = createBrowserRouter([
             {path:"/checkout/:productId/:quantity", element:<Checkout />},
             {path:"/cart", element: <Cart/>},
             {path:"/success-payment", element:<SuccessPayment />},
+            {path:"/failed-payment", element:<FailedPayment />},
         ]
     }
 ])

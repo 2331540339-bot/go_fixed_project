@@ -1,0 +1,25 @@
+[{
+  "_id": {
+    "$oid": "6925defa3d0b597c34390532"
+  },
+  "user_id": {
+    "$oid": "69183c7c8149e7fe96495bc6"
+  },
+  "cart_items": [
+    {
+      "product_id": {
+        "$oid": "6922bbe14ee3b593e2e6cc03"
+      },
+      "quantity": 1,
+      "price": 7500000
+    }
+  ],
+  "total_price": 7500000,
+  "createdAt": {
+    "$date": "2025-11-25T16:53:14.415Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-25T16:53:14.415Z"
+  },
+  "__v": 0
+}]

@@ -50,7 +50,10 @@ const middlewareController = {
     },
 
    verifyPayment: (req, res, next) => {
-            const { amount, orderId } = req.body;
+        const { amount, orderId } = req.body; 
+            // VNPay return uses query params on GET, while create/confirm calls may use JSON body.
+            // const payload = req.method === 'GET' ? req.query : req.body || {};
+            // const { amount, orderId } = payload;
 
             if (!amount || !orderId) {
                 return res.status(400).json({ 
@@ -78,7 +81,6 @@ const middlewareController = {
 
 }
 module.exports = middlewareController;
-
 
 
 

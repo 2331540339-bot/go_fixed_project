@@ -1,0 +1,279 @@
+[{
+  "_id": {
+    "$oid": "69260813f3f40b4acd4e03a1"
+  },
+  "user_id": {
+    "$oid": "69183c7c8149e7fe96495bc6"
+  },
+  "items": [
+    {
+      "product_id": {
+        "$oid": "6922bbe14ee3b593e2e6cc03"
+      },
+      "quantity": 1,
+      "price": 7500000,
+      "_id": {
+        "$oid": "69260813f3f40b4acd4e03a2"
+      }
+    }
+  ],
+  "total_price": 7500000,
+  "payment_method": "cod",
+  "shipping_address": "học viện",
+  "status": "pending",
+  "createdAt": {
+    "$date": "2025-11-25T19:48:35.360Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-25T19:48:35.360Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "692608bd296a5eddbdec0586"
+  },
+  "user_id": {
+    "$oid": "69183c7c8149e7fe96495bc6"
+  },
+  "items": [
+    {
+      "product_id": {
+        "$oid": "6922bbe14ee3b593e2e6cc03"
+      },
+      "quantity": 1,
+      "price": 7500000,
+      "_id": {
+        "$oid": "692608bd296a5eddbdec0587"
+      }
+    }
+  ],
+  "total_price": 7500000,
+  "payment_method": "cod",
+  "shipping_address": "học viện",
+  "status": "pending",
+  "createdAt": {
+    "$date": "2025-11-25T19:51:25.504Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-25T19:51:25.504Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "692608d2ec4f9155a0e6ee5b"
+  },
+  "user_id": {
+    "$oid": "69183c7c8149e7fe96495bc6"
+  },
+  "items": [
+    {
+      "product_id": {
+        "$oid": "6922bbe14ee3b593e2e6cc03"
+      },
+      "quantity": 1,
+      "price": 7500000,
+      "_id": {
+        "$oid": "692608d2ec4f9155a0e6ee5c"
+      }
+    }
+  ],
+  "total_price": 7500000,
+  "payment_method": "cod",
+  "shipping_address": "học viện",
+  "status": "pending",
+  "createdAt": {
+    "$date": "2025-11-25T19:51:46.352Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-25T19:51:46.352Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69260a2caab9c49c5e0f70f0"
+  },
+  "user_id": {
+    "$oid": "69183c7c8149e7fe96495bc6"
+  },
+  "items": [
+    {
+      "product_id": {
+        "$oid": "6922bbe14ee3b593e2e6cc03"
+      },
+      "quantity": 1,
+      "price": 7500000,
+      "_id": {
+        "$oid": "69260a2caab9c49c5e0f70f1"
+      }
+    }
+  ],
+  "total_price": 7500000,
+  "payment_method": "cod",
+  "shipping_address": "học viện",
+  "status": "pending",
+  "createdAt": {
+    "$date": "2025-11-25T19:57:32.583Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-25T19:57:32.583Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69260c990a4865b5c1b6e963"
+  },
+  "user_id": {
+    "$oid": "69183c7c8149e7fe96495bc6"
+  },
+  "items": [
+    {
+      "product_id": {
+        "$oid": "6922bbe14ee3b593e2e6cc03"
+      },
+      "quantity": 1,
+      "price": 7500000,
+      "_id": {
+        "$oid": "69260c990a4865b5c1b6e964"
+      }
+    }
+  ],
+  "total_price": 7500000,
+  "payment_method": "cod",
+  "shipping_address": "hv",
+  "status": "pending",
+  "createdAt": {
+    "$date": "2025-11-25T20:07:53.503Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-25T20:07:53.503Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69260ded5b8ae0605f16b1c5"
+  },
+  "user_id": {
+    "$oid": "69183c7c8149e7fe96495bc6"
+  },
+  "items": [
+    {
+      "product_id": {
+        "$oid": "6922bbe14ee3b593e2e6cc03"
+      },
+      "quantity": 1,
+      "price": 7500000,
+      "_id": {
+        "$oid": "69260ded5b8ae0605f16b1c6"
+      }
+    }
+  ],
+  "total_price": 7500000,
+  "payment_method": "cod",
+  "shipping_address": "học viện",
+  "status": "pending",
+  "createdAt": {
+    "$date": "2025-11-25T20:13:33.904Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-25T20:13:33.904Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69260ee4b12552c67dc5cbff"
+  },
+  "user_id": {
+    "$oid": "69183c7c8149e7fe96495bc6"
+  },
+  "items": [
+    {
+      "product_id": {
+        "$oid": "6922bbe14ee3b593e2e6cc03"
+      },
+      "quantity": 1,
+      "price": 7500000,
+      "_id": {
+        "$oid": "69260ee4b12552c67dc5cc00"
+      }
+    }
+  ],
+  "total_price": 7500000,
+  "payment_method": "cod",
+  "shipping_address": "học viện",
+  "status": "pending",
+  "createdAt": {
+    "$date": "2025-11-25T20:17:40.411Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-25T20:17:40.411Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6926127cfe45737683774e40"
+  },
+  "user_id": {
+    "$oid": "69183c7c8149e7fe96495bc6"
+  },
+  "items": [
+    {
+      "product_id": {
+        "$oid": "6922bbe14ee3b593e2e6cc03"
+      },
+      "quantity": 1,
+      "price": 7500000,
+      "_id": {
+        "$oid": "6926127cfe45737683774e41"
+      }
+    }
+  ],
+  "total_price": 7500000,
+  "payment_method": "cod",
+  "shipping_address": "học",
+  "status": "pending",
+  "createdAt": {
+    "$date": "2025-11-25T20:33:00.165Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-25T20:33:00.165Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6926128ffe45737683774e4c"
+  },
+  "user_id": {
+    "$oid": "69183c7c8149e7fe96495bc6"
+  },
+  "items": [
+    {
+      "product_id": {
+        "$oid": "6922bbe14ee3b593e2e6cc03"
+      },
+      "quantity": 1,
+      "price": 7500000,
+      "_id": {
+        "$oid": "6926128ffe45737683774e4d"
+      }
+    }
+  ],
+  "total_price": 7500000,
+  "payment_method": "banking",
+  "shipping_address": "học",
+  "status": "pending",
+  "createdAt": {
+    "$date": "2025-11-25T20:33:19.973Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-25T20:33:19.973Z"
+  },
+  "__v": 0
+}]

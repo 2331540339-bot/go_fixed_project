@@ -1,0 +1,225 @@
+[{
+  "_id": {
+    "$oid": "6921d70161edce13f660b3c3"
+  },
+  "user_id": "69183c7c8149e7fe96495bc6",
+  "mechanic_id": "690494944c3d35a8acc2d864",
+  "service_id": "68ea1226a641c3a9e17e90f6",
+  "description": "123",
+  "status": "accepted",
+  "location": {
+    "type": "Point",
+    "coordinates": [
+      0,
+      0
+    ]
+  },
+  "price_estimate": 25000,
+  "createdAt": {
+    "$date": "2025-11-22T15:30:09.747Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-22T15:30:12.449Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6922a0277e358f9fbe818979"
+  },
+  "user_id": "69183c7c8149e7fe96495bc6",
+  "mechanic_id": "690494944c3d35a8acc2d864",
+  "service_id": "68ea1226a641c3a9e17e90f5",
+  "description": "",
+  "status": "accepted",
+  "location": {
+    "type": "Point",
+    "coordinates": [
+      0,
+      0
+    ]
+  },
+  "price_estimate": 115000,
+  "createdAt": {
+    "$date": "2025-11-23T05:48:23.809Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-23T05:48:27.217Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6922a6e752f2a74e49a47784"
+  },
+  "user_id": "69183c7c8149e7fe96495bc6",
+  "mechanic_id": "finding",
+  "service_id": "68ea1226a641c3a9e17e90f5",
+  "description": "",
+  "status": "not-accepted\"",
+  "location": {
+    "type": "Point",
+    "coordinates": [
+      0,
+      0
+    ]
+  },
+  "price_estimate": 115000,
+  "createdAt": {
+    "$date": "2025-11-23T06:17:11.050Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-23T06:17:41.080Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6922a74f52f2a74e49a4778c"
+  },
+  "user_id": "69183c7c8149e7fe96495bc6",
+  "mechanic_id": "690494944c3d35a8acc2d864",
+  "service_id": "68ea1226a641c3a9e17e90f5",
+  "description": "",
+  "status": "accepted",
+  "location": {
+    "type": "Point",
+    "coordinates": [
+      0,
+      0
+    ]
+  },
+  "price_estimate": 115000,
+  "createdAt": {
+    "$date": "2025-11-23T06:18:55.306Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-23T06:19:25.019Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6922a79c52f2a74e49a47795"
+  },
+  "user_id": "69183c7c8149e7fe96495bc6",
+  "mechanic_id": "finding",
+  "service_id": "68ea1226a641c3a9e17e90f5",
+  "description": "",
+  "status": "not-accepted\"",
+  "location": {
+    "type": "Point",
+    "coordinates": [
+      0,
+      0
+    ]
+  },
+  "price_estimate": 115000,
+  "createdAt": {
+    "$date": "2025-11-23T06:20:12.468Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-23T06:20:42.484Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6922a8b752f2a74e49a4779d"
+  },
+  "user_id": "69183c7c8149e7fe96495bc6",
+  "mechanic_id": "finding",
+  "service_id": "68ea1226a641c3a9e17e90f5",
+  "description": "",
+  "status": "not-accepted\"",
+  "location": {
+    "type": "Point",
+    "coordinates": [
+      0,
+      0
+    ]
+  },
+  "price_estimate": 115000,
+  "createdAt": {
+    "$date": "2025-11-23T06:24:55.072Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-23T06:25:25.106Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6922b81b52f2a74e49a477aa"
+  },
+  "user_id": "69183c7c8149e7fe96495bc6",
+  "mechanic_id": "finding",
+  "service_id": "68ea1226a641c3a9e17e90f5",
+  "description": "123",
+  "status": "not-accepted\"",
+  "location": {
+    "type": "Point",
+    "coordinates": [
+      0,
+      0
+    ]
+  },
+  "price_estimate": 115000,
+  "createdAt": {
+    "$date": "2025-11-23T07:30:35.193Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-23T07:31:05.219Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6922b97452f2a74e49a477b3"
+  },
+  "user_id": "69183c7c8149e7fe96495bc6",
+  "mechanic_id": "690494944c3d35a8acc2d864",
+  "service_id": "68ea1226a641c3a9e17e90f5",
+  "description": "",
+  "status": "accepted",
+  "location": {
+    "type": "Point",
+    "coordinates": [
+      106.6345567,
+      10.8252333
+    ]
+  },
+  "price_estimate": 115000,
+  "createdAt": {
+    "$date": "2025-11-23T07:36:20.022Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-23T07:36:40.915Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6922bab152f2a74e49a477be"
+  },
+  "user_id": "69183c7c8149e7fe96495bc6",
+  "mechanic_id": "690494944c3d35a8acc2d864",
+  "service_id": "68ea1226a641c3a9e17e90f5",
+  "description": "hay cuz toi",
+  "status": "accepted",
+  "location": {
+    "type": "Point",
+    "coordinates": [
+      106.6345567,
+      10.8252333
+    ]
+  },
+  "price_estimate": 115000,
+  "createdAt": {
+    "$date": "2025-11-23T07:41:37.933Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-23T07:41:39.750Z"
+  },
+  "__v": 0
+}]

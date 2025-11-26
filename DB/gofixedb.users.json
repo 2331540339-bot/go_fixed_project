@@ -1,0 +1,179 @@
+[{
+  "_id": {
+    "$oid": "68ea0fd8a641c3a9e17e90ef"
+  },
+  "fullname": "Ngô Thành Danh",
+  "email": "admin@gmail.com",
+  "phone": "0919308384",
+  "password_hash": "123456",
+  "avatar_url": "https://scontent.fsgn2-3.fna.fbcdn.net/v/t39.30808-6/530274521_2537541266593174_602615747880591827_n.jpg?_nc_cat=107&ccb=1-7&_nc_sid=6ee11a&_nc_eui2=AeEqys2mFr-TsT045tJ9oK98T1_WDVNfTQJPX9YNU19NAlIx1_n1Rk25dwv9HJbafPTPuAUQupg_HUllw70hZOOH&_nc_ohc=mTfZzC_BSdEQ7kNvwFnlqRW&_nc_oc=AdngNm74y7OMnmRSvqHnNbB7hGP_wL9K0ffO8O9zNQv9YPe8zsjRV7YjZ8zAambYoU0&_nc_zt=23&_nc_ht=scontent.fsgn2-3.fna&_nc_gid=wi_gFAH3eByCJhvfJaom9Q&oh=00_AfeC98rkEH3cXpu1AjCn1CkzCfZK8KxvpvRn0Rri1HSEcg&oe=68EFC981",
+  "role": "admin",
+  "createdAt": {
+    "$date": "2025-10-11T10:00:00.000Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-11T10:00:00.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68ea0fd8a641c3a9e17e90f0"
+  },
+  "fullname": "Nguyễn Ngọc Bảo",
+  "email": "end_user@gmail.com",
+  "phone": "0919212029",
+  "password_hash": "123456",
+  "avatar_url": "https://marketplace.canva.com/Dz63E/MAF4KJDz63E/1/tl/canva-user-icon-MAF4KJDz63E.png",
+  "role": "end_user",
+  "createdAt": {
+    "$date": "2025-10-11T10:05:00.000Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-11T10:05:00.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "69048d8f8a329607cbc710ee"
+  },
+  "fullname": "Danh Thanh Test 01",
+  "email": "mechanic_02@gmail.com",
+  "phone": "0922000002",
+  "password_hash": "456789",
+  "avatar_url": "https://scontent.fsgn2-7.fna.fbcdn.net/v/t39.30808-6/468305272_18137593912368382_8891877195107704139_n.jpg?_nc_cat=108&ccb=1-7&_nc_sid=127cfc&_nc_eui2=AeEIt7b0Wa8R0n2tU_1fRf93eYPduwgErad5g927CAStp5Mkr_zv6e10P4tOZagxPmaN3LxsS__flY-tDYmEBdXW&_nc_ohc=Ep2wbBFN0pkQ7kNvwEKCd2Z&_nc_oc=Adl1D4qAUS_Icavdz_vDDmjoFdr_W6usSGIyNeFcOJADcd7qGgRv50vnqOh7pJ3CAzc&_nc_zt=23&_nc_ht=scontent.fsgn2-7.fna&_nc_gid=MYYal7jU_uyvgBpOdhUTFw&oh=00_AfdLV8ok0VBimnHhsvG5O0OeEMWxZc8scYUvot22m8TY3g&oe=68EFC6E4",
+  "role": "mechanic_user",
+  "status": "online",
+  "location": {
+    "type": "Point",
+    "coordinates": [
+      0.1,
+      15.5
+    ]
+  },
+  "services_available": [
+    "vá lốp",
+    "thay nhớt",
+    "cứu hộ khẩn cấp"
+  ],
+  "average_rating": 4.8,
+  "total_jobs": 1
+},
+{
+  "_id": {
+    "$oid": "68ea0fd8a641c3a9e17e90f2"
+  },
+  "fullname": "Pham Dinh D",
+  "email": "mechanic2@gmail.com",
+  "phone": "0933000003",
+  "password_hash": "$2b$10$examplehashformechanic2",
+  "avatar_url": "https://example.com/avatar_mechanic2.jpg",
+  "role": "mechanic_user",
+  "status": "offline",
+  "location": {
+    "type": "Point",
+    "coordinates": [
+      106.682153,
+      10.762622
+    ]
+  },
+  "services_available": [
+    "advanced_services",
+    "simple_services",
+    "rescue_vehicles"
+  ],
+  "average_rating": 4.5,
+  "total_jobs": 95,
+  "createdAt": {
+    "$date": "2025-10-11T10:15:00.000Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-11T10:15:00.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "69048ecec6fc19c0cc7de2ea"
+  },
+  "fullname": "bao",
+  "email": "b@gmail.com",
+  "phone": "0934858724",
+  "password_hash": "$2b$10$76ON2jFXXLNMhSTUwA3WTuDkuZOyNT8tazqMrGg6AVt.kEnX48xa.",
+  "avatar_url": "https://marketplace.canva.com/Dz63E/MAF4KJDz63E/1/tl/canva-user-icon-MAF4KJDz63E.png",
+  "role": "end_user",
+  "status": "offline",
+  "location": {
+    "type": "Point",
+    "coordinates": [
+      0,
+      0
+    ]
+  },
+  "services_available": [],
+  "average_rating": 0,
+  "total_jobs": 0,
+  "createdAt": {
+    "$date": "2025-10-31T10:26:22.695Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-31T10:26:22.695Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "690494944c3d35a8acc2d864"
+  },
+  "fullname": "huy",
+  "email": "a@gmail.com",
+  "phone": "0934858725",
+  "password_hash": "$2b$10$ONccccz/aLvMTvWw5RlAmuuIT89yOC5IxB7z5onkZrqj8jVpBnRHO",
+  "avatar_url": "https://marketplace.canva.com/Dz63E/MAF4KJDz63E/1/tl/canva-user-icon-MAF4KJDz63E.png",
+  "role": "mechanic_user",
+  "status": "offline",
+  "location": {
+    "type": "Point",
+    "coordinates": [
+      106.641131,
+      10.802409
+    ]
+  },
+  "services_available": [],
+  "average_rating": 0,
+  "total_jobs": 0,
+  "createdAt": {
+    "$date": "2025-10-31T10:51:00.085Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-23T07:41:52.799Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69183c7c8149e7fe96495bc6"
+  },
+  "fullname": "Bao",
+  "email": "c@gmail.com",
+  "phone": "0912345678",
+  "password_hash": "$2b$10$oZFScoMFyJSZdM4LcfgYt.jsQU/VbcMZzsBtV368zGWpd5INAd8ue",
+  "avatar_url": "https://marketplace.canva.com/Dz63E/MAF4KJDz63E/1/tl/canva-user-icon-MAF4KJDz63E.png",
+  "role": "end_user",
+  "status": "offline",
+  "location": {
+    "type": "Point",
+    "coordinates": [
+      0,
+      0
+    ]
+  },
+  "services_available": [],
+  "average_rating": 0,
+  "total_jobs": 0,
+  "createdAt": {
+    "$date": "2025-11-15T08:40:28.825Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-15T08:40:28.825Z"
+  },
+  "__v": 0
+}]
