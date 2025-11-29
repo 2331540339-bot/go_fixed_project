@@ -1,6 +1,7 @@
 import Header from "./components/Header"
 import { Outlet } from "react-router-dom"
 import Footer from "./components/Footer"
+import Chatbot from './components/Chatbot';
 import { useState } from "react"
 function App() {
   const [authChange, setAuthChange] = useState(0);
@@ -15,6 +16,7 @@ function App() {
       </style>
       <Header onAuthChange = {checkAuthChange}/>
       <Outlet key = {authChange}/>
+      <Chatbot />
       <Footer/>
       
     </>
