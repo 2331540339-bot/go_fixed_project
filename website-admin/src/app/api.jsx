@@ -11,6 +11,7 @@ const COMMERCE_URL = `${baseURL}/commerce`;
 const PRODUCT_URL = `${COMMERCE_URL}/product`;
 const CATALOG_URL = `${COMMERCE_URL}/catalog`;
 const ORDER_URL = `${baseURL}/order`;
+const BANNER_URL = `${baseURL}/banners`;
 const ACCOUNT_ADMIN_URL = `${ACCOUNT_URL}`;
 
 
@@ -154,4 +155,35 @@ const orderAPI = {
       }),
 };
 
-export { loginAPI, productAPI, accountAPI, catalogAPI, orderAPI };
+const bannerAPI = {
+  list: () =>
+    axiosAdmin
+      .get(`${BANNER_URL}/get`)
+      .then((res) => res.data)
+      .catch((err) => {
+        throw err;
+      }),
+  create: (payload) =>
+    axiosAdmin
+      .post(`${BANNER_URL}/add`, payload)
+      .then((res) => res.data)
+      .catch((err) => {
+        throw err;
+      }),
+  update: (id, payload) =>
+    axiosAdmin
+      .patch(`${BANNER_URL}/update/${id}`, payload)
+      .then((res) => res.data)
+      .catch((err) => {
+        throw err;
+      }),
+  remove: (id) =>
+    axiosAdmin
+      .delete(`${BANNER_URL}/delete/${id}`)
+      .then((res) => res.data)
+      .catch((err) => {
+        throw err;
+      }),
+};
+
+export { loginAPI, productAPI, accountAPI, catalogAPI, orderAPI, bannerAPI };

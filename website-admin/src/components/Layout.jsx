@@ -10,6 +10,8 @@ const Layout = ({ children }) => {
     ? "Danh mục"
     : pathname.includes("orders")
     ? "Đơn hàng"
+    : pathname.includes("banners")
+    ? "Banner"
     : "Dashboard";
 
   return (
@@ -34,6 +36,9 @@ const Layout = ({ children }) => {
           </NavLink>
           <NavLink to="/orders" className="nav-link text-white">
             <span className="me-2">▸</span>Đơn hàng
+          </NavLink>
+          <NavLink to="/banners" className="nav-link text-white">
+            <span className="me-2">▸</span>Banner
           </NavLink>
         </nav>
         <div className="sidebar-footer mt-auto px-3 pb-3 text-white-50 small">

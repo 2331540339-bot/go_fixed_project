@@ -6,7 +6,6 @@ import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
 import 'package:mechanic/config/api_config.dart';
 
-
 class MapRouteBox extends StatefulWidget {
   const MapRouteBox({
     
