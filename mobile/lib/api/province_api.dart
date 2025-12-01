@@ -1,7 +1,7 @@
 // province_api.dart
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import '../model/province.dart';
+import '../presentation/model/province.dart';
 
 class ProvinceApi {
   static const _base = 'https://provinces.open-api.vn';

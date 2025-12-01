@@ -6,7 +6,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:mobile/config/assets/app_image.dart';
-import 'package:mobile/data/remote/geocoding_api.dart';
+import 'package:mobile/api/geocoding_api.dart';
 import 'package:mobile/presentation/controller/user_controller.dart';
 
 class SettingsPage extends StatefulWidget {

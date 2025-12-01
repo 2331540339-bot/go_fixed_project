@@ -1,0 +1,22 @@
+[{
+  "_id": {
+    "$oid": "69229de1698f27092fc824ac"
+  },
+  "image_url": "https://www.xemayhuyhoang.com/upload/baiviet/thiet-ke-chua-co-ten-15-8110.png",
+  "link_url": "https://example.com/promo/1",
+  "title": "Khuyến mãi 50% dịch vụ sửa xe"
+},
+{
+  "_id": {
+    "$oid": "69229de1698f27092fc824ad"
+  },
+  "image_url": "https://cuuhoxemay24g.com/wp-content/uploads/2022/10/banner-cuuhoxemay24g-trungtg.jpg",
+  "title": "Dịch vụ cứu hộ nhanh 24/7"
+},
+{
+  "_id": {
+    "$oid": "69229de1698f27092fc824ae"
+  },
+  "image_url": "https://nankai.toyota.com.vn/storage/app/uploads/public/633/d27/5ab/633d275ab7175856202588.jpg",
+  "link_url": "https://example.com/news/123"
+}]

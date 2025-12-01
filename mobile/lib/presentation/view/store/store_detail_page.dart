@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mobile/config/themes/app_color.dart';
-import 'package:mobile/data/model/product.dart';
+import 'package:mobile/presentation/model/product.dart';
 import 'package:mobile/presentation/controller/cart_controller.dart';
 import 'package:mobile/presentation/controller/product_controller.dart';
 import 'package:mobile/presentation/view/store/store_cart_page.dart';
@@ -75,7 +75,9 @@ class _StoreDetailPageState extends State<StoreDetailPage> {
   Widget build(BuildContext context) {
     final product = _product;
     return Scaffold(
-      appBar: AppBar(title: Text(product?.name ?? 'Chi tiết sản phẩm')),
+      appBar: AppBar(
+        backgroundColor: AppColor.primaryColor,
+        title: Text(product?.name ?? 'Chi tiết sản phẩm')),
       body: SafeArea(child: _buildBody(product)),
       bottomNavigationBar: _buildBottomBar(product),
     );

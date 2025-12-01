@@ -1,8 +1,8 @@
 import 'package:flutter/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../data/remote/user_api.dart';
-import '../../data/model/user.dart';
-import '../../core/network/api_client.dart';
+import '../api/user_api.dart';
+import '../presentation/model/user.dart';
+import '../api/api_client.dart';
 
 class UserRepository {
   UserRepository(this._api, this._sp);
@@ -26,20 +26,16 @@ class UserRepository {
   String? get phone => _sp.getString('user_phone');
 
   Future<bool> login(String email, String password) async {
-    // 💡 Nhận toàn bộ dữ liệu từ API
+    // Nhận toàn bộ dữ liệu từ API
     final data = await _api.login(email: email, password: password); 
     
     final t = data['accessToken'] as String?;
    final user = User.fromJson(data);
 
-     // 💡 LƯU EMAIL VÀ PHONE VÀO SHARED PREFERENCE
-
     if (t == null || t.isEmpty) {
       debugPrint('UserRepository: Token nhận được là null/rỗng.');
       return false;
     }
-
-    // 💡 LƯU CẢ TÊN VÀ TOKEN VÀO SHARED PREFERENCES
     await _sp.setString('token', t);
     await _sp.setString('user_fullname', user.fullname);
     await _sp.setString('user_email', user.email);
@@ -86,7 +82,6 @@ class UserRepository {
     return true;
   }
 
-  // 💡 HÀM getProfile() trong Controller bây giờ sẽ gọi hàm này:
   Future<User?> getStoredProfile() async {
     return localUser;
   }

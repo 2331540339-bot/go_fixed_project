@@ -3,8 +3,8 @@ import 'package:mobile/common/app_button.dart';
 import 'package:mobile/config/assets/app_image.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:mobile/config/themes/app_color.dart';
-import 'package:mobile/presentation/view/login_page.dart';
-import 'package:mobile/presentation/view/sign_up_page.dart';
+import 'package:mobile/presentation/view/start/login_page.dart';
+import 'package:mobile/presentation/view/start/sign_up_page.dart';
 
 class SignInAndSignUp extends StatelessWidget {
   const SignInAndSignUp({super.key});

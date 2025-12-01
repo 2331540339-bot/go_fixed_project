@@ -18,7 +18,9 @@ class StoreCartPage extends StatelessWidget {
     final items = cart.items;
     final isEmpty = items.isEmpty;
     return Scaffold(
-      appBar: AppBar(title: const Text('Giỏ Hàng')),
+      appBar: AppBar(
+        backgroundColor: AppColor.primaryColor,
+        title: const Text('Giỏ Hàng')),
       body: SafeArea(
         child: Container(
           color: const Color(0xffD9D9D9),

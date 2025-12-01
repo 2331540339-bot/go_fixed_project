@@ -4,6 +4,7 @@ const ACCOUNT_URL = "http://localhost:8000/account";
 const CART_URL = "http://localhost:8000/cart";
 const CATALOG_URL = "http://localhost:8000/catalog";
 const COMMERCE_URL = "http://localhost:8000/commerce";
+const PAYMENT_URL = "http://localhost:8000/payment_online";
 
 const loginAPI = (email, password_hash) => {
     return axios
@@ -85,3 +86,10 @@ const cartAPI_delete = (product_id) => {
     .then((res) => res.data)
     .catch((err) => {throw err})
 }; export {cartAPI_delete}
+
+const paymentVnPayAPI = (amount, orderId) => {
+    return axiosClient
+    .post(`${PAYMENT_URL}/create-qr`, {amount, orderId})
+    .then((res) => res.data)
+    .catch((err) => {throw err})
+}; export {paymentVnPayAPI}

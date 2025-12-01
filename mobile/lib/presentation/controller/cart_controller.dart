@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart';
-import 'package:mobile/data/model/product.dart';
+import 'package:mobile/presentation/model/product.dart';
 
 class CartItem {
   CartItem({

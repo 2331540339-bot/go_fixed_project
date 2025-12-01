@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mobile/config/themes/app_color.dart';
-import 'package:mobile/data/model/vietnam_address.dart';
-import 'package:mobile/data/remote/vietnam_address_api.dart';
+import 'package:mobile/presentation/model/vietnam_address.dart';
+import 'package:mobile/api/vietnam_address_api.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class Showmodalbottomsheet extends StatefulWidget {

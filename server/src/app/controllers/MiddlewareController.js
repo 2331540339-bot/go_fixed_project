@@ -47,11 +47,40 @@ const middlewareController = {
             })
             .catch(err => res.status(401).json({err: "Not found service",error: err.message}))
         })
+    },
+
+   verifyPayment: (req, res, next) => {
+        const { amount, orderId } = req.body; 
+            // VNPay return uses query params on GET, while create/confirm calls may use JSON body.
+            // const payload = req.method === 'GET' ? req.query : req.body || {};
+            // const { amount, orderId } = payload;
+
+            if (!amount || !orderId) {
+                return res.status(400).json({ 
+                    err: "Thiếu dữ liệu cần thiết", 
+                    message: "Vui lòng cung cấp 'amount' và 'orderId'." 
+                });
+            }
+            const numericAmount = Number(amount);
+            if (isNaN(numericAmount) || numericAmount <= 0) {
+                return res.status(400).json({ 
+                    err: "Dữ liệu không hợp lệ", 
+                    message: "'amount' phải là số dương hợp lệ." 
+                });
+            }
+
+            if (typeof orderId !== 'string' || orderId.trim().length === 0) {
+                 return res.status(400).json({ 
+                    err: "Dữ liệu không hợp lệ", 
+                    message: "'orderId' không được để trống." 
+                });
+            }
+            
+            next();
     }
 
 }
 module.exports = middlewareController;
-
 
 
 

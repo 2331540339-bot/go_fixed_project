@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
-import 'package:mobile/data/remote/service_api.dart';
-import 'package:mobile/data/model/service.dart';
+import 'package:mobile/api/service_api.dart';
+import 'package:mobile/presentation/model/service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ServiceController extends ChangeNotifier {

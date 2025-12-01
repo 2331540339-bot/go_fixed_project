@@ -1,0 +1,54 @@
+[{
+  "_id": {
+    "$oid": "68ea1226a641c3a9e17e90f5"
+  },
+  "name": "Vá lốp",
+  "base_price": 15000,
+  "icon_url": "https://mrlop.com.vn/assets/img/categories/tyre.png",
+  "kind_services": "simple_services"
+},
+{
+  "_id": {
+    "$oid": "68ea1226a641c3a9e17e90f6"
+  },
+  "name": "Nhiên liệu",
+  "base_price": 25000,
+  "icon_url": "https://png.pngtree.com/png-vector/20190224/ourmid/pngtree-vector-fuel-station-icon-png-image_701271.jpg",
+  "kind_services": "simple_services"
+},
+{
+  "_id": {
+    "$oid": "68ea1226a641c3a9e17e90f7"
+  },
+  "name": "Điện xe",
+  "base_price": "Chờ kiểm tra",
+  "icon_url": "https://png.pngtree.com/png-vector/20191027/ourmid/pngtree-calling-telephone-line-icon-vector-png-image_1885981.jpg",
+  "kind_services": "advances_services"
+},
+{
+  "_id": {
+    "$oid": "68ea1226a641c3a9e17e90f8"
+  },
+  "name": "Động cơ",
+  "base_price": "Chờ kiểm tra",
+  "icon_url": "https://png.pngtree.com/png-vector/20190930/ourlarge/pngtree-engine-line-icon-vector-png-image_1772259.jpg",
+  "kind_services": "advances_services"
+},
+{
+  "_id": {
+    "$oid": "68ea1226a641c3a9e17e90f9"
+  },
+  "name": "Cứu hộ",
+  "base_price": 25000,
+  "icon_url": "https://media.istockphoto.com/id/1336730739/vi/vec-to/c%E1%BB%A9u-h%E1%BB%99-k%C3%A9o-xe-t%E1%BA%A3i-bi%E1%BB%83u-t%C6%B0%E1%BB%A3ng-vector-m%E1%BA%ABu-thi%E1%BA%BFt-k%E1%BA%BF-ph%E1%BA%B3ng.jpg?s=170667a&w=0&k=20&c=ZVAhAa4mUK4I7BxToJAA4qHnWtg7onus0GCBCN8Urcw=",
+  "kind_services": "rescue_vehicles"
+},
+{
+  "_id": {
+    "$oid": "6904cadd8a329607cbc710f9"
+  },
+  "name": "Đẩy hộ",
+  "base_price": 15000,
+  "icon_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ1wXtkvZtIKfgv46xJtreBdH4FW4CFgvhg8A&s",
+  "kind_services": "simple_services"
+}]

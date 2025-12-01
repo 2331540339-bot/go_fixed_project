@@ -1,7 +1,8 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
-import 'package:mobile/data/model/service.dart';
+import 'package:mobile/core/network/endpoints.dart';
+import 'package:mobile/presentation/model/service.dart';
 import 'package:mobile/config/router/app_router.dart';
 
 class ServiceApi {
@@ -9,7 +10,7 @@ class ServiceApi {
 
   final http.Client _client;
   static String get _base =>
-      AppRouter.main_domain; // ví dụ: http://localhost:8000
+      AppRouter.main_domain; 
 
   /// GET /services?limit=&offset=&q=
   Future<List<Service>> listServices({
@@ -17,7 +18,7 @@ class ServiceApi {
     int offset = 0,
     String? q,
   }) async {
-    final uri = Uri.parse('$_base/service/get').replace(
+    final uri = Uri.parse(Endpoints.services).replace(
       queryParameters: {
         'limit': '$limit',
         'offset': '$offset',
@@ -65,7 +66,7 @@ class ServiceApi {
       'coordinates': [lng, lat],
     };
 
-    final uri = Uri.parse('$_base/service/rescue/$serviceId');
+    final uri = Uri.parse('${Endpoints.sendRescueRequest}$serviceId');
     // final token = _getAuthToken(); // Lấy token xác thực
     // Kiểm tra token trước khi gửi request
     if (authToken.isEmpty) {

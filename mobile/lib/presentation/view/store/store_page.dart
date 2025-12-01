@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:mobile/config/themes/app_color.dart';
-import 'package:mobile/data/model/catalog.dart';
-import 'package:mobile/data/model/product.dart';
+import 'package:mobile/presentation/model/catalog.dart';
+import 'package:mobile/presentation/model/product.dart';
 import 'package:mobile/presentation/controller/banner_controller.dart';
 import 'package:mobile/presentation/controller/catalog_controller.dart';
 import 'package:mobile/presentation/controller/product_controller.dart';
@@ -86,7 +86,11 @@ class _StorePageState extends State<StorePage> {
             .where((p) => (p.category ?? p.id) == _selectedCatalogId)
             .toList();
     return Scaffold(
-      appBar: AppBar(title: Row(
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        backgroundColor: AppColor.primaryColor,
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
          
          InkWell(
@@ -95,7 +99,7 @@ class _StorePageState extends State<StorePage> {
           },
           child: Icon(Icons.menu, size: 24.sp,)
          ),
-         Spacer(),
+        Text("Cửa hàng"),
           InkWell(
             onTap: () {
               Navigator.of(context).push(
