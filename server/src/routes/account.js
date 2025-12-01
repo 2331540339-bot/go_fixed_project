@@ -8,4 +8,5 @@ router.post('/login', accountController.login)
 router.post('/create', accountController.create)
 router.delete('/delete/:id', middlewareController.verifyTokenAndAdmin , accountController.delete)
 
+
 module.exports = router;

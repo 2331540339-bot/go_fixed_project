@@ -14,10 +14,25 @@ const RescueRequest = new schema(
     },
     service_id: {
       type: String,
-      require: true,
+      required: true
     },
     description: {
       type: String,
+    },
+    //THÊM MỚI: ẢNH
+    images: [{
+      type: [String],
+      default: [],
+    }],
+    //THÊM MỚI: SỐ ĐIỆN THOẠI
+    phone: {
+      type: String,
+      required: true,
+    },
+    //THÊM MỚI: ĐỊA CHỈ CHI TIẾT
+    detail_address: {
+      type: String,
+      required: true,
     },
     status: {
       type: String,

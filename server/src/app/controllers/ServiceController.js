@@ -49,17 +49,24 @@ class ServiceController{
     //[POST] - /service/rescue/:id
     rescue(req, res){
         const io = req.app.get('io');
+        console.log("3", req.params.id);
         const rescueRequest = new RescueRequest({
             user_id: req.user.id,
             service_id: req.params.id,
             description: req.body.description,
+
+            // thêm mới
+            images: req.body.images || [],
+            phone: req.body.phone,
+            detail_address: req.body.detail_address,
+
             location: req.body.location,
             price_estimate: req.body.price_estimate,
         });
         const mechanicIds = Object.keys(onlineMechanics);
-        if (mechanicIds.length === 0 ){
-            return res.status(200).json({message:'Không có thợ nào đang hoạt động'});
-        };
+        // if (mechanicIds.length === 0 ){
+        //     return res.status(200).json({message:'Không có thợ nào đang hoạt động'});
+        // };
         rescueRequest.save()
         .then( async() => {
             const location = rescueRequest.location;

@@ -9,12 +9,14 @@ import Checkout from "../components/Checkout"
 import Cart from "../pages/Cart"
 import SuccessPayment from "../components/SuccessPayment"
 import FailedPayment from "../components/FailedPayment"
+import Register from "../pages/Register";
 export const router = createBrowserRouter([
     {
         path:"/",
         element:<App/>,
         children:[
             {index:true , element: <Home/>},
+            {path:"register", element: <Register/> },
             {path:"services", element: <Services/> },
             {path:"services/:id", element: <ServiceBooking/> },
             {path:"genuine-part", element: <GenuinePart/>},
