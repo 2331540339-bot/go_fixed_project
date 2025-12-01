@@ -55,6 +55,7 @@ class _MapRouteBoxState extends State<MapRouteBox> {
 
   bool _mapReady = false;
   CameraFit? _pendingFit;
+  LatLng? _pendingCenter;
   
   static const LatLng _defaultCenter = LatLng(21.028511, 105.804817); 
 
@@ -68,6 +69,8 @@ class _MapRouteBoxState extends State<MapRouteBox> {
     final fit = CameraFit.bounds(
       bounds: LatLngBounds.fromPoints([a, b]),
       padding: const EdgeInsets.all(32),
+      maxZoom: 17,
+      minZoom: 5,
     );
     if (_mapReady) {
       _mapController.fitCamera(fit);
@@ -81,6 +84,8 @@ class _MapRouteBoxState extends State<MapRouteBox> {
     final fit = CameraFit.bounds(
       bounds: LatLngBounds.fromPoints(_route),
       padding: const EdgeInsets.all(32),
+      maxZoom: 17,
+      minZoom: 5,
     );
     if (_mapReady) {
       _mapController.fitCamera(fit);
@@ -91,15 +96,11 @@ class _MapRouteBoxState extends State<MapRouteBox> {
   
   // Hàm set camera về vị trí hiện tại
   void _fitToCurrentLocation(LatLng location) {
-    final fit = CameraFit.bounds(
-      bounds: LatLngBounds.fromPoints( [location]),
-      padding: const EdgeInsets.all(32),
-      minZoom: 16.0, // Zoom sát hơn vào vị trí hiện tại
-    );
     if (_mapReady) {
-      _mapController.fitCamera(fit);
+      _mapController.move(location, 16);
     } else {
-      _pendingFit = fit;
+      _pendingCenter = location;
+      _pendingFit = null; // ưu tiên move point
     }
   }
 
@@ -353,6 +354,7 @@ class _MapRouteBoxState extends State<MapRouteBox> {
   Widget build(BuildContext context) {
     // Logic hiển thị Map mới
     final initialCenter = widget.dest ?? _origin ?? _defaultCenter;
+    final initialZoom = widget.dest == null && _origin == null ? 11.5 : 14.0;
     final showDest = widget.dest != null && widget.showDestMarker;
     final showUser = _origin != null && widget.showUserMarker;
 
@@ -381,16 +383,19 @@ class _MapRouteBoxState extends State<MapRouteBox> {
               },
             )
           else
-            FlutterMap(
-              mapController: _mapController,
-              options: MapOptions(
-                initialCenter: initialCenter, // Dùng dest, hoặc origin, hoặc default
-                initialZoom: 14,
+              FlutterMap(
+                mapController: _mapController,
+                options: MapOptions(
+                  initialCenter: initialCenter, // Dùng dest, hoặc origin, hoặc default
+                initialZoom: initialZoom,
                 onMapReady: () {
                   _mapReady = true;
                   if (_pendingFit != null) {
                     _mapController.fitCamera(_pendingFit!);
                     _pendingFit = null;
+                  } else if (_pendingCenter != null) {
+                    _mapController.move(_pendingCenter!, 16);
+                    _pendingCenter = null;
                   } else if (widget.dest == null && _origin != null) {
                     // Nếu không có dest, nhưng có origin, zoom vào origin khi map sẵn sàng
                     _fitToCurrentLocation(_origin!);
