@@ -1,0 +1,14 @@
+body {
+  margin: 0;
+  background: #fdf7f9;
+  color: #1a1a1a;
+}
+
+a {
+  color: inherit;
+}
+
+table td,
+table th {
+  vertical-align: middle;
+}

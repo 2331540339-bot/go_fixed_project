@@ -4,7 +4,7 @@ import 'package:mechanic/common/app_button.dart';
 import 'package:mechanic/config/assets/app_image.dart';
 import 'package:mechanic/config/themes/app_color.dart';
 import 'package:mechanic/presentation/controllers/user_controller.dart';
-import 'package:mechanic/presentation/view/home_page.dart';
+import 'package:mechanic/presentation/view/main_tabs.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -146,9 +146,7 @@ class _LoginPageState extends State<LoginPage> {
                                     // Điều hướng và truyền ID thợ
                                     Navigator.of(context).pushAndRemoveUntil(
                                       MaterialPageRoute(
-                                        builder: (_) => HomePage(
-                                          mechanicId: mechanicId,
-                                        ), 
+                                        builder: (_) => MainTabs(mechanicId: mechanicId),
                                       ),
                                       (route) => false,
                                     );

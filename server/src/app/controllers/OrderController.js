@@ -1,6 +1,16 @@
 const Order = require("../models/Order")
 const Product = require("../models/Product")
 class OrderController{
+    async showAll(req, res){
+        try {
+            const orders = await Order.find().sort({createdAt: -1});
+            return res.status(200).json(orders);
+        } catch (err) {
+            console.log("Get Orders Error:", err);
+            return res.status(500).json({ success: false, message: "Lỗi server." });
+        }
+    }
+
     async create(req, res){
         try {
             const {items, payment_method, shipping_address } = req.body;
