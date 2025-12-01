@@ -3,6 +3,7 @@ import {productAPI_showall} from '../app/api';
 import banner_advertise from "../assets/banner_advertiser.png"
 import banner_advertise2 from "../assets/banner_advertiser2.png"
 import banner_advertise3 from "../assets/banner_advertiser3.png"
+import banner_advertise4 from "../assets/banner_advertiser4.jpg"
 import BestSellerSlider from "../components/BestSellerSlider"
 import CatalogSlider from "../components/CatalogSlider";
 import { useState } from "react";
@@ -41,12 +42,8 @@ function GenuinePart(){
                 
                 <div id="container" className="w-[80%]">
                     <div id="header" className="flex items-center mb-4 h-75">
-                        <div id="another-catalog" className="h-full px-4 py-2 border-4 border-p-500 rounded-2xl w-[20%]">
-                            <h2 className="text-xl font-semibold font-grostek" >Danh mục khác:</h2>
-                            <p><Link className="font-light font-grostek">● Đồ chơi</Link></p>
-                            <p><Link className="font-light font-grostek">● Đồ chơi</Link></p>
-                            <p><Link className="font-light font-grostek">● Đồ chơi</Link></p>
-                            <p><Link className="font-light font-grostek">● Đồ chơi</Link></p>
+                        <div id="another-catalog" className="h-full         w-[20%]">
+                            <img src={banner_advertise4} className="object-cover w-full h-full px-2" />
                         </div>
 
                         <div id="adsvertiser" className="h-full overflow-clip w-[50%]">
@@ -58,7 +55,7 @@ function GenuinePart(){
                         </div>
                     </div>
                     <div id="hot-product" className="my-5">
-                        <h2 className="text-2xl font-bold cursor-pointer font-grostek hover:text-p-500" >Xem tất cả sản phẩm →</h2>
+                        <Link to='/genuine-part/all-product'><h2 className="text-2xl font-bold cursor-pointer font-grostek hover:text-p-500" >Xem tất cả sản phẩm →</h2></Link>
                     </div>
                     <div id="best-seller"  className="my-5">
                         <h2 className="my-3 text-2xl font-bold font-grostek" >Danh mục hàng bán chạy</h2>

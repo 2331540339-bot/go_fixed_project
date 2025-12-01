@@ -4,6 +4,7 @@ import Home from "../pages/Home"
 import Services from "../pages/Services"
 import ServiceBooking from "../pages/ServiceBooking"    
 import GenuinePart from "../pages/GenuinePart"
+import AllPart from "../components/AllPart"
 import DetailPart from "../pages/DetailPart"
 import Checkout from "../components/Checkout"
 import Cart from "../pages/Cart"
@@ -18,6 +19,7 @@ export const router = createBrowserRouter([
             {path:"services", element: <Services/> },
             {path:"services/:id", element: <ServiceBooking/> },
             {path:"genuine-part", element: <GenuinePart/>},
+            {path:"genuine-part/all-product", element: <AllPart/>},
             {path:"genuine-part/:id", element: <DetailPart/>},
             {path:"/checkout/:productId/:quantity", element:<Checkout />},
             {path:"/cart", element: <Cart/>},

@@ -1,5 +1,6 @@
 const Order = require("../models/Order")
 const Product = require("../models/Product")
+const Cart = require("../models/Cart")
 class OrderController{
     async create(req, res){
         try {
@@ -31,6 +32,22 @@ class OrderController{
                 payment_method,
                 shipping_address
             });
+            const productIds = items.map(item => item.product_id);
+            const cart = await Cart.findOne({ user_id });
+
+            if (cart) {
+
+                cart.cart_items = cart.cart_items.filter(
+                    ci => !productIds.includes(ci.product_id.toString())
+                );
+
+                cart.total_price = cart.cart_items.reduce(
+                    (sum, item) => sum + item.price * item.quantity,
+                    0
+                );
+
+                await cart.save();
+            }
 
             return res.status(201).json({
                 success: true,

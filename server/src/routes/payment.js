@@ -1,13 +1,10 @@
 const express = require("express");
 const router = express.Router();
-// const vnPayController = require('../app/controllers/VnPayController');
 const vnPayController = require("../app/controllers/VnPayController");
 const middlewareController = require("../app/controllers/MiddlewareController");
 const jsonParser = express.json();
 const urlencodedParser = express.urlencoded({ extended: true });
 
-// router.post('/createqr', middlewareController.verifyToken, vnPayController.createQR);
-// router.get('/check-payment-vnpay', middlewareController.verifyToken, vnPayController.checkPayment);
 router.post(
   "/create-qr",
   jsonParser,
@@ -15,9 +12,6 @@ router.post(
   middlewareController.verifyPayment,
   vnPayController.createVnPayQR
 );
-router.get(
-  "/vnpay-return",
-  // middlewareController.verifyPayment,
-  vnPayController.vnpayReturn
-);
+
+router.get("/vnpay-return", vnPayController.vnpayReturn );
 module.exports = router;
