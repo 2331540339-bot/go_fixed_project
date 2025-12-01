@@ -76,15 +76,13 @@ class VnPayController {
         const amount = Number(vnp_Params["vnp_Amount"] || 0) / 100;
 
         if (vnp_ResponseCode === "00") {
-
           const order = await Order.findById(orderId);
 
           if (order) {
-        
             if (order.status === "pending" && order.total_price === amount) {
               await Order.updateOne(
                 { _id: orderId },
-                { $set: { status: "paid" } } 
+                { $set: { status: "paid" } }
               );
               console.log(amount);
               console.log(`Đơn hàng ${orderId} đã được thanh toán thành công.`);
@@ -99,7 +97,6 @@ class VnPayController {
               return res.redirect(
                 `${process.env.CLIENT_SUCCESS_URL}?orderId=${orderId}`
               );
-             
             } else {
               console.error(`Số tiền không khớp cho đơn hàng ${orderId}`);
               return res.redirect(
@@ -125,12 +122,10 @@ class VnPayController {
       }
     } catch (err) {
       console.error("VNPay Return Error:", err);
-      return res
-        .status(500)
-        .json({
-          success: false,
-          message: "Lỗi server khi xử lý kết quả VNPay.",
-        });
+      return res.status(500).json({
+        success: false,
+        message: "Lỗi server khi xử lý kết quả VNPay.",
+      });
     }
   }
 }

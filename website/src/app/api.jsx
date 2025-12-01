@@ -15,6 +15,15 @@ const loginAPI = (email, password_hash) => {
     })
 }; export {loginAPI}
 
+const registerAPI = (fullname, email, phone, password_hash, role = 'end_user') => {
+    return axiosClient
+    .post(`${ACCOUNT_URL}/create`, {fullname, email, phone, password_hash, role})
+    .then((res) => res.data)
+    .catch(err => {
+        throw err;
+    })
+}; export {registerAPI}
+
 const serviceAPI = () => {
     return axiosClient
     .get(`/service/get`)
@@ -22,9 +31,9 @@ const serviceAPI = () => {
     .catch((err) => {throw err})
 }; export {serviceAPI}
 
-const rescue_requestAPI = (description, location, price_estimate, idService) =>{
+const rescue_requestAPI = (description, images,phone,detail_address, location, price_estimate, idService) =>{
     return axiosClient
-    .post(`service/rescue/${idService}`, {description, location, price_estimate})
+    .post(`service/rescue/${idService}`, {description, images,phone,detail_address, location, price_estimate})
     .then((res) => res.data)
     .catch(err => {
         throw err

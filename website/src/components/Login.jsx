@@ -3,6 +3,7 @@ import { useState } from "react";
 import logo from "../assets/logo.png";
 import apple_icon from "../assets/apple_icon.png";
 import google_icon from "../assets/google_icon.png";
+import { Link } from "react-router-dom";
 
 
 function LoginModal({ onClose, onSuccess, onAuth }) {
@@ -10,7 +11,7 @@ function LoginModal({ onClose, onSuccess, onAuth }) {
   const [password, setPassword] = useState("");
   const [err, setErr] = useState("");
   const handleLogin = async(e) => {
-    e.preventDefault(); // Ngăn reload trang
+    e.preventDefault();
     
     loginAPI(email, password)
     .then((res) => {
@@ -72,7 +73,7 @@ function LoginModal({ onClose, onSuccess, onAuth }) {
           </button>
         
 
-        <p className="text-sm font-light md:text-md font-grostek text-n-700">Did you get account ? <span className="font-bold">Register Here</span></p>
+        <p className="text-sm font-light md:text-md font-grostek text-n-700">Did you get account ? <span onClick={onClose} className="font-bold"><Link to="/register">Register Here</Link></span></p>
       </div>
     </div>
   );

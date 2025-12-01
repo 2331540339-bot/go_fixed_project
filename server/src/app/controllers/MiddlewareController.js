@@ -49,6 +49,7 @@ const middlewareController = {
         })
     },
 
+
    verifyPayment: (req, res, next) => {
         const { amount, orderId } = req.body; 
             // VNPay return uses query params on GET, while create/confirm calls may use JSON body.
