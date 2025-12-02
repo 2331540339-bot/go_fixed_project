@@ -92,13 +92,11 @@ function ServiceBooking() {
 
                             <div className="w-full font-bold text-9xl font-grostek text-n-50">CHECKOUT</div>
 
-                            {/* CONTACT FORM */}
                             <div className="flex-1 px-8 py-4 bg-n-700 rounded-2xl">
                                 <h1 className="w-full mb-4 text-4xl font-bold font-grostek text-n-50">
                                     CONTACT
                                 </h1>
 
-                                {/* PHONE NUMBER */}
                                 <input
                                     type="text"
                                     placeholder="Phone Number"
@@ -111,7 +109,6 @@ function ServiceBooking() {
                                     ADDRESS
                                 </h1>
 
-                                {/* DETAIL ADDRESS */}
                                 <input
                                     type="text"
                                     placeholder="Detail Address"
@@ -120,7 +117,6 @@ function ServiceBooking() {
                                     className="w-full pl-4 mb-4 border h-15 border-n-600 text-n-50 rounded-2xl"
                                 />
 
-                                {/* DESCRIPTION */}
                                 <input
                                     type="text"
                                     placeholder="Description"
@@ -131,7 +127,6 @@ function ServiceBooking() {
                             </div>
                         </div>
 
-                        {/* RIGHT SIDE */}
                         <div className="w-[50%] h-full">
                             <div className="flex items-end justify-between w-full h-40 mb-8">
                                 <p className="w-[40%] border-t-5 border-p-500 font-grostek font-light text-n-50 text-xl">
@@ -151,7 +146,6 @@ function ServiceBooking() {
                                 </h1>
                             </div>
 
-                            {/* IMAGE UPLOAD + MAP */}
                             <div className="flex justify-between">
                                 <UploadImage onChange={handleImages} />
                                 <UserMap onPositionChange={handlePosition} />

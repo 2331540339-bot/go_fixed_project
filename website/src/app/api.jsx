@@ -5,7 +5,7 @@ const CART_URL = "http://localhost:8000/cart";
 const CATALOG_URL = "http://localhost:8000/catalog";
 const COMMERCE_URL = "http://localhost:8000/commerce";
 const PAYMENT_URL = "http://localhost:8000/payment_online";
-
+const RESCUE_URL = "http://localhost:8000/request-rescue";
 const loginAPI = (email, password_hash) => {
     return axios
     .post(`${ACCOUNT_URL}/login`, {email, password_hash})
@@ -102,3 +102,10 @@ const paymentVnPayAPI = (amount, orderId) => {
     .then((res) => res.data)
     .catch((err) => {throw err})
 }; export {paymentVnPayAPI}
+
+const rescueRequestAPI = (requestID) => {
+    return axiosClient
+    .post(`${RESCUE_URL}/`, {requestID})
+    .then((res) => res.data)
+    .catch((err) => {throw err;})
+}; export {rescueRequestAPI}
