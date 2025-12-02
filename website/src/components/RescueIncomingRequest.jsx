@@ -1,4 +1,5 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { serviceAPI } from "../app/api";
 
 export default function RescueIncomingRequest({ request, onAccept, onReject }) {
   if (!request) {
@@ -9,17 +10,26 @@ export default function RescueIncomingRequest({ request, onAccept, onReject }) {
     );
   }
 
-  const {
-    _id,
-    description,
-    price_estimate,
-    createdAt,
-    service_id,
-    location,
-    user_id,
-    status,
-  } = request;
+  const [services, setServices] = useState([]);
 
+  const loadAPI = () => {
+    serviceAPI()
+    .then((res) => setServices(res))
+    .catch((err) => console.log(err));
+  };
+
+  const getInformation = () => {
+    if(services.length != 0){
+      const service = services.find((service) => service._id === request.service_id);
+      console.log("Lấy ra service", request.service_id);
+      request['service_name'] = service.name;
+    }
+    
+  }
+  useEffect(() => {
+    loadAPI(),
+    getInformation()
+  },[])
   return (
     <div className="w-full max-w-2xl p-6 mx-auto bg-white border shadow-xl rounded-3xl border-n-100 font-grostek">
       
@@ -29,7 +39,7 @@ export default function RescueIncomingRequest({ request, onAccept, onReject }) {
           🚨 Yêu cầu cứu hộ mới
         </h2>
         <span className="px-3 py-1 text-sm font-semibold text-white rounded-lg bg-p-500">
-          {status.toUpperCase()}
+          {request.status.toUpperCase()}
         </span>
       </div>
 
@@ -39,20 +49,20 @@ export default function RescueIncomingRequest({ request, onAccept, onReject }) {
         {/* Service ID */}
         <div>
           <p className="text-sm text-n-500">Dịch vụ</p>
-          <p className="font-semibold text-n-800">{service_id}</p>
+          <p className="font-semibold text-n-800">{request.service_name}</p>
         </div>
 
         {/* Description */}
         <div>
           <p className="text-sm text-n-500">Mô tả</p>
-          <p className="font-semibold text-n-800">{description}</p>
+          <p className="font-semibold text-n-800">{request.description}</p>
         </div>
 
         {/* Price */}
         <div>
           <p className="text-sm text-n-500">Giá dự kiến</p>
           <p className="text-xl font-bold text-p-600">
-            {price_estimate.toLocaleString("vi-VN")}₫
+            {request.price_estimate.toLocaleString("vi-VN")}₫
           </p>
         </div>
 
@@ -60,22 +70,16 @@ export default function RescueIncomingRequest({ request, onAccept, onReject }) {
         <div>
           <p className="text-sm text-n-500">Vị trí khách hàng</p>
           <p className="font-semibold text-n-800">
-            Lat: {location?.coordinates?.[1]} <br />
-            Lng: {location?.coordinates?.[0]}
+            Lat: {request.location?.coordinates?.[1]} <br />
+            Lng: {request.location?.coordinates?.[0]}
           </p>
-        </div>
-
-        {/* User */}
-        <div>
-          <p className="text-sm text-n-500">ID khách hàng</p>
-          <p className="font-semibold text-n-800">{user_id}</p>
         </div>
 
         {/* Time */}
         <div>
           <p className="text-sm text-n-500">Thời gian yêu cầu</p>
           <p className="font-semibold text-n-800">
-            {new Date(createdAt).toLocaleString("vi-VN")}
+            {new Date(request.createdAt).toLocaleString("vi-VN")}
           </p>
         </div>
       </div>
@@ -83,14 +87,14 @@ export default function RescueIncomingRequest({ request, onAccept, onReject }) {
       {/* Action Buttons */}
       <div className="flex justify-between gap-4 mt-6">
         <button
-          onClick={() => onReject && onReject(_id)}
+          onClick={() => onReject && onReject(request._id)}
           className="flex-1 py-3 font-semibold transition border text-n-700 border-n-300 rounded-xl hover:bg-n-100"
         >
           Từ chối
         </button>
 
         <button
-          onClick={() => onAccept && onAccept(_id)}
+          onClick={() => onAccept && onAccept(request._id)}
           className="flex-1 py-3 font-semibold text-white transition bg-p-500 rounded-xl hover:bg-p-600"
         >
           Chấp nhận cứu hộ

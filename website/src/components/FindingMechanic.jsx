@@ -5,12 +5,14 @@ import Not_AcceptedRescue from "./Not_AcceptedRescue";
 import AcceptedRescue from "./AcceptedRescue";
 function FindingMechanic(){
     const [status, setStatus] = useState("");
+    const [requestID, setRequestID] = useState("");
     useEffect(() => {
 
         socket.on("accepted-status-rescue", (data) => {
-            console.log(data.message);
+            console.log(data);
             if(data.message === 'Thợ đã chấp nhận yêu cầu của bạn'){
                 setStatus("accepted");
+                setRequestID(data.requestID);
             }
             if(data.message === 'Hiện tại không có thợ nào chấp nhận yêu cầu. Vui lòng thử lại sau ít phút...'){
                 setStatus("not-accepted");
@@ -23,7 +25,7 @@ function FindingMechanic(){
     }, [])
     return(
             <div>
-                {status === 'accepted' ?<AcceptedRescue/>: (status === 'not-accepted'? <Not_AcceptedRescue/> : <Radar/>)}
+                {status === 'accepted' ?<AcceptedRescue requestID = {requestID}/>: (status === 'not-accepted'? <Not_AcceptedRescue/> : <Radar/>)}
             </div>
     )
 }; export default FindingMechanic

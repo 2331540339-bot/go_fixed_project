@@ -1,12 +1,19 @@
 import axios from 'axios';
 import axiosClient from './axiosClient';
-const domain = import.meta.env.VITE_API_URL;
-const ACCOUNT_URL = `${domain}/account`;
-const CART_URL = `${domain}/cart`;
-const CATALOG_URL = `${domain}/catalog`;
-const COMMERCE_URL = `${domain}/commerce`;
-const PAYMENT_URL = `${domain}/payment_online`;
-const REVIEW_URL = `${domain}/review`;
+const ACCOUNT_URL = "http://localhost:8000/account";
+const CART_URL = "http://localhost:8000/cart";
+const CATALOG_URL = "http://localhost:8000/catalog";
+const COMMERCE_URL = "http://localhost:8000/commerce";
+const PAYMENT_URL = "http://localhost:8000/payment_online";
+const RESCUE_URL = "http://localhost:8000/request-rescue";
+const REVIEW_URL = "http://localhost:8000/review";
+// const domain = import.meta.env.VITE_API_URL;
+// const ACCOUNT_URL = `${domain}/account`;
+// const CART_URL = `${domain}/cart`;
+// const CATALOG_URL = `${domain}/catalog`;
+// const COMMERCE_URL = `${domain}/commerce`;
+// const PAYMENT_URL = `${domain}/payment_online`;
+// const REVIEW_URL = `${domain}/review`;
 
 const loginAPI = (email, password_hash) => {
     return axios
@@ -104,6 +111,13 @@ const paymentVnPayAPI = (amount, orderId) => {
     .then((res) => res.data)
     .catch((err) => {throw err})
 }; export {paymentVnPayAPI}
+
+const rescueRequestAPI = (requestID) => {
+    return axiosClient
+    .post(`${RESCUE_URL}/`, {requestID})
+    .then((res) => res.data)
+    .catch((err) => {throw err;})
+}; export {rescueRequestAPI}
 
 const reviewAPI_add = (formData) =>{
     return axiosClient.post(`${REVIEW_URL}/add`, formData, {

@@ -12,6 +12,7 @@ import SuccessPayment from "../components/SuccessPayment"
 import FailedPayment from "../components/FailedPayment"
 import Register from "../pages/Register"
 import Order from "../pages/OrderPage"
+import RescuingRequest from "../components/RescuingRequest"
 export const router = createBrowserRouter([
     {
         path:"/",
@@ -29,6 +30,7 @@ export const router = createBrowserRouter([
             {path:"/success-payment", element:<SuccessPayment />},
             {path:"/failed-payment", element:<FailedPayment />},
             {path:"/order", element:<Order />},
+            {path:"/rescuing-request", element:<RescuingRequest />},
         ]
     }
 ])

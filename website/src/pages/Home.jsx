@@ -67,7 +67,7 @@ function Home(){
                                 <h2 className="mb-2 font-medium tracking-wider uppercase text-xm font-grostek text-n-800">Không ai bị <span className="text-p-500">bỏ rơi</span> giữa dòng đời </h2>
                                 <h1 className="font-medium tracking-wider text-8xl font-grostek text-n-800">GO FIX</h1>
                                 <p className="max-w-xl text-xl font-light text-center font-grostek text-n-800 md:text-start ">“Chỉ cần một chạm, mọi sự cố trên đường sẽ được giải quyết. Ứng dụng kết nối bạn với thợ sửa xe gần nhất, hỗ trợ tận nơi từ vá lốp, tiếp xăng cho đến cứu hộ vận chuyển. Nhanh chóng – Minh bạch – An toàn trên mọi hành trình.”</p>
-                                <a href='http://localhost:5173/services' className="flex items-center justify-center px-8 py-4 font-extrabold tracking-wider rounded-md bg-p-500 w-50 text-n-50 font-grostek hover:bg-n-100 hover:text-n-700 hover:border border-p-500 ">Rescue Now <span>&rarr;</span> </a>
+                                <a href='http://localhost:5174/services' className="flex items-center justify-center px-8 py-4 font-extrabold tracking-wider rounded-md bg-p-500 w-50 text-n-50 font-grostek hover:bg-n-100 hover:text-n-700 hover:border border-p-500 ">Rescue Now <span>&rarr;</span> </a>
                             </div>
                         </div>
 
