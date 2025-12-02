@@ -3,9 +3,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:latlong2/latlong.dart';
-import 'package:mobile/api/geocoding_api.dart';
 import 'package:provider/provider.dart';
 
 import 'package:mobile/config/assets/app_icon.dart';
@@ -35,14 +32,6 @@ class _DetailPricePageState extends State<DetailPricePage> {
   bool _isCallingRescue = false;
 
 
-  LatLng? _currentLocation; // Vị trí tọa độ hiện tại (tùy chọn)
-  String _currentAddress =
-      'Đang tải vị trí...'; // Địa chỉ để hiển thị trên AppBar
-  bool _loadingLocation = true; // Cờ để hiển thị loading
-
-  StreamSubscription<Position>? _positionStreamSubscription;
-
-
   final _baseStyle = TextStyle(
     fontSize: 20.sp,
     fontWeight: FontWeight.w600,
@@ -57,90 +46,7 @@ class _DetailPricePageState extends State<DetailPricePage> {
   @override
   void initState() {
     super.initState();
-     _startLocationStream();
     _initControllers();
-  }
-Future<void> _startLocationStream() async {
-    // 1. Kiểm tra quyền và dịch vụ (Giữ nguyên logic từ trước)
-    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      if (mounted) setState(() => _currentAddress = 'Vị trí bị tắt');
-      return Future.error('Dịch vụ Vị trí đã bị tắt.');
-    }
-
-    LocationPermission permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        if (mounted) setState(() => _currentAddress = 'Từ chối truy cập');
-        return Future.error('Quyền truy cập vị trí đã bị từ chối.');
-      }
-    }
-
-    if (permission == LocationPermission.deniedForever) {
-      if (mounted) setState(() => _currentAddress = 'Bị từ chối vĩnh viễn');
-      return Future.error('Quyền bị từ chối vĩnh viễn.');
-    }
-
-    // 2. Định cấu hình Stream
-    const LocationSettings locationSettings = LocationSettings(
-      accuracy: LocationAccuracy.high,
-      distanceFilter: 50, // Cập nhật khi di chuyển 50 mét
-    );
-
-    // Hủy Stream cũ nếu có
-    _positionStreamSubscription?.cancel();
-
-    // Lấy vị trí ban đầu
-    try {
-      Position initialPosition = await Geolocator.getCurrentPosition();
-      await _updateLocation(initialPosition);
-    } catch (e) {
-      if (mounted)
-        setState(() {
-          _currentAddress = 'Không lấy được vị trí ban đầu';
-          _loadingLocation = false;
-        });
-    }
-
-    // 3. Bắt đầu lắng nghe Stream
-    _positionStreamSubscription =
-        Geolocator.getPositionStream(locationSettings: locationSettings).listen(
-          (Position position) {
-            _updateLocation(position); // Gọi hàm cập nhật vị trí và địa chỉ
-          },
-          onError: (error) {
-            if (mounted) {
-              setState(() {
-                _currentAddress = 'Lỗi theo dõi vị trí';
-                _loadingLocation = false;
-              });
-            }
-            debugPrint('Lỗi theo dõi vị trí: $error');
-          },
-        );
-  }
-
-  // Hàm mới để xử lý cập nhật vị trí và chuyển đổi sang địa chỉ
-  Future<void> _updateLocation(Position position) async {
-    final location = LatLng(position.latitude, position.longitude);
-
-    // Tạm thời đặt cờ loading là true khi đang chờ chuyển đổi
-    if (mounted) {
-      setState(() {
-        _currentLocation = location;
-        _loadingLocation = true;
-      });
-    }
-
-    final address = await GeocodingApi.reverseGeocode(location);
-
-    if (mounted) {
-      setState(() {
-        _currentAddress = address ?? 'Không xác định được địa chỉ';
-        _loadingLocation = false;
-      });
-    }
   }
   Future<void> _initControllers() async {
     _userCtrl = await UserController.create();
@@ -169,6 +75,9 @@ Future<void> _startLocationStream() async {
     final rescueFlow = context.read<RescueFlowController>();
     final service = rescueFlow.service;
     final desc = rescueFlow.description ?? '';
+    final phone = rescueFlow.phone?.trim() ?? '';
+    final detailAddress = rescueFlow.detailAddress ?? '';
+    final images = rescueFlow.images;
     final loc = rescueFlow.location ?? <String, dynamic>{};
     final price = rescueFlow.priceEstimate ?? service?.basePrice ?? 0;
     final totalPrice = price + 100000;
@@ -177,6 +86,24 @@ Future<void> _startLocationStream() async {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Thiếu tọa độ, vui lòng xác nhận vị trí trước khi gửi.'),
+        ),
+      );
+      return;
+    }
+
+    if (phone.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Vui lòng nhập số điện thoại trước khi gửi.'),
+        ),
+      );
+      return;
+    }
+
+    if (detailAddress.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Chưa có địa chỉ chi tiết, vui lòng xác nhận vị trí.'),
         ),
       );
       return;
@@ -206,6 +133,9 @@ Future<void> _startLocationStream() async {
         description: desc,
         location: loc,
         priceEstimate: totalPrice,
+        phone: phone,
+        detailAddress: detailAddress,
+        images: images,
         authToken: token,
       );
 
@@ -231,11 +161,6 @@ Future<void> _startLocationStream() async {
     }
   }
 
- @override
-  void dispose() {
-    _positionStreamSubscription?.cancel();
-    super.dispose();
-  }
   @override
   Widget build(BuildContext context) {
     final String? authToken = _userCtrl?.userRepository.token;
@@ -245,20 +170,15 @@ Future<void> _startLocationStream() async {
     final rescueFlow = context.watch<RescueFlowController>();
     final service = rescueFlow.service;
     final desc = rescueFlow.description ?? 'Không có mô tả';
+    final detailAddress = rescueFlow.detailAddress;
+    final phone = rescueFlow.phone ?? '';
     final base = rescueFlow.priceEstimate ?? service?.basePrice ?? 0;
     final  plus = 100000;
 
     final totalPrice = base + plus;
 
     return Scaffold(
-      appBar: MainAppBar(
-        logo: Image.asset(AppImages.mainLogo, height: 100.h, width: 100.w),
-        name: _name,
-        loadingName: _loadingName,
-        location: _loadingLocation ? 'Đang tải...' : _currentAddress,
-        onAvatarTap: () {},
-        avatarWidget: SvgPicture.asset(AppIcon.user),
-      ),
+   
       body: SafeArea(
         child: service == null
             ? const Center(
@@ -286,6 +206,48 @@ Future<void> _startLocationStream() async {
                     Text(
                       'Mô tả sự cố: $desc',
                       style: TextStyle(fontSize: 16.sp, color: Colors.black87),
+                    ),
+                    SizedBox(height: 12.h),
+                    Container(
+                      width: double.infinity,
+                      padding: EdgeInsets.all(12.w),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(10.r),
+                        border: Border.all(color: Colors.black12),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              const Icon(Icons.location_on_outlined,
+                                  color: Colors.black54),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Text(
+                                  detailAddress ?? 'Chưa có địa chỉ',
+                                  style: TextStyle(
+                                      fontSize: 15.sp, color: Colors.black87),
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 8.h),
+                          Row(
+                            children: [
+                              const Icon(Icons.phone_iphone,
+                                  color: Colors.black54),
+                              const SizedBox(width: 8),
+                              Text(
+                                phone.isEmpty ? 'Chưa có số điện thoại' : phone,
+                                style: TextStyle(
+                                    fontSize: 15.sp, color: Colors.black87),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
                     SizedBox(height: 40.h),
 

@@ -1,12 +1,16 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:mobile/config/assets/app_icon.dart';
 import 'package:mobile/config/assets/app_image.dart';
+import 'package:mobile/presentation/controller/location_controller.dart';
 import 'package:mobile/presentation/controller/user_controller.dart';
 import 'package:mobile/presentation/widgets/appbars/main_app_bar.dart';
 import 'package:mobile/presentation/widgets/box_messenger/box_mess.dart';
 
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
 
 class InboxPage extends StatefulWidget {
   const InboxPage({super.key});
@@ -19,12 +23,11 @@ class _InboxPageState extends State<InboxPage> {
   UserController? _userCtrl;
   String _name = '...';
   bool _loadingName = true;
-  String _location = 'Q12, TP.HCM';
 
   @override
   void initState() {
     super.initState();
-    // Bắt đầu tải dữ liệu ngay lập tức
+    context.read<LocationController>().ensureStarted();
     _initControllers();
   }
 
@@ -44,7 +47,6 @@ class _InboxPageState extends State<InboxPage> {
       setState(() {
         _name = n!.fullname;
         _loadingName = false;
-        // _address = n.address ?? 'Chưa cập nhật';
       });
     } catch (e) {
       if (!mounted) return;
@@ -67,12 +69,15 @@ class _InboxPageState extends State<InboxPage> {
 
   @override
   Widget build(BuildContext context) {
+    final locationCtrl = context.watch<LocationController>();
+    final locationText =
+        locationCtrl.loading ? 'Đang tải...' : (locationCtrl.error ?? locationCtrl.currentAddress);
     return Scaffold(
       appBar: MainAppBar(
         logo: Image.asset(AppImages.mainLogo, height: 100.h, width: 100.w),
         name: _name,
         loadingName: _loadingName,
-        location: _location,
+        location: locationText,
         onAvatarTap: () {
           // TODO: Điều hướng đến trang Profile / Login nếu _name là 'Chưa đăng nhập'
           debugPrint('Tapping avatar, current name: $_name');

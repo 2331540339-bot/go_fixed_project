@@ -3,16 +3,15 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:latlong2/latlong.dart';
 
 // Import cấu hình và theme
+import 'package:mobile/config/router/app_router.dart';
 import 'package:mobile/config/assets/app_icon.dart';
 import 'package:mobile/config/assets/app_image.dart';
 import 'package:mobile/config/themes/app_color.dart';
-import 'package:mobile/api/geocoding_api.dart';
 
 // Controllers
+import 'package:mobile/presentation/controller/location_controller.dart';
 import 'package:mobile/presentation/controller/user_controller.dart';
 import 'package:mobile/presentation/controller/banner_controller.dart';
 import 'package:mobile/presentation/controller/service_controller.dart';
@@ -48,17 +47,11 @@ class _HomePageState extends State<HomePage> {
   ServiceController? _svcCtrl;
 
   final _searchCtl = TextEditingController();
-  LatLng? _currentLocation; // Vị trí tọa độ hiện tại (tùy chọn)
-  String _currentAddress =
-      'Đang tải vị trí...'; // Địa chỉ để hiển thị trên AppBar
-  bool _loadingLocation = true; // Cờ để hiển thị loading
-
-  StreamSubscription<Position>? _positionStreamSubscription;
 
   @override
   void initState() {
     super.initState();
-    _startLocationStream();
+    context.read<LocationController>().ensureStarted();
     _initControllers();
   }
 
@@ -117,89 +110,6 @@ class _HomePageState extends State<HomePage> {
     setState(() {});
   }
 
-  Future<void> _startLocationStream() async {
-    // 1. Kiểm tra quyền và dịch vụ (Giữ nguyên logic từ trước)
-    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      if (mounted) setState(() => _currentAddress = 'Vị trí bị tắt');
-      return Future.error('Dịch vụ Vị trí đã bị tắt.');
-    }
-
-    LocationPermission permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        if (mounted) setState(() => _currentAddress = 'Từ chối truy cập');
-        return Future.error('Quyền truy cập vị trí đã bị từ chối.');
-      }
-    }
-
-    if (permission == LocationPermission.deniedForever) {
-      if (mounted) setState(() => _currentAddress = 'Bị từ chối vĩnh viễn');
-      return Future.error('Quyền bị từ chối vĩnh viễn.');
-    }
-
-    // 2. Định cấu hình Stream
-    const LocationSettings locationSettings = LocationSettings(
-      accuracy: LocationAccuracy.high,
-      distanceFilter: 50, // Cập nhật khi di chuyển 50 mét
-    );
-
-    // Hủy Stream cũ nếu có
-    _positionStreamSubscription?.cancel();
-
-    // Lấy vị trí ban đầu
-    try {
-      Position initialPosition = await Geolocator.getCurrentPosition();
-      await _updateLocation(initialPosition);
-    } catch (e) {
-      if (mounted)
-        setState(() {
-          _currentAddress = 'Không lấy được vị trí ban đầu';
-          _loadingLocation = false;
-        });
-    }
-
-    // 3. Bắt đầu lắng nghe Stream
-    _positionStreamSubscription =
-        Geolocator.getPositionStream(locationSettings: locationSettings).listen(
-          (Position position) {
-            _updateLocation(position); // Gọi hàm cập nhật vị trí và địa chỉ
-          },
-          onError: (error) {
-            if (mounted) {
-              setState(() {
-                _currentAddress = 'Lỗi theo dõi vị trí';
-                _loadingLocation = false;
-              });
-            }
-            debugPrint('Lỗi theo dõi vị trí: $error');
-          },
-        );
-  }
-
-  // Hàm mới để xử lý cập nhật vị trí và chuyển đổi sang địa chỉ
-  Future<void> _updateLocation(Position position) async {
-    final location = LatLng(position.latitude, position.longitude);
-
-    // Tạm thời đặt cờ loading là true khi đang chờ chuyển đổi
-    if (mounted) {
-      setState(() {
-        _currentLocation = location;
-        _loadingLocation = true;
-      });
-    }
-
-    final address = await GeocodingApi.reverseGeocode(location);
-
-    if (mounted) {
-      setState(() {
-        _currentAddress = address ?? 'Không xác định được địa chỉ';
-        _loadingLocation = false;
-      });
-    }
-  }
-
   @override
   void dispose() {
     _bannerCtrl?.removeListener(_onBannerChanged);
@@ -207,26 +117,39 @@ class _HomePageState extends State<HomePage> {
     _bannerCtrl?.dispose();
     _svcCtrl?.dispose();
     _searchCtl.dispose();
-    _positionStreamSubscription?.cancel();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    final locationCtrl = context.watch<LocationController>();
+    final locationText =
+        locationCtrl.loading ? 'Đang tải...' : (locationCtrl.error ?? locationCtrl.currentAddress);
     final loadingBanners = _bannerCtrl?.loading ?? true;
     final bannerError = _bannerCtrl?.error;
     final bannerItems = _bannerCtrl?.items ?? const [];
+    final filteredBanners =
+        bannerItems.where((b) => b.imageUrl.trim().isNotEmpty).toList();
+    final bannerImages = filteredBanners.map((b) {
+      final raw = b.imageUrl.trim();
+      if (raw.startsWith('http')) return raw;
+      if (raw.startsWith('/')) return '${AppRouter.main_domain}$raw';
+      if (raw.startsWith('assets/')) return raw;
+      return '${AppRouter.main_domain}/$raw';
+    }).toList();
 
     final svcLoading = _svcCtrl?.loading ?? true;
     final svcError = _svcCtrl?.error;
     final svcItems = _svcCtrl?.items ?? const <Service>[];
+    final currentBannerIndex =
+        bannerImages.isEmpty ? 0 : _bannerIndex % bannerImages.length;
 
     return Scaffold(
       appBar: MainAppBar(
         logo: Image.asset(AppImages.mainLogo, height: 100.h, width: 100.w),
         name: _name,
         loadingName: _loadingName,
-        location: _loadingLocation ? 'Đang tải...' : _currentAddress,
+        location: locationText,
         onAvatarTap: () {
           debugPrint('Tapping avatar, current name: $_name');
         },
@@ -313,7 +236,7 @@ class _HomePageState extends State<HomePage> {
                 )
               else if (bannerError != null)
                 Text('Lỗi banner: $bannerError')
-              else if (bannerItems.isEmpty)
+              else if (bannerImages.isEmpty)
                 const SizedBox(
                   height: 150,
                   child: Center(
@@ -324,7 +247,7 @@ class _HomePageState extends State<HomePage> {
                 Column(
                   children: [
                     BannerCarousel(
-                      images: bannerItems.map((e) => e.imageUrl).toList(),
+                      images: bannerImages,
                       autoPlay: true,
                       autoPlayInterval: const Duration(seconds: 4),
                       onIndexChanged: (i) => setState(() => _bannerIndex = i),
@@ -332,8 +255,8 @@ class _HomePageState extends State<HomePage> {
                     ),
                     SizedBox(height: 10.h),
                     DotsIndicator(
-                      count: bannerItems.length,
-                      index: _bannerIndex,
+                      count: bannerImages.length,
+                      index: currentBannerIndex,
                     ),
                   ],
                 ),

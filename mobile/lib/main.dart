@@ -3,7 +3,10 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:mobile/config/themes/app_theme.dart';
 import 'package:mobile/presentation/controller/cart_controller.dart';
+import 'package:mobile/presentation/controller/location_controller.dart';
 import 'package:mobile/presentation/controller/rescue_flow_controller.dart';
+import 'package:mobile/presentation/view/home/home_page.dart';
+import 'package:mobile/presentation/view/setting/settings_page.dart';
 import 'package:mobile/presentation/view/start/intro_page.dart';
 import 'package:mobile/presentation/view/start/main_screen.dart';
 import 'package:mobile/presentation/view/store/store_page.dart';
@@ -18,6 +21,9 @@ void main() {
         ),
         ChangeNotifierProvider(
           create: (_) => CartController(),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => LocationController(),
         ),
         // Có thể thêm các controller khác sau này
       ],

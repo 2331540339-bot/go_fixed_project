@@ -1,0 +1,60 @@
+[{
+  "_id": {
+    "$oid": "692d7973dfc6e6a01f06695d"
+  },
+  "hinh_anh": "https://skzic.com.vn/vnt_upload/news/10_2020/Meo_tiet_kiem_xang_cho_xe_may.png",
+  "link": "https://skzic.com.vn/vnt_upload/news/10_2020/Meo_tiet_kiem_xang_cho_xe_may.png",
+  "mo_ta": "nhiên liệu xe",
+  "createdAt": {
+    "$date": "2025-12-01T11:18:11.818Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-01T11:18:11.818Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "692d7997dfc6e6a01f066960"
+  },
+  "hinh_anh": "https://www.xemayhuyhoang.com/upload/baiviet/thiet-ke-chua-co-ten-15-8110.png",
+  "link": "https://www.xemayhuyhoang.com/upload/baiviet/thiet-ke-chua-co-ten-15-8110.png",
+  "mo_ta": "Khuyến mãi 50% dịch vụ sửa xe",
+  "createdAt": {
+    "$date": "2025-12-01T11:18:47.172Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-01T11:18:47.172Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "692d79a5dfc6e6a01f066963"
+  },
+  "hinh_anh": "https://cuuhoxemay24g.com/wp-content/uploads/2022/10/banner-cuuhoxemay24g-trungtg.jpg",
+  "link": "https://cuuhoxemay24g.com/wp-content/uploads/2022/10/banner-cuuhoxemay24g-trungtg.jpg",
+  "mo_ta": "Dịch vụ cứu hộ nhanh 24/7",
+  "createdAt": {
+    "$date": "2025-12-01T11:19:01.186Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-01T11:19:01.186Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "692d79bedfc6e6a01f066967"
+  },
+  "hinh_anh": "https://nankai.toyota.com.vn/storage/app/uploads/public/633/d27/5ab/633d275ab7175856202588.jpg",
+  "link": "https://nankai.toyota.com.vn/storage/app/uploads/public/633/d27/5ab/633d275ab7175856202588.jpg",
+  "mo_ta": "hình ảnh",
+  "createdAt": {
+    "$date": "2025-12-01T11:19:26.675Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-01T11:19:26.675Z"
+  },
+  "__v": 0
+}]
