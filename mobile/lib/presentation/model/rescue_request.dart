@@ -9,6 +9,9 @@ class RescueRequest {
   final String? serviceId;
   final String? serviceType;
   final String? description;
+  final String? phone;
+  final String? detailAddress;
+  final List<String> images;
   final RescueRequestStatus status;
   final GeoPoint? location;
   final double? priceEstimate;
@@ -23,6 +26,9 @@ class RescueRequest {
     this.serviceId,
     this.serviceType,
     this.description,
+    this.phone,
+    this.detailAddress,
+    this.images = const [],
     required this.status,
     this.location,
     this.priceEstimate,
@@ -38,6 +44,11 @@ class RescueRequest {
     serviceId: j['service_id'] as String?,
     serviceType: j['service_type'] as String?,
     description: j['description'] as String?,
+    phone: j['phone'] as String?,
+    detailAddress: j['detail_address'] as String?,
+    images: j['images'] == null
+        ? const []
+        : List<String>.from(j['images'] as List),
     status: RescueRequestStatusX.from(j['status']?.toString()),
     location: j['location'] == null ? null : GeoPoint.fromJson(j['location']),
     priceEstimate: j['price_estimate'] == null ? null : numToDouble(j['price_estimate']),
@@ -53,6 +64,9 @@ class RescueRequest {
     'service_id': serviceId,
     'service_type': serviceType,
     'description': description,
+    'phone': phone,
+    'detail_address': detailAddress,
+    'images': images,
     'status': status.json,
     'location': location?.toJson(),
     'price_estimate': priceEstimate,

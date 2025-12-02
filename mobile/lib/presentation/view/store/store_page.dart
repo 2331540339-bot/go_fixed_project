@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:mobile/config/themes/app_color.dart';
+import 'package:mobile/config/router/app_router.dart';
 import 'package:mobile/presentation/model/catalog.dart';
 import 'package:mobile/presentation/model/product.dart';
 import 'package:mobile/presentation/controller/banner_controller.dart';
@@ -74,6 +75,17 @@ class _StorePageState extends State<StorePage> {
     final loadingBanners = _bannerCtrl?.loading ?? true;
     final bannerError = _bannerCtrl?.error;
     final bannerItems = _bannerCtrl?.items ?? const [];
+    final filteredBanners =
+        bannerItems.where((b) => b.imageUrl.trim().isNotEmpty).toList();
+    final bannerImages = filteredBanners.map((b) {
+      final raw = b.imageUrl.trim();
+      if (raw.startsWith('http')) return raw;
+      if (raw.startsWith('/')) return '${AppRouter.main_domain}$raw';
+      if (raw.startsWith('assets/')) return raw;
+      return '${AppRouter.main_domain}/$raw';
+    }).toList();
+    final currentBannerIndex =
+        bannerImages.isEmpty ? 0 : _bannerIndex % bannerImages.length;
     final loadingCatalogs = _catalogCtrl?.loading ?? true;
     final catalogError = _catalogCtrl?.error;
     final catalogItems = _catalogCtrl?.items ?? const <Catalog>[];
@@ -121,7 +133,7 @@ class _StorePageState extends State<StorePage> {
             )
           else if (bannerError != null)
             Text('Lỗi banner: $bannerError')
-          else if (bannerItems.isEmpty)
+          else if (bannerImages.isEmpty)
             const SizedBox(
               height: 150,
               child: Center(child: Text('Chưa có banner nào được đăng tải.')),
@@ -130,14 +142,17 @@ class _StorePageState extends State<StorePage> {
             Column(
               children: [
                 BannerCarousel(
-                  images: bannerItems.map((e) => e.imageUrl).toList(),
+                  images: bannerImages,
                   autoPlay: true,
                   autoPlayInterval: const Duration(seconds: 4),
                   onIndexChanged: (i) => setState(() => _bannerIndex = i),
                   onTap: (i) {},
                 ),
                 SizedBox(height: 10.h),
-                DotsIndicator(count: bannerItems.length, index: _bannerIndex),
+                DotsIndicator(
+                  count: bannerImages.length,
+                  index: currentBannerIndex,
+                ),
               ],
             ),
           SizedBox(height: 20.h),
