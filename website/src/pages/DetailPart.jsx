@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useLocation, useNavigate } from "react-router-dom";
-import { productAPI_detail, cartAPI_add, catalogAPI_showall} from "../app/api";
-import Checkout from "../components/Checkout";
+import { productAPI_detail, cartAPI_add, reviewAPI_add, reviewAPI_getByProduct} from "../app/api";
+import { jwtDecode } from "jwt-decode";
+// import Checkout from "../components/Checkout"; // Không dùng trong component này
 function DetailPart() {
     const { id } = useParams();
     const { state } = useLocation();
@@ -12,6 +13,22 @@ function DetailPart() {
     const [formattedPrice, setFormattedPrice] = useState("");
     const [loading, setLoading] = useState(!state?.product);
     const [catalog, setCatalog] = useState([]);
+
+    // Review states
+    const [reviewText, setReviewText] = useState("");
+    const [rating, setRating] = useState(5);
+    const [imagesFiles, setImagesFiles] = useState([]);
+    const [previewImages, setPreviewImages] = useState([]);
+    const [submittingReview, setSubmittingReview] = useState(false);
+
+    // Lấy đánh giá lên
+    const [reviews, setReviews] = useState([]);
+    const [totalReviews, setTotalReviews] = useState(0);
+    const [averageRating, setAverageRating] = useState(0);
+
+    // *** CẢI TIẾN 1: Thêm state để điều khiển việc hiển thị modal thông báo ***
+    const [showPurchaseModal, setShowPurchaseModal] = useState(false);
+
     const loadAPI = async () => {
         try {
             const res = await productAPI_detail(id);
@@ -23,20 +40,30 @@ function DetailPart() {
         } finally {
             setLoading(false);
         }
+    };
 
-        
+    const loadReviews = async () => {
+        try {
+            const res = await reviewAPI_getByProduct(id);
+            setReviews(res.reviews);
+            setTotalReviews(res.totalReviews);
+            setAverageRating(res.averageRating);
+        } catch (err) {
+            console.log("Lỗi load review:", err.message);
+        }
     };
 
     useEffect(() => {
         if (!state?.product) {
             loadAPI();
         } else {
-
             setActiveImage(state.product.image[0]);
             setFormattedPrice(
                 state.product.price.toLocaleString("vi-VN") + "₫"
             );
         }
+
+        loadReviews();
     }, [id, state]);
 
     if (loading || !data) {
@@ -65,15 +92,88 @@ function DetailPart() {
         });
     };
 
+    const handleSubmitReview = async () => {
+        if (!reviewText.trim()) {
+            alert("Vui lòng nhập nội dung đánh giá!");
+            return;
+        }
+        try {
+            const token = localStorage.getItem('token');
+            if(token){
+                const user = jwtDecode(token);
+                if (!user.id) {
+                    alert("Bạn cần đăng nhập để đánh giá!");
+                    return;
+                }
+
+                setSubmittingReview(true);
+
+                try {
+                    const fd = new FormData();
+                    fd.append("product_id", data._id);
+                    fd.append("user_id", user.id);
+                    fd.append("rating", rating);
+                    fd.append("comment", reviewText);
+
+                    imagesFiles.forEach(file => {
+                        fd.append("images", file);
+                    });
+
+                    await reviewAPI_add(fd);
+
+                    alert("Gửi đánh giá thành công!");
+
+                    // reset form
+                    setReviewText("");
+                    setRating(5);
+                    previewImages.forEach(url => URL.revokeObjectObjectURL(url));
+                    setPreviewImages([]);
+                    setImagesFiles([]);
+
+                    // reload product để update rating + review count
+                    loadAPI();
+                    loadReviews();
+                } catch (err) {
+                    const msg = err.response?.data?.message;
+
+                    // *** CẢI TIẾN 2: Sửa logic để hiển thị modal thay vì alert ***
+                    if (msg === "Bạn phải mua sản phẩm này trước khi đánh giá!") {
+                        setShowPurchaseModal(true); // Mở modal lên
+                        return; // Dừng hàm tại đây
+                    }
+
+                    alert(msg || "Gửi đánh giá thất bại!");
+                } finally {
+                    setSubmittingReview(false);
+                }
+            }
+            if (!token) {
+                alert("Bạn cần đăng nhập để đánh giá!");
+                return;
+            }
+        } catch (err) {
+            console.log(err);
+            alert("Lỗi khi gửi đánh giá!");
+        }
+    }
+
+    const handleImageChange = (e) => {
+        const files = Array.from(e.target.files).slice(0, 5);
+        setImagesFiles(files);
+
+        const previews = files.map(file => URL.createObjectURL(file));
+        setPreviewImages(previews);
+    };
+
     return (
         <div className="w-full min-h-screen bg-n-50">
             <div className="max-w-6xl px-4 py-8 mx-auto lg:px-0">
-
+                {/* ... (Phần code trên không thay đổi) ... */}
                 <div className="mb-4 text-sm text-n-500 font-grostek">
                     <span className="cursor-pointer hover:text-p-500">Trang chủ</span>
                     <span className="mx-2">/</span>
                     <span className="cursor-pointer hover:text-p-500">
-                        {data.catalog_id || "Danh mục"}
+                        {data.catalog_name || "Danh mục"}
                     </span>
                     <span className="mx-2">/</span>
                     <span className="text-n-700">{data.product_name}</span>
@@ -124,9 +224,9 @@ function DetailPart() {
 
                                 <div className="flex items-center gap-1 text-sm text-n-600">
                                     <span className="text-p-500">★</span>
-                                    <span>{data.rating || 4.5}</span>
+                                    <span>{averageRating || data.rating || 4.5}</span>
                                     <span className="text-n-500">
-                                        ({data.reviews_count || 0} đánh giá)
+                                        ({totalReviews || data.reviews_count || 0} đánh giá)
                                     </span>
                                 </div>
                             </div>
@@ -243,48 +343,124 @@ function DetailPart() {
 
                         <div className="flex items-center gap-3 mb-4">
                             <div className="text-3xl font-bold text-p-500">
-                                {data.rating || 4.5}
+                                {averageRating}
                             </div>
                             <div className="flex flex-col">
                                 <div className="flex items-center gap-1 text-p-500">
                                     {Array.from({ length: 5 }).map((_, index) => (
                                         <span key={index}>
-                                            {index < Math.round(data.rating || 4.5) ? "★" : "☆"}
+                                            {index < Math.round(averageRating || data.rating || 4.5) ? "★" : "☆"}
                                         </span>
                                     ))}
                                 </div>
                                 <span className="text-xs text-n-500">
-                                    {data.reviews_count || 0} lượt đánh giá
+                                    {totalReviews} lượt đánh giá
                                 </span>
                             </div>
                         </div>
 
                         <div className="p-3 mb-3 rounded-2xl bg-n-50">
-                            <p className="mb-2 text-xs font-medium text-n-700">
-                                Chia sẻ cảm nhận của bạn:
-                            </p>
+                            <p className="mb-2 text-xs font-medium text-n-700">Chia sẻ cảm nhận của bạn:</p>
+
+                            {/* Rating */}
+                            <div className="flex gap-1 mb-2 cursor-pointer">
+                                {Array.from({ length: 5 }).map((_, index) => (
+                                    <span
+                                        key={index}
+                                        onClick={() => setRating(index + 1)}
+                                        className={index < rating ? "text-p-500" : "text-n-400"}
+                                        style={{ fontSize: 16 }}
+                                    >
+                                        ★
+                                    </span>
+                                ))}
+                            </div>
+
+
                             <textarea
-                                className="w-full p-2 text-sm border rounded-xl border-n-200 focus:outline-none focus:ring-2 focus:ring-p-500/40"
+                                className="w-full p-2 text-sm border rounded-xl border-n-200 focus:outline-none"
                                 rows={3}
-                                placeholder="Đánh giá chất lượng sản phẩm, trải nghiệm lắp đặt, dịch vụ giao hàng..."
-                            ></textarea>
-                            <button className="w-full py-2 mt-2 text-xs font-semibold text-white transition rounded-xl bg-p-500 hover:bg-p-600">
-                                Gửi đánh giá
+                                placeholder="Đánh giá chất lượng sản phẩm..."
+                                value={reviewText}
+                                onChange={(e) => setReviewText(e.target.value)}
+                            />
+
+                           
+                            <div className="flex items-center gap-2 mt-2">
+                                <input
+                                    type="file"
+                                    multiple
+                                    accept="image/*"
+                                    onChange={handleImageChange}
+                                    className="text-xs"
+                                />
+                                <span className="text-xs text-n-500">Tối đa 5 ảnh</span>
+                            </div>
+
+                          
+                            <div className="flex gap-2 mt-2">
+                                {previewImages.map((src, idx) => (
+                                    <img
+                                        key={idx}
+                                        src={src}
+                                        className="w-16 h-16 rounded-xl object-cover border"
+                                        alt="preview"
+                                    />
+                                ))}
+                            </div>
+
+                            <button
+                                onClick={handleSubmitReview}
+                                disabled={submittingReview}
+                                className="w-full py-2 mt-3 text-xs font-semibold text-white rounded-xl bg-p-500 hover:bg-p-600"
+                            >
+                                {submittingReview ? "Đang gửi..." : "Gửi đánh giá"}
                             </button>
                         </div>
 
-                        <div className="space-y-3 text-sm">
-                            <div className="p-3 rounded-2xl bg-n-50">
-                                <div className="flex items-center justify-between mb-1">
-                                    <span className="font-semibold text-n-800">Nguyễn Văn A</span>
-                                    <span className="text-xs text-n-500">2 ngày trước</span>
+
+                        <div className="space-y-3 text-sm mt-5">
+                            {reviews.length === 0 && (
+                                <p className="text-xs text-n-500">Chưa có đánh giá nào.</p>
+                            )}
+
+                            {reviews.map((rev) => (
+                                <div key={rev._id} className="p-3 rounded-2xl bg-n-50">
+                                    <div className="flex items-center justify-between mb-1">
+                                        <span className="font-semibold text-n-800">
+                                            {rev.user_id?.fullname || "Người dùng"}
+                                        </span>
+                                        <span className="text-xs text-n-500">
+                                            {new Date(rev.createdAt).toLocaleDateString("vi-VN")}
+                                        </span>
+                                    </div>
+
+                                    
+                                    <div className="text-xs text-p-500">
+                                        {Array.from({ length: 5 }).map((_, index) => (
+                                            <span key={index}>
+                                                {index < rev.rating ? "★" : "☆"}
+                                            </span>
+                                        ))}
+                                    </div>
+
+                                    <p className="mt-1 text-xs text-n-600">{rev.comment}</p>
+
+                                    
+                                    {rev.images?.length > 0 && (
+                                        <div className="flex gap-2 mt-2">
+                                            {rev.images.map((img, idx) => (
+                                                <img
+                                                    key={idx}
+                                                    src={img}
+                                                    alt="review-img"
+                                                    className="w-16 h-16 object-cover rounded-xl border"
+                                                />
+                                            ))}
+                                        </div>
+                                    )}
                                 </div>
-                                <div className="text-xs text-p-500">★★★★★</div>
-                                <p className="mt-1 text-xs text-n-600">
-                                    Phuộc lắp lên xe chạy êm thấy rõ, vào ổ gà đỡ xóc hơn nhiều.
-                                    Ship nhanh, đóng gói kỹ.
-                                </p>
-                            </div>
+                            ))}
                         </div>
                     </div>
                 </div>
@@ -297,6 +473,38 @@ function DetailPart() {
                     </p>
                 </div>
             </div>
+
+            {/* *** CẢI TIẾN 3: Component Modal thông báo *** */}
+            {showPurchaseModal && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+                    <div className="bg-white rounded-2xl p-6 max-w-sm mx-4 shadow-xl">
+                        <div className="flex flex-col items-center">
+                            {/* Icon thông báo */}
+                            <svg className="w-16 h-16 text-p-500 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" /></svg>
+                            
+                            <h3 className="text-lg font-semibold text-n-800 mb-2 font-grostek">Yêu cầu mua hàng</h3>
+                            <p className="text-sm text-center text-n-600 mb-6">
+                                Bạn cần mua sản phẩm này trước khi có thể để lại đánh giá.
+                            </p>
+                            
+                            <div className="flex gap-3 w-full">
+                                <button
+                                    onClick={() => navigate('/cart')} // Chuyển hướng đến trang giỏ hàng
+                                    className="flex-1 py-2 text-sm font-semibold text-white rounded-xl bg-p-500 hover:bg-p-600 font-grostek"
+                                >
+                                    Đi đến giỏ hàng
+                                </button>
+                                <button
+                                    onClick={() => setShowPurchaseModal(false)} // Chỉ cần đóng modal
+                                    className="flex-1 py-2 text-sm font-semibold border rounded-xl border-n-300 text-n-700 hover:bg-n-100 font-grostek"
+                                >
+                                    Đóng
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
