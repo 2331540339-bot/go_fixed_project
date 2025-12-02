@@ -10,7 +10,8 @@ import Checkout from "../components/Checkout"
 import Cart from "../pages/Cart"
 import SuccessPayment from "../components/SuccessPayment"
 import FailedPayment from "../components/FailedPayment"
-import Register from "../pages/Register";
+import Register from "../pages/Register"
+import Order from "../pages/OrderPage"
 export const router = createBrowserRouter([
     {
         path:"/",
@@ -27,6 +28,7 @@ export const router = createBrowserRouter([
             {path:"/cart", element: <Cart/>},
             {path:"/success-payment", element:<SuccessPayment />},
             {path:"/failed-payment", element:<FailedPayment />},
+            {path:"/order", element:<Order />},
         ]
     }
 ])

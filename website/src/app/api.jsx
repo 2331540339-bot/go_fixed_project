@@ -120,6 +120,13 @@ const reviewAPI_getByProduct = (product_id) => {
         .get(`${REVIEW_URL}/product/${product_id}`)
         .then(res => res.data)
         .catch(err => { throw err });
-};
-export { reviewAPI_getByProduct };
+}; export { reviewAPI_getByProduct };
+
+const orderAPI_getByUser = (user_id) => {
+    return axiosClient
+        .get(`/order/user/${user_id}`)
+        .then(res => res.data)
+        .catch(err => { throw err });
+}; export { orderAPI_getByUser };
+
 

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useLocation, useNavigate } from "react-router-dom";
 import { productAPI_detail, cartAPI_add, reviewAPI_add, reviewAPI_getByProduct} from "../app/api";
-import { jwtDecode } from "jwt-decode";
+import { jwtDecode } from "jwt-decode"; 
 function DetailPart() {
     const { id } = useParams();
     const { state } = useLocation();
@@ -129,13 +129,13 @@ function DetailPart() {
                     setPreviewImages([]);
                     setImagesFiles([]);
 
-                    // reload product để update rating + review count
+                   
                     loadAPI();
                     loadReviews();
                 } catch (err) {
                     const msg = err.response?.data?.message;
 
-                    // *** CẢI TIẾN 2: Sửa logic để hiển thị modal thay vì alert ***
+              
                     if (msg === "Bạn phải mua sản phẩm này trước khi đánh giá!") {
                         setShowPurchaseModal(true); // Mở modal lên
                         return; // Dừng hàm tại đây
@@ -473,7 +473,7 @@ function DetailPart() {
                 </div>
             </div>
 
-            {/* *** CẢI TIẾN 3: Component Modal thông báo *** */}
+
             {showPurchaseModal && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
                     <div className="bg-white rounded-2xl p-6 max-w-sm mx-4 shadow-xl">
