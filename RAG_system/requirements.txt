@@ -2,3 +2,4 @@ djangorestframework
 astrapy
 sentence-transformers
 openai
+django-cors-headers
