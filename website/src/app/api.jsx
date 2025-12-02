@@ -1,11 +1,12 @@
 import axios from 'axios';
 import axiosClient from './axiosClient';
-const ACCOUNT_URL = "http://localhost:8000/account";
-const CART_URL = "http://localhost:8000/cart";
-const CATALOG_URL = "http://localhost:8000/catalog";
-const COMMERCE_URL = "http://localhost:8000/commerce";
-const PAYMENT_URL = "http://localhost:8000/payment_online";
-const REVIEW_URL = "http://localhost:8000/review";
+const domain = import.meta.env.VITE_API_URL;
+const ACCOUNT_URL = `${domain}/account`;
+const CART_URL = `${domain}/cart`;
+const CATALOG_URL = `${domain}/catalog`;
+const COMMERCE_URL = `${domain}/commerce`;
+const PAYMENT_URL = `${domain}/payment_online`;
+const REVIEW_URL = `${domain}/review`;
 
 const loginAPI = (email, password_hash) => {
     return axios

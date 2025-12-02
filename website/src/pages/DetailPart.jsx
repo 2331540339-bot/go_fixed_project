@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { useParams, useLocation, useNavigate } from "react-router-dom";
 import { productAPI_detail, cartAPI_add, reviewAPI_add, reviewAPI_getByProduct} from "../app/api";
 import { jwtDecode } from "jwt-decode";
-// import Checkout from "../components/Checkout"; // Không dùng trong component này
 function DetailPart() {
     const { id } = useParams();
     const { state } = useLocation();
