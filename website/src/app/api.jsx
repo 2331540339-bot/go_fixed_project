@@ -6,6 +6,7 @@ const CATALOG_URL = "http://localhost:8000/catalog";
 const COMMERCE_URL = "http://localhost:8000/commerce";
 const PAYMENT_URL = "http://localhost:8000/payment_online";
 const RESCUE_URL = "http://localhost:8000/request-rescue";
+const REVIEW_URL = "http://localhost:8000/review";
 // const domain = import.meta.env.VITE_API_URL;
 // const ACCOUNT_URL = `${domain}/account`;
 // const CART_URL = `${domain}/cart`;
@@ -111,14 +112,13 @@ const paymentVnPayAPI = (amount, orderId) => {
     .catch((err) => {throw err})
 }; export {paymentVnPayAPI}
 
-<<<<<<< HEAD
 const rescueRequestAPI = (requestID) => {
     return axiosClient
     .post(`${RESCUE_URL}/`, {requestID})
     .then((res) => res.data)
     .catch((err) => {throw err;})
 }; export {rescueRequestAPI}
-=======
+
 const reviewAPI_add = (formData) =>{
     return axiosClient.post(`${REVIEW_URL}/add`, formData, {
         headers: {
@@ -137,4 +137,3 @@ const reviewAPI_getByProduct = (product_id) => {
 };
 export { reviewAPI_getByProduct };
 
->>>>>>> 06ecfa7d02c2fe35f4bc4930b2b2a7c88e220ba2

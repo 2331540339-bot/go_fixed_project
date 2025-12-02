@@ -37,7 +37,6 @@ export default function RescuingRequest({request}) {
         },
         (err) => {
           console.error("Không thể lấy vị trí:", err);
-          alert("Bạn cần cho phép truy cập vị trí!");
         },
         { enableHighAccuracy: true, maximumAge: 0, timeout: 15000 }
       );
@@ -93,30 +92,35 @@ export default function RescuingRequest({request}) {
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
 
         <div className="w-full h-[350px] rounded-2xl overflow-hidden shadow-lg border border-n-200">
-          <MapContainer
-            center={[request.location.coordinates[1], request.location.coordinates[0]]}
-            zoom={16}
-            scrollWheelZoom={true}
-            className="w-full h-full"
-          >
-            <TileLayer
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            />
-            <Marker position={[request.location.coordinates[1], request.location.coordinates[0]]} icon={userIcon}>
-              <Popup>Vị trí khách hàng</Popup>
-            </Marker>
-            <Marker position={mechanicPosition} icon={mechanicIcon}>
-              <Popup>Vị trí thợ</Popup>
-            </Marker>
+          {mechanicPosition[0] != 0 && mechanicPosition[1] != 0 
+            ?
+              <MapContainer
+              center={[request.location.coordinates[1], request.location.coordinates[0]]}
+              zoom={16}
+              scrollWheelZoom={true}
+              className="w-full h-full"
+            >
+              <TileLayer
+                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+              />
+              <Marker position={[request.location.coordinates[1], request.location.coordinates[0]]} icon={userIcon}>
+                <Popup>Vị trí khách hàng</Popup>
+              </Marker>
+              <Marker position={mechanicPosition} icon={mechanicIcon}>
+                <Popup>Vị trí thợ</Popup>
+              </Marker>
 
-            {routeCoords.length > 0 && (
-              <Polyline
-                positions={routeCoords}
-                color="blue"
-                weight={5}
-               />
-            )}
-          </MapContainer>
+              {routeCoords.length > 0 && (
+                <Polyline
+                  positions={routeCoords}
+                  color="blue"
+                  weight={5}
+                />
+              )}
+            </MapContainer>
+            :
+            <p>Đang tải map</p>
+          }
         </div>
 
         <div className="flex flex-col gap-4 p-5 bg-white border shadow-md rounded-2xl border-n-200">

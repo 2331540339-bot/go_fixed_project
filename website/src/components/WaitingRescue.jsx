@@ -75,7 +75,6 @@ function WaitingRescue(){
         },
         (err) => {
             console.error("Không thể lấy vị trí:", err);
-            alert("Bạn cần cho phép truy cập vị trí!");
         },
         { enableHighAccuracy: true, maximumAge: 0, timeout: 15000 }
         );
