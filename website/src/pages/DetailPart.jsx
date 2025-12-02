@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, useLocation, useNavigate } from "react-router-dom";
 import { productAPI_detail, cartAPI_add, reviewAPI_add, reviewAPI_getByProduct} from "../app/api";
 import { jwtDecode } from "jwt-decode";
-import Checkout from "../components/Checkout";
+// import Checkout from "../components/Checkout"; // Không dùng trong component này
 function DetailPart() {
     const { id } = useParams();
     const { state } = useLocation();
@@ -26,6 +26,9 @@ function DetailPart() {
     const [totalReviews, setTotalReviews] = useState(0);
     const [averageRating, setAverageRating] = useState(0);
 
+    // *** CẢI TIẾN 1: Thêm state để điều khiển việc hiển thị modal thông báo ***
+    const [showPurchaseModal, setShowPurchaseModal] = useState(false);
+
     const loadAPI = async () => {
         try {
             const res = await productAPI_detail(id);
@@ -37,8 +40,6 @@ function DetailPart() {
         } finally {
             setLoading(false);
         }
-
-        
     };
 
     const loadReviews = async () => {
@@ -52,12 +53,10 @@ function DetailPart() {
         }
     };
 
-
     useEffect(() => {
         if (!state?.product) {
             loadAPI();
         } else {
-
             setActiveImage(state.product.image[0]);
             setFormattedPrice(
                 state.product.price.toLocaleString("vi-VN") + "₫"
@@ -102,7 +101,6 @@ function DetailPart() {
             const token = localStorage.getItem('token');
             if(token){
                 const user = jwtDecode(token);
-                console.log(user.id)
                 if (!user.id) {
                     alert("Bạn cần đăng nhập để đánh giá!");
                     return;
@@ -128,15 +126,23 @@ function DetailPart() {
                     // reset form
                     setReviewText("");
                     setRating(5);
-                    previewImages.forEach(url => URL.revokeObjectURL(url));
+                    previewImages.forEach(url => URL.revokeObjectObjectURL(url));
                     setPreviewImages([]);
                     setImagesFiles([]);
 
                     // reload product để update rating + review count
                     loadAPI();
+                    loadReviews();
                 } catch (err) {
-                    console.log(err);
-                    alert("Gửi đánh giá thất bại!");
+                    const msg = err.response?.data?.message;
+
+                    // *** CẢI TIẾN 2: Sửa logic để hiển thị modal thay vì alert ***
+                    if (msg === "Bạn phải mua sản phẩm này trước khi đánh giá!") {
+                        setShowPurchaseModal(true); // Mở modal lên
+                        return; // Dừng hàm tại đây
+                    }
+
+                    alert(msg || "Gửi đánh giá thất bại!");
                 } finally {
                     setSubmittingReview(false);
                 }
@@ -162,12 +168,12 @@ function DetailPart() {
     return (
         <div className="w-full min-h-screen bg-n-50">
             <div className="max-w-6xl px-4 py-8 mx-auto lg:px-0">
-
+                {/* ... (Phần code trên không thay đổi) ... */}
                 <div className="mb-4 text-sm text-n-500 font-grostek">
                     <span className="cursor-pointer hover:text-p-500">Trang chủ</span>
                     <span className="mx-2">/</span>
                     <span className="cursor-pointer hover:text-p-500">
-                        {data.catalog_id || "Danh mục"}
+                        {data.catalog_name || "Danh mục"}
                     </span>
                     <span className="mx-2">/</span>
                     <span className="text-n-700">{data.product_name}</span>
@@ -218,9 +224,9 @@ function DetailPart() {
 
                                 <div className="flex items-center gap-1 text-sm text-n-600">
                                     <span className="text-p-500">★</span>
-                                    <span>{data.rating || 4.5}</span>
+                                    <span>{averageRating || data.rating || 4.5}</span>
                                     <span className="text-n-500">
-                                        ({data.reviews_count || 0} đánh giá)
+                                        ({totalReviews || data.reviews_count || 0} đánh giá)
                                     </span>
                                 </div>
                             </div>
@@ -343,7 +349,7 @@ function DetailPart() {
                                 <div className="flex items-center gap-1 text-p-500">
                                     {Array.from({ length: 5 }).map((_, index) => (
                                         <span key={index}>
-                                            {index < Math.round(data.rating || 4.5) ? "★" : "☆"}
+                                            {index < Math.round(averageRating || data.rating || 4.5) ? "★" : "☆"}
                                         </span>
                                     ))}
                                 </div>
@@ -370,7 +376,7 @@ function DetailPart() {
                                 ))}
                             </div>
 
-                            {/* Nội dung đánh giá */}
+
                             <textarea
                                 className="w-full p-2 text-sm border rounded-xl border-n-200 focus:outline-none"
                                 rows={3}
@@ -379,7 +385,7 @@ function DetailPart() {
                                 onChange={(e) => setReviewText(e.target.value)}
                             />
 
-                            {/* Upload ảnh */}
+                           
                             <div className="flex items-center gap-2 mt-2">
                                 <input
                                     type="file"
@@ -391,7 +397,7 @@ function DetailPart() {
                                 <span className="text-xs text-n-500">Tối đa 5 ảnh</span>
                             </div>
 
-                            {/* Preview ảnh */}
+                          
                             <div className="flex gap-2 mt-2">
                                 {previewImages.map((src, idx) => (
                                     <img
@@ -429,7 +435,7 @@ function DetailPart() {
                                         </span>
                                     </div>
 
-                                    {/* Rating */}
+                                    
                                     <div className="text-xs text-p-500">
                                         {Array.from({ length: 5 }).map((_, index) => (
                                             <span key={index}>
@@ -440,7 +446,7 @@ function DetailPart() {
 
                                     <p className="mt-1 text-xs text-n-600">{rev.comment}</p>
 
-                                    {/* Images */}
+                                    
                                     {rev.images?.length > 0 && (
                                         <div className="flex gap-2 mt-2">
                                             {rev.images.map((img, idx) => (
@@ -455,8 +461,7 @@ function DetailPart() {
                                     )}
                                 </div>
                             ))}
-                    </div>
-
+                        </div>
                     </div>
                 </div>
 
@@ -468,6 +473,38 @@ function DetailPart() {
                     </p>
                 </div>
             </div>
+
+            {/* *** CẢI TIẾN 3: Component Modal thông báo *** */}
+            {showPurchaseModal && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+                    <div className="bg-white rounded-2xl p-6 max-w-sm mx-4 shadow-xl">
+                        <div className="flex flex-col items-center">
+                            {/* Icon thông báo */}
+                            <svg className="w-16 h-16 text-p-500 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" /></svg>
+                            
+                            <h3 className="text-lg font-semibold text-n-800 mb-2 font-grostek">Yêu cầu mua hàng</h3>
+                            <p className="text-sm text-center text-n-600 mb-6">
+                                Bạn cần mua sản phẩm này trước khi có thể để lại đánh giá.
+                            </p>
+                            
+                            <div className="flex gap-3 w-full">
+                                <button
+                                    onClick={() => navigate('/cart')} // Chuyển hướng đến trang giỏ hàng
+                                    className="flex-1 py-2 text-sm font-semibold text-white rounded-xl bg-p-500 hover:bg-p-600 font-grostek"
+                                >
+                                    Đi đến giỏ hàng
+                                </button>
+                                <button
+                                    onClick={() => setShowPurchaseModal(false)} // Chỉ cần đóng modal
+                                    className="flex-1 py-2 text-sm font-semibold border rounded-xl border-n-300 text-n-700 hover:bg-n-100 font-grostek"
+                                >
+                                    Đóng
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

@@ -1,6 +1,7 @@
 const Review = require("../models/Review");
 const Product = require("../models/Product");
 const User = require("../models/User");
+const Order = require("../models/Order")
 const cloudinary = require("../../config/cloudinary")
 
 const uploadToCloudinary = (fileBuffer) => {
@@ -17,6 +18,7 @@ const uploadToCloudinary = (fileBuffer) => {
 };
 
 class ReviewController {
+
     //[POST] /review/add
     async addReview(req, res){
         try {
@@ -24,10 +26,10 @@ class ReviewController {
 
             if (!product_id || !user_id || !rating) {
                 return res.status(400).json({
-                message: "product_id, user_id và rating là bắt buộc!",
+                    message: "product_id, user_id và rating là bắt buộc!",
                 });
             }
-            
+
             // Upload ảnh lên Cloudinary
             let images = [];
 
@@ -48,6 +50,19 @@ class ReviewController {
             const user = await User.findById(user_id);
             if (!user) {
                 return res.status(404).json({ message: "Người dùng không tồn tại" });
+            }
+
+            // KIỂM TRA USER CÓ ĐƠN HÀNG HOÀN TẤT (completed) CHƯA
+            const hasBought = await Order.findOne({
+                user_id,
+                status: "pending",
+                "items.product_id": product_id
+            });
+
+            if (!hasBought) {
+                return res.status(400).json({
+                    message: "Bạn phải mua sản phẩm này trước khi đánh giá!"
+                });
             }
 
             // Tạo review mới
