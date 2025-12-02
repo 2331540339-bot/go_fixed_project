@@ -38,13 +38,16 @@ class ServiceController extends ChangeNotifier {
     required Map<String, dynamic> location,
     required double priceEstimate,
     required String authToken,
+    required String phone,
+    required String detailAddress,
+    required List<String> images,
   }) async {
   
     final sp = await SharedPreferences.getInstance();
-    final token = sp.getString('token');
+    final storedToken = sp.getString('token');
+    final token = authToken.isNotEmpty ? authToken : (storedToken ?? '');
 
-    if (token == null || token.isEmpty) {
-      // Thêm check isEmpty
+    if (token.isEmpty) {
       throw Exception(
         'Lỗi xác thực: Người dùng chưa đăng nhập hoặc token trống.',
       );
@@ -56,6 +59,9 @@ class ServiceController extends ChangeNotifier {
         description: description,
         location: location,
         priceEstimate: priceEstimate,
+        phone: phone,
+        detailAddress: detailAddress,
+        images: images,
         authToken: token, // Truyền token vào ServiceApi
       );
     } catch (e) {

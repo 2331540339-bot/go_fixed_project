@@ -1,11 +1,12 @@
-import 'package:flutter/material.dart';
-import 'package:mobile/config/assets/app_image.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:mobile/config/themes/app_color.dart';
+import 'dart:convert';
 import 'dart:io';
+
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:mobile/config/assets/app_image.dart';
+import 'package:mobile/config/themes/app_color.dart';
 import 'package:mobile/presentation/controller/rescue_flow_controller.dart';
-import 'package:mobile/presentation/controller/user_controller.dart';
 import 'package:mobile/presentation/view/loction/detail_price_page.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -21,9 +22,9 @@ class ServicesPage extends StatefulWidget {
 }
 
 class _ServicesPageState extends State<ServicesPage> {
-  UserController? _userCtrl;
   final _searchCtl = TextEditingController();
   final _descCtl = TextEditingController();
+  final _phoneCtl = TextEditingController();
   XFile? _imageFile;
   SharedPreferences? _sp;
   TextStyle get _baseTitle => TextStyle(
@@ -67,13 +68,12 @@ class _ServicesPageState extends State<ServicesPage> {
   void dispose() {
     _searchCtl.dispose();
     _descCtl.dispose();
+    _phoneCtl.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final String? authToken = _userCtrl?.userRepository.token;
-
     return GestureDetector(
       onTap: () {
         FocusScope.of(context).unfocus();
@@ -218,6 +218,8 @@ class _ServicesPageState extends State<ServicesPage> {
                 ),
                 SizedBox(height: 20.h),
 
+                _fieldPhone('Số điện thoại liên hệ'),
+                SizedBox(height: 12.h),
                 _fieldDescribe('Hãy mô tả'),
                 Spacer(),
                 Row(
@@ -309,10 +311,43 @@ class _ServicesPageState extends State<ServicesPage> {
                         // shape: CircleBorder(),
                         backgroundColor: AppColor.primaryColor,
                       ),
-                      onPressed: () {
-                        context.read<RescueFlowController>().setDescription(
-                          _descCtl.text.trim(),
-                        );
+                      onPressed: () async {
+                        final flow = context.read<RescueFlowController>();
+                        final phone = _phoneCtl.text.trim();
+                        if (phone.isEmpty) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content:
+                                  Text('Vui lòng nhập số điện thoại để liên hệ.'),
+                            ),
+                          );
+                          return;
+                        }
+
+                        // Đảm bảo người dùng đã xác nhận vị trí
+                        if (flow.location == null || flow.detailAddress == null) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Vui lòng xác nhận vị trí trước khi gửi.'),
+                            ),
+                          );
+                          return;
+                        }
+
+                        final description = _descCtl.text.trim();
+
+                        // Chuẩn bị danh sách ảnh dưới dạng base64 (tối đa 1 ảnh hiện tại)
+                        final images = <String>[];
+                        if (_imageFile != null) {
+                          final bytes = await _imageFile!.readAsBytes();
+                          images.add(base64Encode(bytes));
+                        }
+
+                        flow
+                          ..setPhone(phone)
+                          ..setDescription(description)
+                          ..setImages(images);
+
                         Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -392,6 +427,34 @@ class _ServicesPageState extends State<ServicesPage> {
               borderSide: const BorderSide(color: AppColor.primaryColor),
             ),
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _fieldPhone(String hint) {
+    return TextField(
+      controller: _phoneCtl,
+      keyboardType: TextInputType.phone,
+      style: const TextStyle(color: Colors.black),
+      cursorColor: Colors.black87,
+      decoration: InputDecoration(
+        labelText: hint,
+        labelStyle: const TextStyle(color: Colors.black54),
+        prefixIcon: const Icon(Icons.phone, color: Colors.black54),
+        filled: true,
+        fillColor: const Color(0xffF3F8FB),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: AppColor.primaryColor),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: Colors.black26),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: AppColor.primaryColor),
         ),
       ),
     );

@@ -2,7 +2,7 @@ const {default: mongoose} = require('mongoose')
 const Schema = mongoose.Schema
 
 
-const BennerSchema = new Schema({
+const bannerSchema = new Schema({
      hinh_anh: {
         type: String,
         required: true
@@ -17,4 +17,4 @@ const BennerSchema = new Schema({
      }
 }, { timestamps: true });
 
-module.exports = mongoose.model('Benner', BennerSchema);
+module.exports = mongoose.model('Banner', bannerSchema);

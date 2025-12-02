@@ -1,11 +1,13 @@
 import axios from 'axios';
 import axiosClient from './axiosClient';
-const ACCOUNT_URL = "http://localhost:8000/account";
-const CART_URL = "http://localhost:8000/cart";
-const CATALOG_URL = "http://localhost:8000/catalog";
-const COMMERCE_URL = "http://localhost:8000/commerce";
-const PAYMENT_URL = "http://localhost:8000/payment_online";
-const RESCUE_URL = "http://localhost:8000/request-rescue";
+const domain = import.meta.env.VITE_API_URL;
+const ACCOUNT_URL = `${domain}/account`;
+const CART_URL = `${domain}/cart`;
+const CATALOG_URL = `${domain}/catalog`;
+const COMMERCE_URL = `${domain}/commerce`;
+const PAYMENT_URL = `${domain}/payment_online`;
+const REVIEW_URL = `${domain}/review`;
+
 const loginAPI = (email, password_hash) => {
     return axios
     .post(`${ACCOUNT_URL}/login`, {email, password_hash})
@@ -103,9 +105,30 @@ const paymentVnPayAPI = (amount, orderId) => {
     .catch((err) => {throw err})
 }; export {paymentVnPayAPI}
 
+<<<<<<< HEAD
 const rescueRequestAPI = (requestID) => {
     return axiosClient
     .post(`${RESCUE_URL}/`, {requestID})
     .then((res) => res.data)
     .catch((err) => {throw err;})
 }; export {rescueRequestAPI}
+=======
+const reviewAPI_add = (formData) =>{
+    return axiosClient.post(`${REVIEW_URL}/add`, formData, {
+        headers: {
+            "Content-Type": "multipart/form-data"
+        }
+    })
+    .then(res => res.data)
+    .catch(err => { throw err });
+}; export { reviewAPI_add };
+
+const reviewAPI_getByProduct = (product_id) => {
+    return axiosClient
+        .get(`${REVIEW_URL}/product/${product_id}`)
+        .then(res => res.data)
+        .catch(err => { throw err });
+};
+export { reviewAPI_getByProduct };
+
+>>>>>>> 06ecfa7d02c2fe35f4bc4930b2b2a7c88e220ba2

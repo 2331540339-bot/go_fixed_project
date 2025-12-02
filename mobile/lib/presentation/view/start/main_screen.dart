@@ -2,12 +2,14 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:mobile/config/themes/app_color.dart';
+import 'package:mobile/presentation/controller/location_controller.dart';
 import 'package:mobile/presentation/view/home/home_page.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:mobile/presentation/view/loction/location_page.dart';
 import 'package:mobile/presentation/view/messenger/inbox_page.dart';
 import 'package:mobile/presentation/view/setting/settings_page.dart';
 import 'package:mobile/presentation/view/store/store_page.dart';
+import 'package:provider/provider.dart';
 
 class Mainscreen extends StatefulWidget {
   const Mainscreen({super.key});
@@ -18,29 +20,31 @@ class Mainscreen extends StatefulWidget {
 
 class _MainscreenState extends State<Mainscreen> {
   int _index = 0;
+  late final List<Widget> _pages;
+
+  @override
+  void initState() {
+    super.initState();
+    context.read<LocationController>().ensureStarted();
+    _pages = [
+      HomePage(
+        onGoToLocation: () => setState(() => _index = 3),
+      ),
+      const StorePage(),
+      const InboxPage(),
+      const LocationPage(),
+      const SettingsPage(),
+    ];
+  }
 
   @override
   Widget build(BuildContext context) {
-    final pages = [
-      HomePage(
-        onGoToLocation: () {
-          setState(() {
-            _index = 3; // 👈 index của LocationPage trong pages
-          });
-        },
-      ),
-      StorePage(),
-      InboxPage(),
-      LocationPage(),
-      SettingsPage(),
-    ];
     return Scaffold(
       resizeToAvoidBottomInset: false,
       extendBody: true, // để nav bar "nổi" trên nền mờ
       body: IndexedStack(
-        // giữ nguyên trạng thái từng tab
         index: _index,
-        children: pages,
+        children: _pages,
       ),
       bottomNavigationBar: Padding(
         padding: EdgeInsets.fromLTRB(15.w, 0, 15.w, 15.h),
@@ -97,7 +101,7 @@ class _MainscreenState extends State<Mainscreen> {
                     NavigationDestination(
                       icon: Icon(Icons.storefront_outlined, color: Color(0xff000000)),
                       selectedIcon: Icon(Icons.storefront_rounded),
-                      label: 'Home',
+                      label: 'Store',
                     ),
                     NavigationDestination(
                       icon: Icon(

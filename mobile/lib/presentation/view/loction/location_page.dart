@@ -6,7 +6,6 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 // ignore: depend_on_referenced_packages
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:mobile/common/app_button.dart';
 
@@ -16,10 +15,9 @@ import 'package:mobile/config/api_config.dart';
 import 'package:mobile/api/geocoding_api.dart';
 
 import 'package:mobile/presentation/controller/user_controller.dart';
-import 'package:mobile/presentation/view/loction/detailed_repair_page.dart';
+import 'package:mobile/presentation/controller/location_controller.dart';
 import 'package:mobile/presentation/view/loction/open_map.dart';
 import 'package:mobile/presentation/view/loction/services_page.dart';
-// import 'package:mobile/presentation/view/loction/services_page.dart';
 import 'package:mobile/presentation/widgets/appbars/main_app_bar.dart';
 
 import 'package:mobile/presentation/model/vietnam_address.dart';
@@ -54,18 +52,11 @@ class _LocationPageState extends State<LocationPage> {
   final _searchCtl = TextEditingController();
   final String _selectedAddress = '';
 
-  LatLng? _currentLocation; 
-  String _currentAddress =
-      'Đang tải vị trí...'; 
-  bool _loadingLocation = true; 
-
-  StreamSubscription<Position>? _positionStreamSubscription;
-
   @override
   void initState() {
     super.initState();
+    context.read<LocationController>().ensureStarted();
     _initControllers();
-    _startLocationStream();
   }
 
   void _centerOnUserMarker({double zoom = 30}) {
@@ -116,7 +107,7 @@ class _LocationPageState extends State<LocationPage> {
 
     // Thêm quốc gia để Goong “chắc cú”
     parts.add('Việt Nam');
-    
+
     // SnackBar này là để debug, có thể bỏ
     /*
     final snackBar = SnackBar(
@@ -164,7 +155,7 @@ class _LocationPageState extends State<LocationPage> {
     final latlng = await _getGeocodedLatLng(full);
 
     if (!mounted) return;
-    
+
     if (latlng == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Không tìm thấy toạ độ cho: $full')),
@@ -183,120 +174,42 @@ class _LocationPageState extends State<LocationPage> {
     debugPrint('✅ Geocoded: ${latlng.latitude}, ${latlng.longitude}');
   }
 
-  Future<void> _startLocationStream() async {
-    // 1. Kiểm tra quyền và dịch vụ (Giữ nguyên logic từ trước)
-    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      if (mounted) setState(() => _currentAddress = 'Vị trí bị tắt');
-      return Future.error('Dịch vụ Vị trí đã bị tắt.');
-    }
-
-    LocationPermission permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        if (mounted) setState(() => _currentAddress = 'Từ chối truy cập');
-        return Future.error('Quyền truy cập vị trí đã bị từ chối.');
-      }
-    }
-
-    if (permission == LocationPermission.deniedForever) {
-      if (mounted) setState(() => _currentAddress = 'Bị từ chối vĩnh viễn');
-      return Future.error('Quyền bị từ chối vĩnh viễn.');
-    }
-
-    // 2. Định cấu hình Stream
-    const LocationSettings locationSettings = LocationSettings(
-      accuracy: LocationAccuracy.high,
-      distanceFilter: 50, // Cập nhật khi di chuyển 50 mét
-    );
-
-    // Hủy Stream cũ nếu có
-    _positionStreamSubscription?.cancel();
-
-    // Lấy vị trí ban đầu
-    try {
-      Position initialPosition = await Geolocator.getCurrentPosition();
-      await _updateLocation(initialPosition);
-    } catch (e) {
-      if (mounted)
-        setState(() {
-          _currentAddress = 'Không lấy được vị trí ban đầu';
-          _loadingLocation = false;
-        });
-    }
-
-    // 3. Bắt đầu lắng nghe Stream
-    _positionStreamSubscription =
-        Geolocator.getPositionStream(locationSettings: locationSettings).listen(
-          (Position position) {
-            _updateLocation(position); // Gọi hàm cập nhật vị trí và địa chỉ
-          },
-          onError: (error) {
-            if (mounted) {
-              setState(() {
-                _currentAddress = 'Lỗi theo dõi vị trí';
-                _loadingLocation = false;
-              });
-            }
-            debugPrint('Lỗi theo dõi vị trí: $error');
-          },
-        );
-  }
-
-  // Hàm mới để xử lý cập nhật vị trí và chuyển đổi sang địa chỉ
-  Future<void> _updateLocation(Position position) async {
-    final location = LatLng(position.latitude, position.longitude);
-
-    // Tạm thời đặt cờ loading là true khi đang chờ chuyển đổi
-    if (mounted) {
-      setState(() {
-        _currentLocation = location;
-        _loadingLocation = true;
-      });
-    }
-
-    final address = await GeocodingApi.reverseGeocode(location);
-
-    if (mounted) {
-      setState(() {
-        _currentAddress = address ?? 'Không xác định được địa chỉ';
-        _loadingLocation = false;
-      });
-    }
-  }
   void _showSnackbar(BuildContext context, String message) {
-  ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(
-      content: Text(message),
-      // Đặt thời gian hiển thị mong muốn
-      duration: const Duration(seconds: 3), 
-      // Tùy chọn: Thêm hành động (Action)
-      action: SnackBarAction(
-        label: 'Đóng',
-        onPressed: () {
-          ScaffoldMessenger.of(context).hideCurrentSnackBar();
-        },
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        // Đặt thời gian hiển thị mong muốn
+        duration: const Duration(seconds: 3),
+        // Tùy chọn: Thêm hành động (Action)
+        action: SnackBarAction(
+          label: 'Đóng',
+          onPressed: () {
+            ScaffoldMessenger.of(context).hideCurrentSnackBar();
+          },
+        ),
       ),
-    ),
-  );
-}
+    );
+  }
+
   @override
   void dispose() {
     _searchCtl.dispose();
-    _positionStreamSubscription?.cancel();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    final locationCtrl = context.watch<LocationController>();
+    final currentLocation = locationCtrl.currentLocation;
+    final currentAddress = locationCtrl.error ?? locationCtrl.currentAddress;
+    final loadingLocation = locationCtrl.loading;
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: MainAppBar(
         logo: Image.asset(AppImages.mainLogo, height: 100.h, width: 100.w),
         name: _name,
         loadingName: _loadingName,
-        location: _loadingLocation ? 'Đang tải...' : _currentAddress,
+        location: loadingLocation ? 'Đang tải...' : currentAddress,
         onAvatarTap: () {
           // mở trang profile / settings
         },
@@ -339,7 +252,7 @@ class _LocationPageState extends State<LocationPage> {
                         });
                       },
                       // Kích hoạt Geocode khi người dùng đóng modal (hoặc một hành động phù hợp)
-                      // onClosed: _geocodeSelectedAddressAndRefreshMap, 
+                      // onClosed: _geocodeSelectedAddressAndRefreshMap,
                     ),
                   ),
                 ],
@@ -365,7 +278,7 @@ class _LocationPageState extends State<LocationPage> {
                       Expanded(
                         child: Text(
                           // Nếu có _userMarker (đã Geocode thành công) thì ưu tiên hiển thị
-                          _userMarker != null 
+                          _userMarker != null
                               ? _buildFullAddress()
                               : 'Địa chỉ đã chọn: $_selectedAddress',
                           style: const TextStyle(
@@ -398,7 +311,7 @@ class _LocationPageState extends State<LocationPage> {
                       // Chuyển sang async để chờ Geocode (nếu cần)
                       onPressed: () async {
                         // 🛠️ Khởi tạo biến để lưu trữ dữ liệu cuối cùng
-                        String finalAddressDescription = '';
+                        String finalDetailAddress = '';
                         LatLng? finalLocationLatLng;
 
                         final bool isManualAddressComplete =
@@ -409,14 +322,15 @@ class _LocationPageState extends State<LocationPage> {
 
                         if (isManualAddressComplete) {
                           // Trường hợp 1: Có địa chỉ thủ công
-                          finalAddressDescription = _buildFullAddress();
-                          
+                          finalDetailAddress = _buildFullAddress();
+
                           // Tạm thời hiển thị loading cho người dùng
-                          setState(() => _loadingName = true); 
+                          setState(() => _loadingName = true);
 
                           // Gọi Geocode để lấy tọa độ (không cập nhật Map)
-                          finalLocationLatLng =
-                              await _getGeocodedLatLng(finalAddressDescription);
+                          finalLocationLatLng = await _getGeocodedLatLng(
+                            finalDetailAddress,
+                          );
 
                           setState(() => _loadingName = false);
 
@@ -427,13 +341,17 @@ class _LocationPageState extends State<LocationPage> {
                             );
                             return;
                           }
-                          debugPrint('Sử dụng địa chỉ thủ công: $finalAddressDescription, LatLng: $finalLocationLatLng');
-
-                        } else if (_currentLocation != null && _currentAddress != 'Đang tải vị trí...') {
+                          debugPrint(
+                            'Sử dụng địa chỉ thủ công: $finalDetailAddress, LatLng: $finalLocationLatLng',
+                          );
+                        } else if (currentLocation != null &&
+                            currentAddress != 'Đang tải vị trí...') {
                           // Trường hợp 2: Dùng vị trí hiện tại (Đã có tọa độ và địa chỉ)
-                          finalAddressDescription = _currentAddress;
-                          finalLocationLatLng = _currentLocation;
-                          debugPrint('Sử dụng vị trí hiện tại: $finalAddressDescription, LatLng: $finalLocationLatLng');
+                          finalDetailAddress = currentAddress;
+                          finalLocationLatLng = currentLocation;
+                          debugPrint(
+                            'Sử dụng vị trí hiện tại: $finalDetailAddress, LatLng: $finalLocationLatLng',
+                          );
                         } else {
                           // Trường hợp 3: Vị trí hiện tại cũng không có
                           _showSnackbar(
@@ -444,20 +362,21 @@ class _LocationPageState extends State<LocationPage> {
                         }
 
                         //  Kiểm tra cuối cùng trước khi lưu và chuyển trang
-                        if (finalLocationLatLng == null || finalAddressDescription.isEmpty) {
+                        if (finalLocationLatLng == null ||
+                            finalDetailAddress.isEmpty) {
                           _showSnackbar(
                             context,
                             'Lỗi: Không xác định được tọa độ hoặc địa chỉ.',
                           );
                           return;
                         }
-                        
+
                         //  BƯỚC QUAN TRỌNG: Lưu dữ liệu vào RescueFlowController
                         final controller = context.read<RescueFlowController>();
-                        
-                        // Lưu mô tả địa chỉ
-                        controller.setDescription(finalAddressDescription);
-                        
+
+                        // Lưu địa chỉ chi tiết
+                        controller.setDetailAddress(finalDetailAddress);
+
                         // Lưu tọa độ dưới dạng Map<String, dynamic>
                         controller.setLocation({
                           'lat': finalLocationLatLng.latitude,
@@ -473,7 +392,6 @@ class _LocationPageState extends State<LocationPage> {
                           ),
                         );
                       },
-                    
                     ),
                   ),
                 ],

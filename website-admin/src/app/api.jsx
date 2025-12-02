@@ -3,7 +3,7 @@ import axiosAdmin from "./axiosAdmin";
 
 const baseURL =
   process.env.REACT_APP_ADMIN_FE_URL ||
-  process.env.ADMIN_FE_URL ||
+  process.env.VITE_API_URL ||
   "http://localhost:8000";
 
 const ACCOUNT_URL = `${baseURL}/account`;

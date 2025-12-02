@@ -43,6 +43,9 @@ class ServiceApi {
     required Map<String, dynamic> location,
     required double priceEstimate,
     required String authToken,
+    required String phone,
+    required String detailAddress,
+    required List<String> images,
   }) async {
     double? _toDouble(dynamic v) {
       if (v == null) return null;
@@ -75,6 +78,9 @@ class ServiceApi {
 
     final body = jsonEncode({
       'description': description,
+      'phone': phone,
+      'detail_address': detailAddress,
+      'images': images,
       'location': geoLocation,
       'price_estimate': priceEstimate,
     });

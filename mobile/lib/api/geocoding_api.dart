@@ -10,10 +10,9 @@ class GeocodingApi {
     try {
       final params = {
         'address': address,
-        'api_key': ApiConfig.goongMapsApiKey, // ⚠️ Goong dùng api_key
+        'api_key': ApiConfig.goongMapsApiKey,
       };
 
-      // Theo docs Goong: https://rsapi.goong.io/geocode?address=...&api_key=...
       final uri = Uri.https('rsapi.goong.io', '/geocode', params);
       debugPrint('Goong Geocode request: $uri');
 
@@ -31,7 +30,6 @@ class GeocodingApi {
       if (res.statusCode != 200) return null;
 
       final data = jsonDecode(res.body);
-      // Goong giữ format gần như Google: results[], status: "OK"
       if (data is Map &&
           (data['status'] == 'OK') &&
           (data['results'] is List) &&
@@ -56,10 +54,9 @@ class GeocodingApi {
     try {
       final params = {
         'latlng': '${location.latitude},${location.longitude}',
-        'api_key': ApiConfig.goongMapsApiKey, // ⚠️ Goong dùng api_key
+        'api_key': ApiConfig.goongMapsApiKey,
       };
 
-      // Theo docs Goong: https://rsapi.goong.io/Geocode?latlng=...&api_key=...
       final uri = Uri.https('rsapi.goong.io', '/Geocode', params);
       debugPrint('Goong Reverse request: $uri');
 

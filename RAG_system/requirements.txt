@@ -3,3 +3,4 @@ astrapy
 sentence-transformers
 openai
 django-cors-headers
+django
